@@ -44,18 +44,18 @@ model User {
 }
 
 model Session {
-  id                  String    @id @default(uuid())
-  userId              String
-  tokenHash           String    @unique
-  mfaPassed           Boolean   @default(false)
-  expiresAt           DateTime
-  userAgent           String?
-  ip                  String?
-  webauthnChallenge   String?
-  emailOtpHash        String?
-  emailOtpExpiresAt   DateTime?
-  mfaAttempts         Int       @default(0)
-  createdAt           DateTime  @default(now())
+  id                String    @id @default(uuid())
+  userId            String
+  tokenHash         String    @unique
+  mfaPassed         Boolean   @default(false)
+  expiresAt         DateTime
+  userAgent         String?
+  ip                String?
+  webauthnChallenge String?
+  emailOtpHash      String?
+  emailOtpExpiresAt DateTime?
+  mfaAttempts       Int       @default(0)
+  createdAt         DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -102,18 +102,19 @@ enum IssueStatus {
 }
 
 model Project {
-  id               String   @id @default(uuid())
-  name             String
-  slug             String   @unique
-  platform         String   @default("javascript")
-  uploadTokenHash  String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  platform        String   @default("javascript")
+  uploadTokenHash String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  keys     ProjectKey[]
-  issues   Issue[]
-  events   Event[]
-  releases Release[]
+  keys       ProjectKey[]
+  issues     Issue[]
+  events     Event[]
+  releases   Release[]
+  alertRules AlertRule[]
 
   @@map("projects")
 }
@@ -206,4 +207,85 @@ model SourceMap {
 
   @@unique([releaseId, filePath])
   @@map("source_maps")
+}
+
+enum AlertChannelType {
+  SLACK
+  DISCORD
+  TELEGRAM
+  EMAIL
+}
+
+enum AlertTrigger {
+  NEW_ISSUE
+  REGRESSION
+  SPIKE
+}
+
+enum DeliveryStatus {
+  SENT
+  FAILED
+}
+
+model AlertChannel {
+  id        String           @id @default(uuid())
+  type      AlertChannelType
+  name      String
+  configEnc String
+  hint      String
+  enabled   Boolean          @default(true)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  rules      AlertRule[]
+  deliveries AlertDelivery[]
+
+  @@map("alert_channels")
+}
+
+model AlertRule {
+  id              String       @id @default(uuid())
+  projectId       String
+  name            String
+  trigger         AlertTrigger
+  spikeThreshold  Int?
+  spikeWindowMins Int?
+  minLevel        String       @default("error")
+  environment     String?
+  cooldownMins    Int          @default(30)
+  enabled         Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  project    Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  channels   AlertChannel[]
+  deliveries AlertDelivery[]
+
+  @@index([projectId, trigger, enabled])
+  @@map("alert_rules")
+}
+
+model AlertDelivery {
+  id        String         @id @default(uuid())
+  ruleId    String?
+  channelId String?
+  issueId   String?
+  status    DeliveryStatus
+  error     String?
+  createdAt DateTime       @default(now())
+
+  rule    AlertRule?    @relation(fields: [ruleId], references: [id], onDelete: SetNull)
+  channel AlertChannel? @relation(fields: [channelId], references: [id], onDelete: SetNull)
+
+  @@index([ruleId, issueId, createdAt])
+  @@index([createdAt])
+  @@map("alert_deliveries")
+}
+
+model InstanceSetting {
+  key       String   @id
+  valueEnc  String
+  updatedAt DateTime @updatedAt
+
+  @@map("instance_settings")
 }

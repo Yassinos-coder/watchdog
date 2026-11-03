@@ -104,6 +104,14 @@ describe('Authentication (e2e)', () => {
       await request(app.getHttpServer()).get('/api/projects').expect(401);
     });
 
+    it('exposes the version and docs location publicly', async () => {
+      const response = await request(app.getHttpServer()).get('/api/config').expect(200);
+
+      expect(response.body.version).toMatch(/^\d+\.\d+\.\d+/);
+      expect(response.body.docsUrl).toContain('/docs');
+      expect(response.body.docsExtension).toBe('.md');
+    });
+
     it('keeps health checks public', async () => {
       await request(app.getHttpServer()).get('/api/health/live').expect(200);
     });

@@ -10,6 +10,7 @@ Open source, self-hosted error tracking, performance tracing and session replay.
 - **Real code lines**: upload source maps and see the original file, line and surrounding code for every stack frame
 - **Self-hosted authentication**: email and password with required two-step verification (authenticator app, passkey or emailed code) and recovery codes
 - **Your own SDKs** for browser, React and Node.js
+- **Alerts** to Slack, Discord, Telegram and email, with your own SMTP server
 - **One container + PostgreSQL**, Redis optional
 
 ## Run it with Docker
@@ -90,6 +91,11 @@ The `release` passed to the SDK and to the CLI must match.
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | no | Needed for emailed sign-in codes |
 | `LOG_LEVEL` | no | `error`, `warn`, `info`, `debug` or `silent` (JSON logs in production) |
 | `INGEST_EVENTS_PER_MINUTE` | no | Per-project event quota (default 6000) |
+| `DOCS_URL` | no | Base URL of your documentation, used by the dashboard's "Setup guide" links |
+
+## Documentation
+
+Guides live in [docs/](docs/README.md): alerts, authentication and source maps. Set `DOCS_URL` if you host them elsewhere; the dashboard links to them from every setup form.
 
 ## Stack
 

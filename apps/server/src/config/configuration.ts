@@ -3,6 +3,7 @@ const DEFAULT_API_PREFIX = 'api';
 const DEFAULT_SMTP_PORT = 587;
 const SECURE_SMTP_PORT = 465;
 const DEFAULT_EVENTS_PER_MINUTE = 6000;
+const DEFAULT_DOCS_URL = 'https://github.com/Yassinos-coder/watchdog/blob/main/docs';
 
 const resolvePort = (): number => Number(process.env.PORT) || DEFAULT_PORT;
 
@@ -61,6 +62,10 @@ export default () => {
     },
     redis: {
       url: process.env.REDIS_URL || undefined,
+    },
+    docs: {
+      url: (process.env.DOCS_URL || DEFAULT_DOCS_URL).replace(/\/+$/, ''),
+      extension: process.env.DOCS_URL ? '' : '.md',
     },
     ingest: {
       eventsPerMinute: Number(process.env.INGEST_EVENTS_PER_MINUTE) || DEFAULT_EVENTS_PER_MINUTE,

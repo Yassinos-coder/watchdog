@@ -14,7 +14,7 @@ export class EmailOtpService {
   ) {}
 
   async send({ session, user }: AuthContext): Promise<void> {
-    if (!this.mailService.isConfigured()) {
+    if (!(await this.mailService.isConfigured())) {
       throw new BadRequestException('Email is not configured on this instance');
     }
     const code = this.createCode();

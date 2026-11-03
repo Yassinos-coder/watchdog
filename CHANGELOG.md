@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-11-03
+
+### Added
+- Alerts to Slack, Discord, Telegram and email, with channels shared across projects and credentials encrypted at rest
+- Per-project alert rules for new issues, regressions and spikes, with severity and environment filters and a quiet period
+- Integrations page to manage channels, send test alerts and review every delivery attempt with its failure reason
+- SMTP settings in the dashboard so administrators can use their own mail server, with environment variables as a fallback
+- Alerts page per project to create, edit, pause and delete rules
+- Setup guide links next to every integration form, pointing at the new documentation
+- Documentation for alerts, authentication and source maps
+- Public configuration endpoint exposing the version and documentation location
+
+### Security
+- Webhook addresses are restricted to the provider's own hosts, so alerts cannot be used to reach internal services
+- Alert delivery never blocks error collection, and failures are recorded instead of raised
+
+### Changed
+- Email sign-in codes now use the SMTP settings saved in the dashboard when present
+
 ## [0.3.0] - 2026-11-03
 
 ### Added

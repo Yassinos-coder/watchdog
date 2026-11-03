@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { ISSUE_EVENT_RECORDED } from '../../alerts/constants/alert.constants';
 import { ProjectKeyService } from '../../projects/services/project-key.service';
 import { SymbolicationService } from '../../source-maps/services/symbolication.service';
 import { IngestResult } from '../interfaces/ingest.interfaces';
@@ -15,6 +17,7 @@ export class IngestService {
     private readonly rateLimiter: ProjectRateLimiterService,
     private readonly symbolicationService: SymbolicationService,
     private readonly ingestRepository: IngestRepository,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async accept(projectId: string, publicKey: string | undefined, body: unknown): Promise<IngestResult> {
@@ -29,12 +32,24 @@ export class IngestService {
         event.exception.frames,
       );
     }
-    return this.ingestRepository.record({
+    const result = await this.ingestRepository.record({
       projectId,
       event,
       fingerprint: FingerprintUtils.compute(event),
       title: EventSummaryMapper.toTitle(event),
       culprit: EventSummaryMapper.toCulprit(event),
     });
+    if (!result.duplicate) {
+      this.eventEmitter.emit(ISSUE_EVENT_RECORDED, {
+        projectId,
+        issueId: result.issueId,
+        isNewIssue: result.isNewIssue,
+        isRegression: result.isRegression,
+        level: event.level,
+        environment: event.environment ?? null,
+        release: event.release ?? null,
+      });
+    }
+    return result;
   }
 }

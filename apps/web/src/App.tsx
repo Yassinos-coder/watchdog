@@ -1,4 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import { AlertRulesPage } from '@/features/alerts/pages/AlertRulesPage';
+import { IntegrationsPage } from '@/features/alerts/pages/IntegrationsPage';
 import { MfaChallengePage } from '@/features/auth/pages/MfaChallengePage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { MfaSetupPage } from '@/features/auth/pages/MfaSetupPage';
@@ -29,6 +31,8 @@ export function App() {
           <Route path="/projects/:projectId/issues" element={<IssuesPage />} />
           <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetailPage />} />
           <Route path="/projects/:projectId/settings" element={<ProjectSettingsPage />} />
+          <Route path="/projects/:projectId/alerts" element={<AlertRulesPage />} />
+          <Route path="/integrations" element={<IntegrationsPage />} />
           <Route path="/security" element={<SecurityPage />} />
         </Route>
       </Route>

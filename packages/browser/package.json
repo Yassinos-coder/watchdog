@@ -1,6 +1,6 @@
 {
   "name": "@watchdog/browser",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Watchdog SDK for browsers",
   "license": "MIT",
   "type": "module",

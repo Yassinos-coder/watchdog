@@ -36,7 +36,7 @@ export class AuthService {
   async getStatus(): Promise<AuthStatus> {
     return {
       setupRequired: (await this.userRepository.count()) === 0,
-      emailCodeAvailable: this.mailService.isConfigured(),
+      emailCodeAvailable: await this.mailService.isConfigured(),
     };
   }
 

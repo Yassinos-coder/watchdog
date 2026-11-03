@@ -30,7 +30,7 @@ export class SecurityService {
         lastUsedAt: passkey.lastUsedAt,
       })),
       recoveryCodesRemaining,
-      emailCodeAvailable: this.mailService.isConfigured(),
+      emailCodeAvailable: await this.mailService.isConfigured(),
     };
   }
 
