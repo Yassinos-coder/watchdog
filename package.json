@@ -21,10 +21,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\"",
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
-    "verify:packages": "node scripts/verify-packages.mjs"
+    "verify:packages": "node scripts/verify-packages.mjs",
+    "changeset": "changeset",
+    "version-packages": "node scripts/release-notes.mjs && changeset version && node scripts/sync-versions.mjs",
+    "release": "node scripts/publish-packages.mjs"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
+    "@changesets/cli": "^3.0.3",
     "prettier": "^3.6.2",
     "publint": "^0.3.25",
     "turbo": "^2.5.0",

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "@watchdog-sdk/core",
+      "@watchdog-sdk/browser",
+      "@watchdog-sdk/react",
+      "@watchdog-sdk/node",
+      "@watchdog-sdk/cli",
+      "@watchdog/server",
+      "@watchdog/web"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "privatePackages": { "version": true, "tag": false }
+}
