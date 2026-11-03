@@ -69,7 +69,7 @@ export class AppModule {}`,
 WATCHDOG_URL=${serverUrl} \\
 WATCHDOG_PROJECT_ID=${projectId} \\
 WATCHDOG_UPLOAD_TOKEN=<your upload token> \\
-bunx watchdog sourcemaps upload ./dist --release 1.0.0`,
+bunx @watchdog-sdk/cli sourcemaps upload ./dist --release 1.0.0`,
     };
   }
 
