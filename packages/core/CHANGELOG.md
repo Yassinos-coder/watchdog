@@ -1,5 +1,11 @@
 # @watchdog-sdk/core
 
+## 0.4.4
+
+### Patch Changes
+
+- Updated build and release tooling: Bun 1.4.4, newer Docker and checkout GitHub Actions, jsdom 30 and recharts 3.10
+
 ## 0.4.3
 
 ### Patch Changes
