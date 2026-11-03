@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2026-11-03
+
+### Added
+- Automated releases: a pull request bumps every version and writes the changelog, and merging it publishes the packages to npm with provenance, creates a GitHub release and pushes the Docker image
+- Publishing stays off until the NPM_PUBLISH_ENABLED repository variable is set to true, so the first release is always a deliberate choice
+
 ## [0.4.1] - 2026-11-03
 
 ### Added

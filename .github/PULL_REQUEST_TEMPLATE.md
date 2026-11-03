@@ -18,6 +18,7 @@ Closes #
 - [ ] Tests added or updated for the change
 - [ ] UI changes were checked on a phone, a tablet and a desktop width
 - [ ] Database changes include a Prisma migration
+- [ ] Added a changeset (`bunx changeset`) if the change affects users
 - [ ] Docs updated if configuration, environment variables or setup steps changed
 
 ## Screenshots

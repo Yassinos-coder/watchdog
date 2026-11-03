@@ -66,13 +66,21 @@ Useful commands:
 
 ## Releasing
 
-Maintainers publish the SDK packages by pushing a version tag:
+Releases are automatic. All packages and the Docker image share one version.
 
-1. Bump the version in the root `package.json` and in every `packages/*/package.json`, and update `CHANGELOG.md`.
-2. Run `bun run build && bun run verify:packages` locally.
-3. Tag and push: `git tag v1.2.3 && git push origin v1.2.3`.
+1. **Describe your change.** When it affects people who use Watchdog, run `bunx changeset`, choose patch, minor or major, and write one sentence. Commit the generated file in `.changeset/` with your change.
+2. **Push to `main`.** The **Release** workflow opens (or updates) a pull request called "Release" that bumps every version, updates `CHANGELOG.md` and syncs the version numbers in the code.
+3. **Merge the Release pull request.** The workflow then builds, tests and verifies the packages, publishes `@watchdog-sdk/core`, `browser`, `node`, `react` and `cli` to npm with provenance, tags `vX.Y.Z`, creates a GitHub release and pushes the Docker image to GHCR.
 
-The **Publish packages** workflow checks that the tag matches the package versions, runs the tests and package checks, then publishes `@watchdog-sdk/core`, `browser`, `node`, `react` and `cli` to npm with provenance. It needs the `NPM_TOKEN` repository secret. Versions that are already published are skipped, so a failed run can be retried safely. The same tag also builds the Docker image.
+You can also bump the versions in every `package.json` yourself and push to `main`. Any version that is not on npm yet is published, and versions that already exist are skipped, so a failed run can simply be re-run.
+
+Set up once by a maintainer:
+
+- Repository secret `NPM_TOKEN`: an npm automation token (or a granular token with write access to the `@watchdog-sdk` scope that can bypass two-factor authentication).
+- Repository variable `NPM_PUBLISH_ENABLED` set to `true`. Until then the workflow prepares releases but does not publish.
+- Settings → Actions → General → Workflow permissions: allow Actions to create pull requests.
+
+Check what a release would do without publishing: `DRY_RUN=1 bun run release`.
 
 ## License
 
