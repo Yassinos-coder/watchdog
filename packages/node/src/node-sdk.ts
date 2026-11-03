@@ -4,6 +4,9 @@ import {
   CaptureContext,
   Level,
   UserContext,
+  MetricOptions,
+  Transaction,
+  TransactionOptions,
   WatchdogClient,
   WatchdogEvent,
 } from '@watchdog-sdk/core';
@@ -11,7 +14,7 @@ import { ContextLines } from './context-lines';
 import { HttpRequestLike, NodeOptions, Uninstall } from './interfaces';
 import { RequestContextBuilder } from './request-context';
 
-const SDK = { name: 'watchdog.node', version: '0.4.4' };
+const SDK = { name: 'watchdog.node', version: '0.5.0' };
 const DEFAULT_FLUSH_TIMEOUT_MS = 2_000;
 const EXIT_CODE_UNCAUGHT = 1;
 
@@ -96,6 +99,22 @@ export function setExtra(key: string, value: unknown): void {
 
 export function setContext(key: string, value: unknown): void {
   client?.setContext(key, value);
+}
+
+export function startTransaction(options: TransactionOptions): Transaction | undefined {
+  return client?.startTransaction(options);
+}
+
+export function increment(name: string, value?: number, options?: MetricOptions): void {
+  client?.increment(name, value, options);
+}
+
+export function gauge(name: string, value: number, options?: MetricOptions): void {
+  client?.gauge(name, value, options);
+}
+
+export function distribution(name: string, value: number, options?: MetricOptions): void {
+  client?.distribution(name, value, options);
 }
 
 export function flush(timeoutMs?: number): Promise<boolean> {

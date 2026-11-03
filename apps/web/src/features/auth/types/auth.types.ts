@@ -60,3 +60,8 @@ export interface LoginInput {
 }
 
 export type VerifyMethod = 'totp' | 'recovery' | 'email';
+
+export interface OAuthProvider {
+  id: 'google' | 'github';
+  label: string;
+}

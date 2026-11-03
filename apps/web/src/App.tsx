@@ -7,12 +7,17 @@ import { MfaSetupPage } from '@/features/auth/pages/MfaSetupPage';
 import { SecurityPage } from '@/features/auth/pages/SecurityPage';
 import { SetupPage } from '@/features/auth/pages/SetupPage';
 import { RequireAuth } from '@/features/auth/routes/RequireAuth';
+import { DashboardsPage } from '@/features/performance/pages/DashboardsPage';
+import { PerformancePage } from '@/features/performance/pages/PerformancePage';
 import { IssueDetailPage } from '@/features/issues/pages/IssueDetailPage';
 import { IssuesPage } from '@/features/issues/pages/IssuesPage';
 import { ProjectOverviewPage } from '@/features/issues/pages/ProjectOverviewPage';
+import { ReplaysPage } from '@/features/replays/pages/ReplaysPage';
 import { ProjectSettingsPage } from '@/features/projects/pages/ProjectSettingsPage';
 import { ProjectsPage } from '@/features/projects/pages/ProjectsPage';
 import { HomeRedirect } from '@/features/projects/routes/HomeRedirect';
+import { AcceptInvitePage } from '@/features/team/pages/AcceptInvitePage';
+import { TeamPage } from '@/features/team/pages/TeamPage';
 import { AppShell } from '@/layout/AppShell';
 
 export function App() {
@@ -22,6 +27,7 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/login/verify" element={<MfaChallengePage />} />
       <Route path="/security/setup" element={<MfaSetupPage />} />
+      <Route path="/invite/:token" element={<AcceptInvitePage />} />
 
       <Route element={<RequireAuth />}>
         <Route element={<AppShell />}>
@@ -31,8 +37,12 @@ export function App() {
           <Route path="/projects/:projectId/issues" element={<IssuesPage />} />
           <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetailPage />} />
           <Route path="/projects/:projectId/settings" element={<ProjectSettingsPage />} />
+          <Route path="/projects/:projectId/performance" element={<PerformancePage />} />
+          <Route path="/projects/:projectId/dashboards" element={<DashboardsPage />} />
+          <Route path="/projects/:projectId/replays" element={<ReplaysPage />} />
           <Route path="/projects/:projectId/alerts" element={<AlertRulesPage />} />
           <Route path="/integrations" element={<IntegrationsPage />} />
+          <Route path="/team" element={<TeamPage />} />
           <Route path="/security" element={<SecurityPage />} />
         </Route>
       </Route>

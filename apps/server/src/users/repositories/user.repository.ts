@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import type { User } from '../../generated/prisma/client';
-import type { MfaMethod } from '../../generated/prisma/enums';
+import type { MfaMethod, UserRole } from '../../generated/prisma/enums';
 import { CreateOwnerInput } from '../interfaces/user.interfaces';
 
 @Injectable()
@@ -14,6 +14,18 @@ export class UserRepository {
 
   findByEmail(email: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { email } });
+  }
+
+  listAll(): Promise<User[]> {
+    return this.prisma.user.findMany({ orderBy: { createdAt: 'asc' } });
+  }
+
+  updateRole(id: string, role: UserRole): Promise<User> {
+    return this.prisma.user.update({ where: { id }, data: { role } });
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.prisma.user.delete({ where: { id } });
   }
 
   count(): Promise<number> {

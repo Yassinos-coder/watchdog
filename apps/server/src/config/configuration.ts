@@ -5,7 +5,18 @@ const SECURE_SMTP_PORT = 465;
 const DEFAULT_EVENTS_PER_MINUTE = 6000;
 const DEFAULT_DOCS_URL = 'https://github.com/Yassinos-coder/watchdog/blob/main/docs';
 
-const resolvePort = (): number => Number(process.env.PORT) || DEFAULT_PORT;
+const DEFAULT_EVENT_RETENTION_DAYS = 90;
+const DEFAULT_SHORT_RETENTION_DAYS = 30;
+
+const parseDays = (value: string | undefined, fallback: number): number => {
+  if (value === undefined || value === '') {
+    return fallback;
+  }
+  const days = Number(value);
+  return Number.isFinite(days) && days >= 0 ? Math.floor(days) : fallback;
+};
+
+const resolvePort =(): number => Number(process.env.PORT) || DEFAULT_PORT;
 
 const toOrigin = (value: string): string => {
   const withProtocol = /^https?:\/\//.test(value) ? value : `https://${value}`;
@@ -69,6 +80,21 @@ export default () => {
     },
     ingest: {
       eventsPerMinute: Number(process.env.INGEST_EVENTS_PER_MINUTE) || DEFAULT_EVENTS_PER_MINUTE,
+    },
+    oauth: {
+      google: {
+        clientId: process.env.OAUTH_GOOGLE_CLIENT_ID || undefined,
+        clientSecret: process.env.OAUTH_GOOGLE_CLIENT_SECRET || undefined,
+      },
+      github: {
+        clientId: process.env.OAUTH_GITHUB_CLIENT_ID || undefined,
+        clientSecret: process.env.OAUTH_GITHUB_CLIENT_SECRET || undefined,
+      },
+    },
+    retention: {
+      eventDays: parseDays(process.env.RETENTION_EVENT_DAYS, DEFAULT_EVENT_RETENTION_DAYS),
+      performanceDays: parseDays(process.env.RETENTION_PERFORMANCE_DAYS, DEFAULT_SHORT_RETENTION_DAYS),
+      replayDays: parseDays(process.env.RETENTION_REPLAY_DAYS, DEFAULT_SHORT_RETENTION_DAYS),
     },
     security: {
       secretKey: process.env.WATCHDOG_SECRET_KEY || undefined,

@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 export const ROOT = resolve(import.meta.dirname, '..', '..');
-export const SDK_PACKAGES = ['core', 'browser', 'node', 'react', 'cli'];
+export const SDK_PACKAGES = ['core', 'browser', 'node', 'react', 'react-native', 'cli'];
 export const SCOPE = '@watchdog-sdk/';
 
 export const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));

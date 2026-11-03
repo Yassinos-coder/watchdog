@@ -10,7 +10,9 @@ import {
   WatchdogEvent,
   WatchdogOptions,
 } from './interfaces';
+import { MetricData, MetricOptions, MetricsBuffer } from './metrics';
 import { Scope } from './scope';
+import { Transaction, TransactionOptions } from './tracing';
 import { FetchTransport } from './transport';
 import { DsnParser } from './utils/dsn';
 import { StackParser } from './utils/stack';
@@ -30,6 +32,8 @@ export class WatchdogClient {
   private recentSignature: { value: string; at: number } | null = null;
   private windowStart = Date.now();
   private windowCount = 0;
+  private readonly captureListeners: ((eventId: string) => void)[] = [];
+  private readonly metrics = new MetricsBuffer((batch) => this.transport.sendTo?.('metrics', { metrics: batch }));
 
   constructor(
     private readonly options: WatchdogOptions,
@@ -79,7 +83,69 @@ export class WatchdogClient {
     this.scope.contexts[key] = value;
   }
 
+  startTransaction(options: TransactionOptions): Transaction {
+    return new Transaction(options, (data) => {
+      if (!this.enabled || !this.shouldSampleTrace()) {
+        return;
+      }
+      this.transport.sendTo?.('transactions', {
+        ...data,
+        release: this.options.release,
+        environment: this.options.environment,
+        sdk: this.sdk,
+      });
+    });
+  }
+
+  increment(name: string, value = 1, options: MetricOptions = {}): void {
+    this.trackMetric(name, value, { ...options, type: 'counter' });
+  }
+
+  gauge(name: string, value: number, options: MetricOptions = {}): void {
+    this.trackMetric(name, value, { ...options, type: 'gauge' });
+  }
+
+  distribution(name: string, value: number, options: MetricOptions = {}): void {
+    this.trackMetric(name, value, { ...options, type: 'distribution' });
+  }
+
+  trackMetric(name: string, value: number, options: MetricOptions = {}): void {
+    if (!this.enabled || !Number.isFinite(value)) {
+      return;
+    }
+    const metric: MetricData = {
+      name,
+      value,
+      type: options.type ?? 'gauge',
+      unit: options.unit,
+      tags: { ...this.scope.tags, ...options.tags },
+      release: this.options.release,
+      environment: this.options.environment,
+      timestamp: Date.now(),
+    };
+    this.metrics.add(metric);
+  }
+
+  onCapture(listener: (eventId: string) => void): () => void {
+    this.captureListeners.push(listener);
+    return () => {
+      const index = this.captureListeners.indexOf(listener);
+      if (index >= 0) this.captureListeners.splice(index, 1);
+    };
+  }
+
+  sendReplay(payload: Record<string, unknown>): void {
+    if (!this.enabled) return;
+    this.transport.sendTo?.('replays', {
+      ...payload,
+      release: this.options.release,
+      environment: this.options.environment,
+      userId: this.scope.user?.id,
+    });
+  }
+
   flush(timeoutMs?: number): Promise<boolean> {
+    this.metrics.flush();
     return this.transport.flush(timeoutMs);
   }
 
@@ -116,6 +182,7 @@ export class WatchdogClient {
       return undefined;
     }
     this.transport.send(event);
+    this.captureListeners.forEach((listener) => listener(event.eventId));
     return event.eventId;
   }
 
@@ -152,6 +219,11 @@ export class WatchdogClient {
     } catch {
       return String(value);
     }
+  }
+
+  private shouldSampleTrace(): boolean {
+    const rate = this.options.tracesSampleRate ?? 1;
+    return rate >= 1 || Math.random() < rate;
   }
 
   private shouldSample(): boolean {

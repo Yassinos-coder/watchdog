@@ -7,6 +7,7 @@
       "@watchdog-sdk/core",
       "@watchdog-sdk/browser",
       "@watchdog-sdk/react",
+      "@watchdog-sdk/react-native",
       "@watchdog-sdk/node",
       "@watchdog-sdk/cli",
       "@watchdog/server",

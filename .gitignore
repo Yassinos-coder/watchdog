@@ -20,3 +20,5 @@ Thumbs.db
 .claude/worktrees/
 
 apps/server/src/generated/
+apps/docs/.vitepress/cache/
+apps/docs/.vitepress/dist/

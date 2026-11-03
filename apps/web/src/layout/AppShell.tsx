@@ -1,4 +1,4 @@
-import { BellRing, Bug, FolderKanban, LayoutDashboard, LogOut, Menu, Plug, Settings2, ShieldCheck } from 'lucide-react';
+import { BellRing, Bug, ChartLine, FolderKanban, Gauge, LayoutDashboard, LogOut, Menu, Plug, Settings2, ShieldCheck, Users, Video } from 'lucide-react';
 import { useState } from 'react';
 import { Link, NavLink, Outlet, useMatch, useNavigate } from 'react-router-dom';
 import { Logo } from '@/components/Logo';
@@ -61,6 +61,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     ? [
         { to: `/projects/${projectId}`, label: 'Overview', icon: LayoutDashboard, end: true },
         { to: `/projects/${projectId}/issues`, label: 'Issues', icon: Bug, end: false },
+        { to: `/projects/${projectId}/performance`, label: 'Performance', icon: Gauge, end: false },
+        { to: `/projects/${projectId}/dashboards`, label: 'Dashboards', icon: ChartLine, end: false },
+        { to: `/projects/${projectId}/replays`, label: 'Replays', icon: Video, end: false },
         { to: `/projects/${projectId}/alerts`, label: 'Alerts', icon: BellRing, end: false },
         { to: `/projects/${projectId}/settings`, label: 'Project settings', icon: Settings2, end: false },
       ]
@@ -105,6 +108,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           {projectLinks.length > 0 && <li role="separator" className="my-2 border-t" />}
           <NavItem to="/projects" label="All projects" icon={FolderKanban} end onNavigate={onNavigate} />
           <NavItem to="/integrations" label="Integrations" icon={Plug} end onNavigate={onNavigate} />
+          {session?.user && session.user.role !== 'MEMBER' && (
+            <NavItem to="/team" label="Team" icon={Users} end onNavigate={onNavigate} />
+          )}
           <NavItem to="/security" label="Security" icon={ShieldCheck} end onNavigate={onNavigate} />
         </ul>
       </nav>

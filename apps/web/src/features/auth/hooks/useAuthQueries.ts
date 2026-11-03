@@ -12,6 +12,10 @@ export function useAuthStatus() {
   return useQuery({ queryKey: authKeys.status, queryFn: () => authService.getStatus() });
 }
 
+export function useOAuthProviders() {
+  return useQuery({ queryKey: ['auth', 'oauth-providers'], queryFn: () => authService.getOAuthProviders() });
+}
+
 export function useAuthSession() {
   return useQuery<AuthSession | null>({
     queryKey: authKeys.session,

@@ -6,7 +6,7 @@ import { gunzipSync } from 'node:zlib';
 
 const ROOT = resolve(import.meta.dirname, '..');
 const SCOPE = '@watchdog-sdk/';
-const PACKAGES = ['core', 'browser', 'node', 'react', 'cli'];
+const PACKAGES = ['core', 'browser', 'node', 'react', 'react-native', 'cli'];
 const REQUIRED_FILES = ['package/package.json', 'package/README.md', 'package/LICENSE'];
 const BLOCK = 512;
 

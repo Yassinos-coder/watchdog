@@ -4,13 +4,17 @@ import {
   DsnParser,
   Level,
   UserContext,
+  MetricOptions,
+  Transaction,
+  TransactionOptions,
   WatchdogClient,
 } from '@watchdog-sdk/core';
 import { installClickBreadcrumbs, installConsoleBreadcrumbs, installNavigationBreadcrumbs, installNetworkBreadcrumbs } from './integrations/breadcrumbs';
+import { installReplay } from './integrations/replay';
 import { installGlobalHandlers } from './integrations/global-handlers';
 import { BrowserOptions, Uninstall } from './interfaces';
 
-const SDK = { name: 'watchdog.browser', version: '0.4.4' };
+const SDK = { name: 'watchdog.browser', version: '0.5.0' };
 const DEFAULT_IGNORED_ERRORS: (string | RegExp)[] = [
   /^Script error\.?$/,
   'ResizeObserver loop',
@@ -23,7 +27,7 @@ let uninstallers: Uninstall[] = [];
 export function init(options: BrowserOptions): WatchdogClient {
   close();
   const dsn = DsnParser.parse(options.dsn);
-  const { integrations = {}, ...coreOptions } = options;
+  const { integrations = {}, replay, ...coreOptions } = options;
 
   const created = new WatchdogClient(
     {
@@ -44,6 +48,10 @@ export function init(options: BrowserOptions): WatchdogClient {
   if (integrations.clicks !== false) uninstallers.push(installClickBreadcrumbs(add));
   if (integrations.navigation !== false) uninstallers.push(installNavigationBreadcrumbs(add));
   if (integrations.network !== false) uninstallers.push(installNetworkBreadcrumbs(add, dsn.origin));
+
+  if (replay && (replay.sampleRate ?? 1) > 0 && Math.random() < (replay.sampleRate ?? 1)) {
+    uninstallers.push(installReplay(created, replay));
+  }
 
   return created;
 }
@@ -86,6 +94,22 @@ export function setExtra(key: string, value: unknown): void {
 
 export function setContext(key: string, value: unknown): void {
   client?.setContext(key, value);
+}
+
+export function startTransaction(options: TransactionOptions): Transaction | undefined {
+  return client?.startTransaction(options);
+}
+
+export function increment(name: string, value?: number, options?: MetricOptions): void {
+  client?.increment(name, value, options);
+}
+
+export function gauge(name: string, value: number, options?: MetricOptions): void {
+  client?.gauge(name, value, options);
+}
+
+export function distribution(name: string, value: number, options?: MetricOptions): void {
+  client?.distribution(name, value, options);
 }
 
 export function flush(timeoutMs?: number): Promise<boolean> {

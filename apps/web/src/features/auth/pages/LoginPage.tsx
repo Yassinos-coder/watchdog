@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { AuthLayout } from '../components/AuthLayout';
 import { PasswordInput } from '../components/PasswordInput';
 import { useLogin } from '../hooks/useAuthMutations';
+import { OAuthButtons } from '../components/OAuthButtons';
 import { useAuthSession, useAuthStatus } from '../hooks/useAuthQueries';
 import { loginSchema, type LoginFormValues } from '../schemas/auth.schemas';
 
@@ -60,6 +61,7 @@ export function LoginPage() {
           Sign in
         </Button>
       </form>
+      <OAuthButtons />
     </AuthLayout>
   );
 }

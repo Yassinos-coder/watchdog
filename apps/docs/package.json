@@ -1,0 +1,16 @@
+{
+  "name": "@watchdog/docs",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "typecheck": "echo docs has no typecheck",
+    "test": "echo docs has no tests"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}

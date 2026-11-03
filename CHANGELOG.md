@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-11-03
+
+### Added
+- Performance monitoring: transactions with spans, custom metrics (counters, gauges, distributions) and dashboards with configurable widgets
+- Session replay: the browser SDK can record sessions (optional `@rrweb/record`), and a Replays page plays them back, linking replays to the errors that happened during them
+- React Native and Expo SDK (`@watchdog-sdk/react-native`) reporting uncaught JavaScript errors, unhandled promise rejections, breadcrumbs, navigation, tracing and metrics
+- Team management: invite people by email or link, with owner, admin and member roles that can only manage people ranked below them
+- Sign in with Google or GitHub for existing users and pending invites, with two-step verification still enforced
+- Automatic data retention for events, performance data and replays, configurable with `RETENTION_*` settings
+- Documentation site built with VitePress, deployed to GitHub Pages, plus new guides for tracing, replay, mobile, team, OAuth, retention and configuration
+- Railway template support: `railway.json` for the Dockerfile build and health check, and a maintainer guide for publishing the template
+
+### Changed
+- The Dockerfile copies the new docs workspace so locked installs keep working
+- Hermes stack frames now resolve to the bundle file name, so source maps match for React Native
+
 ## [0.4.4] - 2026-11-03
 
 ### Fixed

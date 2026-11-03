@@ -1,13 +1,15 @@
-import { ParsedDsn, Transport, WatchdogEvent } from './interfaces';
+import { ParsedDsn, Transport, TransportKind, WatchdogEvent } from './interfaces';
 
 const MAX_QUEUE = 50;
+const KEEPALIVE_LIMIT = 60_000;
 const MAX_ATTEMPTS = 4;
 const BASE_DELAY_MS = 1_000;
 const MAX_DELAY_MS = 15_000;
 const DEFAULT_FLUSH_TIMEOUT_MS = 2_000;
 
 interface QueuedEvent {
-  event: WatchdogEvent;
+  url: string;
+  event: unknown;
   attempts: number;
 }
 
@@ -23,11 +25,19 @@ export class FetchTransport implements Transport {
   ) {}
 
   send(event: WatchdogEvent): void {
+    this.enqueue(this.dsn.endpoint, event);
+  }
+
+  sendTo(kind: TransportKind, payload: unknown): void {
+    this.enqueue(`${this.dsn.origin}/api/ingest/v1/${this.dsn.projectId}/${kind}`, payload);
+  }
+
+  private enqueue(url: string, event: unknown): void {
     if (this.queue.length >= MAX_QUEUE) {
       this.queue.shift();
       this.onDebug('queue full, dropping the oldest event');
     }
-    this.queue.push({ event, attempts: 0 });
+    this.queue.push({ url, event, attempts: 0 });
     void this.drain();
   }
 
@@ -61,7 +71,7 @@ export class FetchTransport implements Transport {
         await new Promise((resolve) => setTimeout(resolve, wait));
       }
       const item = this.queue[0];
-      const outcome = await this.attempt(item.event);
+      const outcome = await this.attempt(item.url, item.event);
       if (outcome === 'retry') {
         item.attempts += 1;
         if (item.attempts >= MAX_ATTEMPTS) {
@@ -76,13 +86,14 @@ export class FetchTransport implements Transport {
     }
   }
 
-  private async attempt(event: WatchdogEvent): Promise<'done' | 'retry'> {
+  private async attempt(url: string, event: unknown): Promise<'done' | 'retry'> {
     try {
-      const response = await this.fetchImpl(this.dsn.endpoint, {
+      const body = JSON.stringify(event);
+      const response = await this.fetchImpl(url, {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'x-watchdog-key': this.dsn.publicKey },
-        body: JSON.stringify(event),
-        keepalive: true,
+        body,
+        keepalive: body.length < KEEPALIVE_LIMIT,
       });
       if (response.ok) {
         return 'done';

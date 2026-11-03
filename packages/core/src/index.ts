@@ -1,5 +1,9 @@
 export { WatchdogClient } from './client';
+export { MetricsBuffer } from './metrics';
+export type { MetricData, MetricKind, MetricOptions } from './metrics';
 export { Scope } from './scope';
+export { Span, Transaction } from './tracing';
+export type { SpanData, TransactionData, TransactionOptions } from './tracing';
 export { FetchTransport } from './transport';
 export { DsnParser } from './utils/dsn';
 export { StackParser } from './utils/stack';

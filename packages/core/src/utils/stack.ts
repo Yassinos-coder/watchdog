@@ -4,6 +4,7 @@ const V8_FRAME = /^\s*at (?:(.+?) )?\(?(.+?):(\d+):(\d+)\)?\s*$/;
 const GECKO_FRAME = /^\s*(.*?)(?:\/<)*@(.+?):(\d+):(?::?(\d+))?\s*$/;
 const VENDOR_PATTERN = /node_modules|^node:|\/\.vite\/|webpack\/runtime/;
 const NATIVE_PATTERN = /^(native|<anonymous>|eval)$/;
+const HERMES_ADDRESS_PREFIX = /^address at /;
 const MAX_FRAMES = 100;
 
 export class StackParser {
@@ -30,7 +31,8 @@ export class StackParser {
     if (!match) {
       return null;
     }
-    const [, rawFunction, filename, lineno, colno] = match;
+    const [, rawFunction, rawFilename, lineno, colno] = match;
+    const filename = rawFilename.replace(HERMES_ADDRESS_PREFIX, '');
     if (NATIVE_PATTERN.test(filename)) {
       return null;
     }

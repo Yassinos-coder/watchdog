@@ -59,8 +59,11 @@ export interface WatchdogEvent {
   sdk: { name: string; version: string };
 }
 
+export type TransportKind = 'transactions' | 'metrics' | 'replays';
+
 export interface Transport {
   send(event: WatchdogEvent): void;
+  sendTo?(kind: TransportKind, payload: unknown): void;
   flush(timeoutMs?: number): Promise<boolean>;
 }
 
@@ -71,6 +74,7 @@ export interface WatchdogOptions {
   platform?: string;
   enabled?: boolean;
   sampleRate?: number;
+  tracesSampleRate?: number;
   maxBreadcrumbs?: number;
   maxEventsPerMinute?: number;
   ignoreErrors?: (string | RegExp)[];

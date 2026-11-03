@@ -11,10 +11,15 @@ import { HealthModule } from './health/health.module';
 import { IngestModule } from './ingest/ingest.module';
 import { IssuesModule } from './issues/issues.module';
 import { MailModule } from './mail/mail.module';
+import { OAuthModule } from './oauth/oauth.module';
+import { PerformanceModule } from './performance/performance.module';
 import { ProjectsModule } from './projects/projects.module';
+import { ReplaysModule } from './replays/replays.module';
 import { PublicConfigModule } from './public-config/public-config.module';
+import { RetentionModule } from './retention/retention.module';
 import { SourceMapsModule } from './source-maps/source-maps.module';
 import { StaticWebModule } from './static-web/static-web.module';
+import { TeamModule } from './team/team.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -35,6 +40,11 @@ import { UsersModule } from './users/users.module';
     SourceMapsModule,
     IngestModule,
     IssuesModule,
+    PerformanceModule,
+    ReplaysModule,
+    RetentionModule,
+    TeamModule,
+    OAuthModule,
     AlertsModule,
     HealthModule,
     PublicConfigModule,

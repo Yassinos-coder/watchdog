@@ -273,3 +273,16 @@ describe('FetchTransport', () => {
     vi.useRealTimers();
   });
 });
+
+describe('StackParser with Hermes frames', () => {
+  it('drops the address prefix from the bundle name', () => {
+    const frames = StackParser.parse(
+      'Error: boom\n    at press (address at index.android.bundle:1:2345)\n    at anonymous (address at index.android.bundle:1:99)',
+    );
+
+    expect(frames[1].filename).toBe('index.android.bundle');
+    expect(frames[1].function).toBe('press');
+    expect(frames[1].lineno).toBe(1);
+    expect(frames[1].colno).toBe(2345);
+  });
+});

@@ -8,8 +8,16 @@ export interface BrowserIntegrations {
   network?: boolean;
 }
 
+export interface ReplayOptions {
+  sampleRate?: number;
+  maskAllInputs?: boolean;
+  maskAllText?: boolean;
+  flushIntervalMs?: number;
+}
+
 export interface BrowserOptions extends WatchdogOptions {
   integrations?: BrowserIntegrations;
+  replay?: ReplayOptions;
 }
 
 export type Uninstall = () => void;

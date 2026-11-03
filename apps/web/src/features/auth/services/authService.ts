@@ -8,6 +8,7 @@ import { BaseApiClient } from '@/services/BaseApiClient';
 import type {
   AuthSession,
   AuthStatus,
+  OAuthProvider,
   EnrollmentResult,
   LoginInput,
   SecuritySummary,
@@ -19,6 +20,10 @@ import type {
 class AuthService extends BaseApiClient {
   getStatus(): Promise<AuthStatus> {
     return this.get('/auth/status');
+  }
+
+  getOAuthProviders(): Promise<OAuthProvider[]> {
+    return this.get('/oauth/providers');
   }
 
   getSession(): Promise<AuthSession> {

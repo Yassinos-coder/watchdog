@@ -39,6 +39,7 @@ model User {
   sessions      Session[]
   passkeys      Passkey[]
   recoveryCodes RecoveryCode[]
+  invites       Invite[]
 
   @@map("users")
 }
@@ -110,11 +111,15 @@ model Project {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  keys       ProjectKey[]
-  issues     Issue[]
-  events     Event[]
-  releases   Release[]
-  alertRules AlertRule[]
+  keys         ProjectKey[]
+  issues       Issue[]
+  events       Event[]
+  releases     Release[]
+  alertRules   AlertRule[]
+  transactions Transaction[]
+  metrics      Metric[]
+  dashboards   Dashboard[]
+  replays      Replay[]
 
   @@map("projects")
 }
@@ -288,4 +293,162 @@ model InstanceSetting {
   updatedAt DateTime @updatedAt
 
   @@map("instance_settings")
+}
+
+enum MetricType {
+  COUNTER
+  GAUGE
+  DISTRIBUTION
+}
+
+enum WidgetSource {
+  METRIC
+  TRANSACTIONS
+}
+
+enum WidgetAggregation {
+  AVG
+  SUM
+  MIN
+  MAX
+  COUNT
+  P50
+  P95
+  P99
+}
+
+enum WidgetDisplay {
+  LINE
+  BAR
+  NUMBER
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  eventId     String
+  projectId   String
+  traceId     String
+  name        String
+  op          String
+  status      String   @default("ok")
+  timestamp   DateTime
+  durationMs  Float
+  release     String?
+  environment String?
+  spans       Json
+  tags        Json
+  createdAt   DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, eventId])
+  @@index([projectId, name, timestamp])
+  @@index([projectId, timestamp])
+  @@index([traceId])
+  @@map("transactions")
+}
+
+model Metric {
+  id          String     @id @default(uuid())
+  projectId   String
+  name        String
+  type        MetricType
+  value       Float
+  unit        String?
+  tags        Json
+  release     String?
+  environment String?
+  timestamp   DateTime
+  createdAt   DateTime   @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, name, timestamp])
+  @@index([projectId, timestamp])
+  @@map("metrics")
+}
+
+model Dashboard {
+  id        String   @id @default(uuid())
+  projectId String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  widgets DashboardWidget[]
+
+  @@index([projectId])
+  @@map("dashboards")
+}
+
+model DashboardWidget {
+  id          String            @id @default(uuid())
+  dashboardId String
+  title       String
+  source      WidgetSource
+  metricName  String?
+  filterName  String?
+  aggregation WidgetAggregation @default(AVG)
+  display     WidgetDisplay     @default(LINE)
+  position    Int               @default(0)
+  createdAt   DateTime          @default(now())
+
+  dashboard Dashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@index([dashboardId, position])
+  @@map("dashboard_widgets")
+}
+
+model Replay {
+  id            String   @id @default(uuid())
+  projectId     String
+  replayId      String
+  startedAt     DateTime
+  lastEventAt   DateTime
+  durationMs    Int      @default(0)
+  chunkCount    Int      @default(0)
+  eventCount    Int      @default(0)
+  url           String?
+  userAgent     String?
+  release       String?
+  environment   String?
+  userId        String?
+  errorEventIds String[]
+  createdAt     DateTime @default(now())
+
+  project Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  chunks  ReplayChunk[]
+
+  @@unique([projectId, replayId])
+  @@index([projectId, startedAt])
+  @@map("replays")
+}
+
+model ReplayChunk {
+  id       String @id @default(uuid())
+  replayId String
+  sequence Int
+  events   Json
+
+  replay Replay @relation(fields: [replayId], references: [id], onDelete: Cascade)
+
+  @@unique([replayId, sequence])
+  @@map("replay_chunks")
+}
+
+model Invite {
+  id          String    @id @default(uuid())
+  email       String
+  role        UserRole
+  tokenHash   String    @unique
+  invitedById String?
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  invitedBy User? @relation(fields: [invitedById], references: [id], onDelete: SetNull)
+
+  @@index([email])
+  @@map("invites")
 }

@@ -10,5 +10,6 @@ import { ProjectRateLimiterService } from './services/project-rate-limiter.servi
   imports: [ProjectsModule, SourceMapsModule],
   controllers: [IngestController],
   providers: [IngestRepository, IngestService, ProjectRateLimiterService],
+  exports: [ProjectRateLimiterService],
 })
 export class IngestModule {}

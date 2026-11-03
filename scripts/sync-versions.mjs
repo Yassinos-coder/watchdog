@@ -13,6 +13,7 @@ writeFileSync(rootPath, `${JSON.stringify(root, null, 2)}\n`);
 const VERSION_STRINGS = [
   ['packages/browser/src/browser-sdk.ts', /(name: 'watchdog\.browser', version: ')[^']+(')/],
   ['packages/node/src/node-sdk.ts', /(name: 'watchdog\.node', version: ')[^']+(')/],
+  ['packages/react-native/src/native-sdk.ts', /(name: 'watchdog\.react-native', version: ')[^']+(')/],
   ['packages/cli/src/run.ts', /(const CLI_VERSION = ')[^']+(')/],
 ];
 
