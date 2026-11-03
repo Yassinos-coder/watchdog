@@ -49,6 +49,8 @@ export function installReplay(client: WatchdogClient, options: ReplayOptions): U
         },
         maskAllInputs: options.maskAllInputs !== false,
         maskTextSelector: options.maskAllText ? '*' : undefined,
+        sampling: { scroll: 150, input: 'last' },
+        slimDOMOptions: 'all',
         blockClass: 'wd-block',
         maskTextClass: 'wd-mask',
       });

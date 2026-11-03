@@ -13,6 +13,7 @@
 - [Tracing and metrics](tracing-and-metrics.md): see how long things take and track your own numbers
 - [Session replay](session-replay.md): watch what users did before an error
 - [Source maps](source-maps.md): show original code instead of minified bundles
+- [Performance impact](sdk-overhead.md): what the SDKs cost and how to keep it low
 
 **Alerts**
 

@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/node",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Watchdog SDK for Node.js, Express and NestJS with source code context for every frame",
   "keywords": [
     "watchdog",
@@ -13,7 +13,7 @@
   ],
   "license": "MIT",
   "author": "Watchdog contributors",
-  "homepage": "https://github.com/Yassinos-coder/watchdog#readme",
+  "homepage": "https://yassinos-coder.github.io/watchdog/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Yassinos-coder/watchdog.git",

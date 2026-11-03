@@ -77,6 +77,7 @@ export interface WatchdogOptions {
   tracesSampleRate?: number;
   maxBreadcrumbs?: number;
   maxEventsPerMinute?: number;
+  maxTransactionsPerMinute?: number;
   ignoreErrors?: (string | RegExp)[];
   tags?: Record<string, string>;
   beforeSend?: (event: WatchdogEvent) => WatchdogEvent | null;

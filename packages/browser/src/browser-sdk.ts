@@ -14,7 +14,8 @@ import { installReplay } from './integrations/replay';
 import { installGlobalHandlers } from './integrations/global-handlers';
 import { BrowserOptions, Uninstall } from './interfaces';
 
-const SDK = { name: 'watchdog.browser', version: '0.5.4' };
+const DEFAULT_REPLAY_SAMPLE_RATE = 0.1;
+const SDK = { name: 'watchdog.browser', version: '0.5.5' };
 const DEFAULT_IGNORED_ERRORS: (string | RegExp)[] = [
   /^Script error\.?$/,
   'ResizeObserver loop',
@@ -49,7 +50,8 @@ export function init(options: BrowserOptions): WatchdogClient {
   if (integrations.navigation !== false) uninstallers.push(installNavigationBreadcrumbs(add));
   if (integrations.network !== false) uninstallers.push(installNetworkBreadcrumbs(add, dsn.origin));
 
-  if (replay && (replay.sampleRate ?? 1) > 0 && Math.random() < (replay.sampleRate ?? 1)) {
+  const replayRate = replay?.sampleRate ?? DEFAULT_REPLAY_SAMPLE_RATE;
+  if (replay && replayRate > 0 && Math.random() < replayRate) {
     uninstallers.push(installReplay(created, replay));
   }
 

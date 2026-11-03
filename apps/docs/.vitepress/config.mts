@@ -100,6 +100,7 @@ export default defineConfig({
           { text: 'Tracing and metrics', link: '/tracing-and-metrics' },
           { text: 'Session replay', link: '/session-replay' },
           { text: 'Source maps', link: '/source-maps' },
+          { text: 'Performance impact', link: '/sdk-overhead' },
         ],
       },
       {

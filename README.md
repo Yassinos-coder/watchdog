@@ -19,6 +19,10 @@ Error tracking, performance tracing and session replay in one container plus Pos
 
 Watchdog catches errors from your web, Node.js and React Native apps, shows you the original code behind every stack trace, times your endpoints, records sessions and alerts you where you work. It is free, MIT licensed and runs on your own infrastructure, so your data never leaves your servers.
 
+<p align="center">
+  <img src="docs/public/screenshots/error-detail.png" alt="A Watchdog issue showing the failing line of code, the stack trace and the release" width="880">
+</p>
+
 > **Early project (0.x).** It works and the author uses it, but expect rough edges, and it covers JavaScript and TypeScript apps only. See [what it does not do](https://yassinos-coder.github.io/watchdog/sentry-alternative).
 
 ## Features
@@ -32,6 +36,19 @@ Watchdog catches errors from your web, Node.js and React Native apps, shows you 
 - **SDKs** for browser, React, Node.js and NestJS, and React Native and Expo
 - **Data retention** that deletes old events, traces and replays on a schedule
 - **One container plus PostgreSQL**, Redis optional
+
+## Screenshots
+
+| | |
+| --- | --- |
+| ![Issue list](docs/public/screenshots/issues.png) | ![Source-mapped stack trace](docs/public/screenshots/source-maps.png) |
+| **Issues**, grouped by cause | **Original code** from your source maps |
+| ![Performance](docs/public/screenshots/performance.png) | ![Dashboards](docs/public/screenshots/dashboards.png) |
+| **Performance** with p50 and p95 | **Dashboards** for your own metrics |
+| ![Session replay](docs/public/screenshots/session-replay.png) | ![Team](docs/public/screenshots/team.png) |
+| **Session replay**, inputs masked | **Team**, roles and invites |
+
+The screenshots show demo data from a sample storefront.
 
 ## What to expect
 

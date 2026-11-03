@@ -1,4 +1,4 @@
-import type { Breadcrumb, Level } from '@watchdog-sdk/core';
+import { SafeFormat, type Breadcrumb, type Level } from '@watchdog-sdk/core';
 import { AppState } from 'react-native';
 import type { Uninstall } from '../interfaces';
 
@@ -24,7 +24,7 @@ export function installConsoleBreadcrumbs(add: AddBreadcrumb): Uninstall {
       add({
         category: 'console',
         level: CONSOLE_LEVELS[method],
-        message: args.map(formatArgument).join(' ').slice(0, MAX_MESSAGE_LENGTH),
+        message: args.map((argument) => SafeFormat.describe(argument)).join(' ').slice(0, MAX_MESSAGE_LENGTH),
       });
       original.apply(console, args);
     };
@@ -91,14 +91,4 @@ function describeUrl(input: Parameters<typeof fetch>[0]): string {
 function stripQuery(url: string): string {
   const index = url.indexOf('?');
   return index === -1 ? url : url.slice(0, index);
-}
-
-function formatArgument(value: unknown): string {
-  if (typeof value === 'string') return value;
-  if (value instanceof Error) return value.message;
-  try {
-    return JSON.stringify(value) ?? String(value);
-  } catch {
-    return String(value);
-  }
 }

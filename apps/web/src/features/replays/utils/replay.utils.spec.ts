@@ -12,4 +12,9 @@ describe('ReplayUtils', () => {
     expect(ReplayUtils.path(null)).toBe('Unknown page');
     expect(ReplayUtils.path('not a url')).toBe('not a url');
   });
+
+  it('reads the recorded page size from the meta event', () => {
+    expect(ReplayUtils.recordedSize([{ type: 2 }, { type: 4, data: { width: 1280, height: 780 } }])).toEqual({ width: 1280, height: 780 });
+    expect(ReplayUtils.recordedSize([{ type: 2 }])).toBeNull();
+  });
 });

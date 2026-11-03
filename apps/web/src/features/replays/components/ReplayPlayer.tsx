@@ -32,10 +32,29 @@ export function ReplayPlayer({ events }: ReplayPlayerProps) {
     setTotal(instance.getMetaData().totalTime);
     setElapsed(0);
     setPlaying(false);
+
+    let recorded = ReplayUtils.recordedSize(events);
+    const fit = (): void => {
+      if (!recorded) return;
+      const scale = Math.min(1, target.clientWidth / recorded.width);
+      instance.wrapper.style.transform = `scale(${scale})`;
+      instance.wrapper.style.transformOrigin = 'top left';
+      target.style.height = `${recorded.height * scale}px`;
+    };
+    instance.on('resize', (size) => {
+      const next = size as { width: number; height: number };
+      recorded = { width: next.width, height: next.height };
+      fit();
+    });
+    const observer = new ResizeObserver(fit);
+    observer.observe(target);
+    fit();
+
     const timer = setInterval(() => setElapsed(instance.getCurrentTime()), TICK_MS);
     instance.on('finish', () => setPlaying(false));
     return () => {
       clearInterval(timer);
+      observer.disconnect();
       instance.destroy();
       replayer.current = null;
     };
@@ -64,7 +83,7 @@ export function ReplayPlayer({ events }: ReplayPlayerProps) {
   return (
     <div className="space-y-3">
       <div className="overflow-auto rounded-lg border bg-muted/30 p-2">
-        <div ref={container} className="mx-auto origin-top-left" />
+        <div ref={container} className="w-full overflow-hidden" />
       </div>
       <div className="flex items-center gap-3">
         <Button size="icon" variant="outline" onClick={toggle} aria-label={playing ? 'Pause' : 'Play'}>

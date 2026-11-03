@@ -1,3 +1,5 @@
+const META_EVENT_TYPE = 4;
+
 export class ReplayUtils {
   static duration(ms: number): string {
     const totalSeconds = Math.max(0, Math.round(ms / 1000));
@@ -14,5 +16,12 @@ export class ReplayUtils {
     } catch {
       return url;
     }
+  }
+
+  static recordedSize(events: unknown[]): { width: number; height: number } | null {
+    const meta = events.find((event) => (event as { type?: number }).type === META_EVENT_TYPE) as { data?: { width?: number; height?: number } } | undefined;
+    const width = meta?.data?.width;
+    const height = meta?.data?.height;
+    return width && height ? { width, height } : null;
   }
 }

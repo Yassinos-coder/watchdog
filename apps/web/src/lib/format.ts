@@ -5,6 +5,10 @@ export class Format {
     return `${formatDistanceToNowStrict(new Date(value))} ago`;
   }
 
+  static timeUntil(value: string | Date): string {
+    return `in ${formatDistanceToNowStrict(new Date(value))}`;
+  }
+
   static dateTime(value: string | Date): string {
     return format(new Date(value), 'MMM d, yyyy HH:mm:ss');
   }

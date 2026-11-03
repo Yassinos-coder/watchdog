@@ -286,3 +286,20 @@ describe('StackParser with Hermes frames', () => {
     expect(frames[1].colno).toBe(2345);
   });
 });
+
+describe('WatchdogClient transaction limit', () => {
+  it('stops sending transactions past the per-minute cap', () => {
+    const sent: unknown[] = [];
+    const transport: Transport = { send: () => undefined, sendTo: (_kind, payload) => void sent.push(payload), flush: async () => true };
+    const client = new WatchdogClient(
+      { dsn: 'https://key@watchdog.test/11111111-1111-4111-8111-111111111111', transport, maxTransactionsPerMinute: 3 },
+      { name: 'test', version: '0' },
+    );
+
+    for (let index = 0; index < 10; index += 1) {
+      client.startTransaction({ name: `GET /${index}` }).finish();
+    }
+
+    expect(sent).toHaveLength(3);
+  });
+});

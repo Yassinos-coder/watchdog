@@ -3,8 +3,8 @@ import { fileURLToPath } from 'node:url';
 import type { Frame } from '@watchdog-sdk/core';
 
 const CONTEXT_RADIUS = 5;
-const MAX_FILE_BYTES = 2 * 1024 * 1024;
-const MAX_CACHED_FILES = 100;
+const MAX_FILE_BYTES = 1024 * 1024;
+const MAX_CACHED_FILES = 50;
 const MAX_LINE_LENGTH = 400;
 
 export class ContextLines {

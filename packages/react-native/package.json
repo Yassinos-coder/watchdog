@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/react-native",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Watchdog SDK for React Native and Expo: JavaScript crash handling, breadcrumbs, error boundary, tracing and metrics",
   "keywords": [
     "watchdog",
@@ -13,7 +13,7 @@
   ],
   "license": "MIT",
   "author": "Watchdog contributors",
-  "homepage": "https://github.com/Yassinos-coder/watchdog#readme",
+  "homepage": "https://yassinos-coder.github.io/watchdog/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Yassinos-coder/watchdog.git",

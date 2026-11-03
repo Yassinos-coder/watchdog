@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/browser",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Watchdog SDK for browsers: global error handlers, breadcrumbs and request context",
   "keywords": [
     "watchdog",
@@ -12,7 +12,7 @@
   ],
   "license": "MIT",
   "author": "Watchdog contributors",
-  "homepage": "https://github.com/Yassinos-coder/watchdog#readme",
+  "homepage": "https://yassinos-coder.github.io/watchdog/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Yassinos-coder/watchdog.git",

@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.5] - 2026-11-03
+
+### Added
+- Screenshots of the dashboard in the README and on the landing page, taken from a demo storefront with sample data
+- A "Performance impact" page that says what the SDKs add to your app's size and speed and how to keep it low
+- `maxTransactionsPerMinute` option (default 300) to cap how many traces an SDK sends
+
+### Changed
+- Console breadcrumbs in the browser and React Native SDKs now summarize arguments with a bounded formatter that takes microseconds whatever the size of the logged object, about 60 times faster than before for large objects
+- Session replay records 10% of sessions by default and uses lighter recording settings (throttled scrolling, last input value only, trimmed page head)
+- The Node.js SDK keeps fewer and smaller source files in memory when it adds code lines to errors
+- The npm pages of the SDK packages link to the landing page
+
+### Fixed
+- The replay player now scales the recording to fit its panel instead of cropping it
+- A pending invite on the team page says "expires in 7 days" instead of "7 days ago"
+
 ## [0.5.4] - 2026-11-03
 
 ### Added

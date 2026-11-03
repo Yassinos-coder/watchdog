@@ -1,4 +1,4 @@
-import type { Breadcrumb, Level } from '@watchdog-sdk/core';
+import { SafeFormat, type Breadcrumb, type Level } from '@watchdog-sdk/core';
 import { Uninstall } from '../interfaces';
 import { DomUtils } from '../utils/dom.utils';
 import { UrlUtils } from '../utils/url.utils';
@@ -24,7 +24,7 @@ export function installConsoleBreadcrumbs(add: AddBreadcrumb): Uninstall {
       add({
         category: 'console',
         level: CONSOLE_LEVELS[method],
-        message: args.map(formatArgument).join(' ').slice(0, MAX_MESSAGE_LENGTH),
+        message: args.map((argument) => SafeFormat.describe(argument)).join(' ').slice(0, MAX_MESSAGE_LENGTH),
       });
       original.apply(console, args);
     };
@@ -122,18 +122,4 @@ function networkCrumb(category: string, method: string, url: string, status: num
     level: status >= 400 || status === 0 ? 'warning' : 'info',
     data: { method, url: UrlUtils.withoutQuery(url), status },
   };
-}
-
-function formatArgument(argument: unknown): string {
-  if (typeof argument === 'string') {
-    return argument;
-  }
-  if (argument instanceof Error) {
-    return `${argument.name}: ${argument.message}`;
-  }
-  try {
-    return JSON.stringify(argument) ?? String(argument);
-  } catch {
-    return String(argument);
-  }
 }

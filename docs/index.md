@@ -49,6 +49,19 @@ features:
     details: A single Docker image plus PostgreSQL. No Kafka, no ClickHouse. Runs on Railway, a VPS or your own cluster.
 ---
 
+## See it
+
+![A Watchdog issue showing the failing line of code and the stack trace](/screenshots/error-detail.png)
+
+| | |
+| --- | --- |
+| ![Original code from source maps](/screenshots/source-maps.png) | ![Performance with p50 and p95](/screenshots/performance.png) |
+| **Original code** from your source maps | **Performance** with p50 and p95 |
+| ![Dashboards for your own metrics](/screenshots/dashboards.png) | ![Session replay with masked inputs](/screenshots/session-replay.png) |
+| **Dashboards** for your own metrics | **Session replay**, inputs masked |
+
+These are screenshots of a demo storefront with sample data.
+
 ## Why Watchdog
 
 Most teams want to know when their app breaks and why, without sending customer data to a third party or running a dozen services to do it. Watchdog is a small, open-source error tracker you can read, change and run yourself.

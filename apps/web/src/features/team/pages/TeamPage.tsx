@@ -75,7 +75,7 @@ export function TeamPage() {
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{invite.email}</p>
                   <p className="text-xs text-muted-foreground">
-                    {invite.role.toLowerCase()} · expires {Format.relativeTime(invite.expiresAt)}
+                    {invite.role.toLowerCase()} · expires {Format.timeUntil(invite.expiresAt)}
                   </p>
                 </div>
                 <Button

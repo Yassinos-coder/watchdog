@@ -23,7 +23,7 @@ init({
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `sampleRate` | `1` | Share of sessions to record (0 to 1) |
+| `sampleRate` | `0.1` | Share of sessions to record (0 to 1). Recording is the heaviest thing the SDK does, so the default is 10% |
 | `maskAllInputs` | `true` | Hide what people type into fields |
 | `maskAllText` | `false` | Hide all text on the page |
 | `flushIntervalMs` | `5000` | How often recorded data is sent |

@@ -22,6 +22,7 @@ const DEFAULT_MAX_BREADCRUMBS = 100;
 const DEFAULT_MAX_EVENTS_PER_MINUTE = 60;
 const DUPLICATE_WINDOW_MS = 2_000;
 const MINUTE_MS = 60_000;
+const DEFAULT_MAX_TRANSACTIONS_PER_MINUTE = 300;
 const MAX_CAUSE_DEPTH = 5;
 
 export class WatchdogClient {
@@ -32,6 +33,8 @@ export class WatchdogClient {
   private recentSignature: { value: string; at: number } | null = null;
   private windowStart = Date.now();
   private windowCount = 0;
+  private transactionWindowStart = Date.now();
+  private transactionCount = 0;
   private readonly captureListeners: ((eventId: string) => void)[] = [];
   private readonly metrics = new MetricsBuffer((batch) => this.transport.sendTo?.('metrics', { metrics: batch }));
 
@@ -85,7 +88,7 @@ export class WatchdogClient {
 
   startTransaction(options: TransactionOptions): Transaction {
     return new Transaction(options, (data) => {
-      if (!this.enabled || !this.shouldSampleTrace()) {
+      if (!this.enabled || !this.shouldSampleTrace() || !this.withinTransactionLimit()) {
         return;
       }
       this.transport.sendTo?.('transactions', {
@@ -251,6 +254,16 @@ export class WatchdogClient {
       now - this.recentSignature.at < DUPLICATE_WINDOW_MS;
     this.recentSignature = { value, at: now };
     return duplicate;
+  }
+
+  private withinTransactionLimit(): boolean {
+    const now = Date.now();
+    if (now - this.transactionWindowStart >= MINUTE_MS) {
+      this.transactionWindowStart = now;
+      this.transactionCount = 0;
+    }
+    this.transactionCount += 1;
+    return this.transactionCount <= (this.options.maxTransactionsPerMinute ?? DEFAULT_MAX_TRANSACTIONS_PER_MINUTE);
   }
 
   private withinRateLimit(): boolean {
