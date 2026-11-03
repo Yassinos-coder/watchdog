@@ -34,7 +34,7 @@ jobs:
       DATABASE_URL: postgresql://watchdog:watchdog@localhost:5432/postgres
       WATCHDOG_SECRET_KEY: ci-only-secret-key-ci-only-secret-key-ci-only
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.3
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v3
       - uses: docker/build-push-action@v6
         with:
