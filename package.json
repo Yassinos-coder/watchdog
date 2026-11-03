@@ -1,0 +1,30 @@
+{
+  "name": "watchdog",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "bun@1.4.3",
+  "engines": {
+    "node": ">=26.0.0",
+    "bun": ">=1.4.3"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\"",
+    "db:generate": "turbo run db:generate",
+    "db:migrate": "turbo run db:migrate"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.0",
+    "typescript": "^6.0.3"
+  }
+}
