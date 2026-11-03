@@ -20,19 +20,19 @@ Watchdog is an open-source, self-hosted error tracker for teams who want the eve
 | Session replay | Yes | Yes |
 | Alerts | Slack, Discord, Telegram, email | Many integrations |
 | Mobile | React Native and Expo (JavaScript errors) | Native iOS and Android, and more |
-| SDK languages | JavaScript and TypeScript | Many languages |
+| SDK languages | JavaScript, TypeScript and Python | Many languages |
 | Maturity | Early (version 0.x) | Established |
 
 ## Where Watchdog fits
 
 - You want your error data to stay on your own servers.
 - You prefer a small stack that one person can run and understand.
-- Your apps are JavaScript or TypeScript: browser, React, Node.js, NestJS, React Native or Expo.
+- Your apps are JavaScript, TypeScript or Python: browser, React, Node.js, NestJS, React Native, Expo, or a Python app or worker.
 - You want to read and change the code that monitors your code.
 
 ## Where Sentry is the better choice
 
-- You need native crash reporting for iOS or Android, or SDKs for languages other than JavaScript.
+- You need native crash reporting for iOS or Android, or SDKs for languages other than JavaScript and Python.
 - You want a managed service and do not want to run anything.
 - You rely on integrations and features Watchdog does not have yet, such as issue assignment, ticketing integrations, profiling or cron monitoring.
 - You need a long track record and a large ecosystem.

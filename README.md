@@ -17,13 +17,13 @@ Error tracking, performance tracing and session replay in one container plus Pos
 
 </div>
 
-Watchdog catches errors from your web, Node.js and React Native apps, shows you the original code behind every stack trace, times your endpoints, records sessions and alerts you where you work. It is free, MIT licensed and runs on your own infrastructure, so your data never leaves your servers.
+Watchdog catches errors from your web, Node.js, Python and React Native apps, shows you the original code behind every stack trace, times your endpoints, records sessions and alerts you where you work. It is free, MIT licensed and runs on your own infrastructure, so your data never leaves your servers.
 
 <p align="center">
   <img src="docs/public/screenshots/error-detail.png" alt="A Watchdog issue showing the failing line of code, the stack trace and the release" width="880">
 </p>
 
-> **Early project (0.x).** It works and the author uses it, but expect rough edges, and it covers JavaScript and TypeScript apps only. See [what it does not do](https://yassinos-coder.github.io/watchdog/sentry-alternative).
+> **Early project (0.x).** It works and the author uses it, but expect rough edges, and it covers JavaScript, TypeScript and Python apps. See [what it does not do](https://yassinos-coder.github.io/watchdog/sentry-alternative).
 
 ## Features
 
@@ -33,7 +33,7 @@ Watchdog catches errors from your web, Node.js and React Native apps, shows you 
 - **Session replay** with inputs masked by default, linked to the errors that happened during the session
 - **Alerts** to Slack, Discord, Telegram and email, using your own SMTP server
 - **Teams**: invites, owner, admin and member roles, required two-step verification (authenticator app, passkey or emailed code) and sign in with Google or GitHub
-- **SDKs** for browser, React, Node.js and NestJS, and React Native and Expo
+- **SDKs** for browser, React, Node.js and NestJS, Python, and React Native and Expo
 - **Data retention** that deletes old events, traces and replays on a schedule
 - **One container plus PostgreSQL**, Redis optional
 
@@ -119,6 +119,13 @@ import * as Watchdog from '@watchdog-sdk/react-native';
 Watchdog.init({ dsn: '...', release: '1.0.0' });
 ```
 
+```python
+# Python (pip install watchdog-sdk)
+import watchdog_sdk as watchdog
+
+watchdog.init(dsn='...', release='1.0.0')
+```
+
 ### See the real code, not minified bundles
 
 Upload source maps from your build so stack traces show your original files:
@@ -141,6 +148,7 @@ The `release` passed to the SDK and to the CLI must match.
 | `@watchdog-sdk/react` | Error boundary, hooks and React 19 root handlers |
 | `@watchdog-sdk/node` | Process handlers, request tracing, Express and NestJS integration |
 | `@watchdog-sdk/react-native` | JavaScript crashes, breadcrumbs and navigation for React Native and Expo |
+| `watchdog-sdk` (PyPI) | Python: unhandled exceptions, logging, tracing and metrics, no dependencies |
 | `@watchdog-sdk/cli` | Source map upload |
 
 ## Configuration
@@ -164,7 +172,7 @@ The full list is in the [configuration guide](docs/configuration.md).
 
 ## Documentation
 
-Guides cover [getting started](docs/getting-started.md), [Railway](docs/railway.md), [alerts](docs/alerts/overview.md), [authentication](docs/authentication.md), [tracing and metrics](docs/tracing-and-metrics.md), [session replay](docs/session-replay.md), [React Native](docs/react-native.md), [source maps](docs/source-maps.md) and [data retention](docs/retention.md). They are also published at [yassinos-coder.github.io/watchdog](https://yassinos-coder.github.io/watchdog/).
+Guides cover [getting started](docs/getting-started.md), [Railway](docs/railway.md), [alerts](docs/alerts/overview.md), [authentication](docs/authentication.md), [tracing and metrics](docs/tracing-and-metrics.md), [session replay](docs/session-replay.md), [Python](docs/python.md), [React Native](docs/react-native.md), [source maps](docs/source-maps.md) and [data retention](docs/retention.md). They are also published at [yassinos-coder.github.io/watchdog](https://yassinos-coder.github.io/watchdog/).
 
 ## Stack
 

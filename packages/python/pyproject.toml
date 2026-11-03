@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "watchdog-sdk"
+dynamic = ["version"]
+description = "Watchdog SDK for Python: error tracking, performance tracing and metrics for your self-hosted Watchdog server"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Watchdog contributors" }]
+keywords = ["watchdog", "error-tracking", "error-monitoring", "crash-reporting", "performance-monitoring", "self-hosted", "sentry-alternative"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development :: Bug Tracking",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://yassinos-coder.github.io/watchdog/"
+Documentation = "https://yassinos-coder.github.io/watchdog/python"
+Repository = "https://github.com/Yassinos-coder/watchdog"
+Issues = "https://github.com/Yassinos-coder/watchdog/issues"
+
+[tool.hatch.version]
+path = "src/watchdog_sdk/_version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/watchdog_sdk"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

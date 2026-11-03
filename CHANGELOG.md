@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-11-03
+
+### Added
+- Python SDK (`watchdog-sdk` on PyPI): reports unhandled exceptions, logged errors, performance traces (transactions and spans, including async code) and custom metrics from Python apps and workers. It has no dependencies, sends in a background thread so it never blocks, works across forked and spawned worker processes, and supports Python 3.9 and newer
+- A Python documentation page, and Python in the README, the landing page and the Sentry comparison
+- Tests for the Python SDK run in CI on Python 3.9 and 3.13, and a PyPI publish step that stays off until the `PYPI_PUBLISH_ENABLED` repository variable is set to true
+
 ## [0.5.5] - 2026-11-03
 
 ### Added

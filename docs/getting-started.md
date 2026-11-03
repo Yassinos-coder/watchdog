@@ -32,7 +32,7 @@ import { init } from '@watchdog-sdk/browser';
 init({ dsn: 'https://<key>@your-watchdog.example.com/<project-id>', release: '1.0.0' });
 ```
 
-For Node use `@watchdog-sdk/node`; for React error boundaries use `@watchdog-sdk/react`; for mobile apps use [`@watchdog-sdk/react-native`](react-native.md).
+For Node use `@watchdog-sdk/node`; for React error boundaries use `@watchdog-sdk/react`; for mobile apps use [`@watchdog-sdk/react-native`](react-native.md); for Python use [`watchdog-sdk`](python.md).
 
 ## What next
 

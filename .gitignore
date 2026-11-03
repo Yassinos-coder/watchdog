@@ -22,3 +22,8 @@ Thumbs.db
 apps/server/src/generated/
 apps/docs/.vitepress/cache/
 apps/docs/.vitepress/dist/
+
+__pycache__/
+.pytest_cache/
+*.egg-info/
+.venv/

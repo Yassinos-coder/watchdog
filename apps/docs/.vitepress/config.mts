@@ -4,9 +4,9 @@ const SITE_URL = 'https://yassinos-coder.github.io/watchdog/';
 const SITE_NAME = 'Watchdog';
 const SITE_TITLE = 'Watchdog: open-source Sentry alternative, self-hosted error tracking';
 const SITE_DESCRIPTION =
-  'Watchdog is an open-source, self-hosted Sentry alternative: error tracking, performance tracing and session replay for web, Node.js and React Native apps. One container plus PostgreSQL, deployed on Railway in a click.';
+  'Watchdog is an open-source, self-hosted Sentry alternative: error tracking, performance tracing and session replay for web, Node.js, Python and React Native apps. One container plus PostgreSQL, deployed on Railway in a click.';
 const KEYWORDS =
-  'Sentry alternative, open source error tracking, self-hosted error tracking, self-hosted Sentry alternative, error monitoring, crash reporting, session replay, performance monitoring, React Native error tracking, Railway template';
+  'Sentry alternative, open source error tracking, self-hosted error tracking, self-hosted Sentry alternative, error monitoring, crash reporting, session replay, performance monitoring, React Native error tracking, Python error tracking, Railway template';
 const OG_IMAGE = `${SITE_URL}og-image.png`;
 const BASE = process.env.DOCS_BASE || '/';
 
@@ -96,6 +96,7 @@ export default defineConfig({
       {
         text: 'SDKs',
         items: [
+          { text: 'Python', link: '/python' },
           { text: 'React Native and Expo', link: '/react-native' },
           { text: 'Tracing and metrics', link: '/tracing-and-metrics' },
           { text: 'Session replay', link: '/session-replay' },

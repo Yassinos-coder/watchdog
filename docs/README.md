@@ -9,6 +9,7 @@
 
 **SDKs**
 
+- [Python](python.md): errors, traces and metrics from Python apps and workers
 - [React Native and Expo](react-native.md): crash reporting for mobile apps
 - [Tracing and metrics](tracing-and-metrics.md): see how long things take and track your own numbers
 - [Session replay](session-replay.md): watch what users did before an error

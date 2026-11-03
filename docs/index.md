@@ -2,7 +2,7 @@
 layout: home
 title: 'Watchdog: open-source Sentry alternative, self-hosted error tracking'
 titleTemplate: false
-description: Watchdog is an open-source, self-hosted Sentry alternative with error tracking, performance tracing and session replay for web, Node.js and React Native apps. One container plus PostgreSQL, deployed on Railway in a click.
+description: Watchdog is an open-source, self-hosted Sentry alternative with error tracking, performance tracing and session replay for web, Node.js, Python and React Native apps. One container plus PostgreSQL, deployed on Railway in a click.
 
 hero:
   name: Watchdog
@@ -40,7 +40,7 @@ features:
     details: Get notified in Slack, Discord, Telegram or email when a new issue appears, a fixed one comes back, or errors spike.
   - icon: 📱
     title: SDKs for your stack
-    details: Browser, React, Node.js and NestJS, and React Native and Expo, all open source and published on npm.
+    details: Browser, React, Node.js and NestJS, Python, and React Native and Expo. All open source and published on npm and PyPI.
   - icon: 👥
     title: Teams and secure sign-in
     details: Invite teammates with owner, admin and member roles, require two-step verification, and sign in with Google or GitHub.
