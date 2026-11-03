@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2026-11-03
+
+### Fixed
+- The Python SDK tests in continuous integration run on an Ubuntu image that still provides Python 3.9, and both Python versions now run to completion even if one fails
+
 ## [0.6.0] - 2026-11-03
 
 ### Added
