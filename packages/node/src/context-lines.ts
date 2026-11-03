@@ -1,6 +1,6 @@
 import { readFileSync, statSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import type { Frame } from '@watchdog/core';
+import type { Frame } from '@watchdog-sdk/core';
 
 const CONTEXT_RADIUS = 5;
 const MAX_FILE_BYTES = 2 * 1024 * 1024;

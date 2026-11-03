@@ -1,4 +1,4 @@
-import type { RequestContext, WatchdogOptions } from '@watchdog/core';
+import type { RequestContext, WatchdogOptions } from '@watchdog-sdk/core';
 
 export interface NodeOptions extends WatchdogOptions {
   captureUncaughtExceptions?: boolean;

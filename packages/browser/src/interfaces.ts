@@ -1,4 +1,4 @@
-import type { WatchdogOptions } from '@watchdog/core';
+import type { WatchdogOptions } from '@watchdog-sdk/core';
 
 export interface BrowserIntegrations {
   globalHandlers?: boolean;

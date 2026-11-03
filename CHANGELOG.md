@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] - 2026-11-03
+
+### Added
+- npm publishing for the five SDK packages under the @watchdog-sdk scope, with provenance, a package README and licence file each
+- Release workflow that publishes the packages when a version tag is pushed, and skips versions that are already published
+- Package verification that checks contents, resolved dependencies, exports and types, run in CI and before every release
+- Release process documented in CONTRIBUTING
+
+### Changed
+- SDK packages renamed from @watchdog/* to @watchdog-sdk/*, including all docs and setup snippets
+
 ## [0.4.0] - 2026-11-03
 
 ### Added

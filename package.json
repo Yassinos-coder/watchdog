@@ -1,6 +1,6 @@
 {
   "name": "watchdog",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "license": "MIT",
   "packageManager": "bun@1.4.3",
@@ -20,10 +20,13 @@
     "clean": "turbo run clean",
     "format": "prettier --write \"**/*.{ts,tsx,json,md,css}\"",
     "db:generate": "turbo run db:generate",
-    "db:migrate": "turbo run db:migrate"
+    "db:migrate": "turbo run db:migrate",
+    "verify:packages": "node scripts/verify-packages.mjs"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "prettier": "^3.6.2",
+    "publint": "^0.3.25",
     "turbo": "^2.5.0",
     "typescript": "^6.0.3"
   }

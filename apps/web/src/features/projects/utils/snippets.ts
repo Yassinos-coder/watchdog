@@ -9,11 +9,11 @@ export interface SetupSnippets {
 export class SnippetBuilder {
   static build(dsn: string, projectId: string, serverUrl: string): SetupSnippets {
     return {
-      react: `bun add @watchdog/react
+      react: `bun add @watchdog-sdk/react
 
 // main.tsx
 import { createRoot } from 'react-dom/client';
-import * as Watchdog from '@watchdog/react';
+import * as Watchdog from '@watchdog-sdk/react';
 
 Watchdog.init({
   dsn: '${dsn}',
@@ -26,9 +26,9 @@ createRoot(document.getElementById('root')!, Watchdog.reactRootErrorHandlers()).
     <App />
   </Watchdog.WatchdogErrorBoundary>,
 );`,
-      browser: `bun add @watchdog/browser
+      browser: `bun add @watchdog-sdk/browser
 
-import * as Watchdog from '@watchdog/browser';
+import * as Watchdog from '@watchdog-sdk/browser';
 
 Watchdog.init({
   dsn: '${dsn}',
@@ -37,9 +37,9 @@ Watchdog.init({
 });
 
 Watchdog.captureException(new Error('Test error from the browser'));`,
-      node: `bun add @watchdog/node
+      node: `bun add @watchdog-sdk/node
 
-import * as Watchdog from '@watchdog/node';
+import * as Watchdog from '@watchdog-sdk/node';
 
 Watchdog.init({
   dsn: '${dsn}',
@@ -49,21 +49,21 @@ Watchdog.init({
 
 // Express
 app.use(Watchdog.expressErrorHandler());`,
-      nestjs: `bun add @watchdog/node
+      nestjs: `bun add @watchdog-sdk/node
 
 // main.ts
-import * as Watchdog from '@watchdog/node';
+import * as Watchdog from '@watchdog-sdk/node';
 Watchdog.init({ dsn: '${dsn}', release: process.env.APP_VERSION });
 
 // app.module.ts
 import { APP_FILTER } from '@nestjs/core';
-import { WatchdogExceptionFilter } from '@watchdog/node/nest';
+import { WatchdogExceptionFilter } from '@watchdog-sdk/node/nest';
 
 @Module({
   providers: [{ provide: APP_FILTER, useClass: WatchdogExceptionFilter }],
 })
 export class AppModule {}`,
-      sourceMaps: `bun add -d @watchdog/cli
+      sourceMaps: `bun add -d @watchdog-sdk/cli
 
 # after your production build
 WATCHDOG_URL=${serverUrl} \\

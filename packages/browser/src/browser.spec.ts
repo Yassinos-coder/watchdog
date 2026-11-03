@@ -1,4 +1,4 @@
-import type { Transport, WatchdogEvent } from '@watchdog/core';
+import type { Transport, WatchdogEvent } from '@watchdog-sdk/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { addBreadcrumb, captureException, captureMessage, close, init, setUser } from './browser-sdk';
 import { DomUtils } from './utils/dom.utils';

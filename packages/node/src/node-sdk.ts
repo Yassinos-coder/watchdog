@@ -6,12 +6,12 @@ import {
   UserContext,
   WatchdogClient,
   WatchdogEvent,
-} from '@watchdog/core';
+} from '@watchdog-sdk/core';
 import { ContextLines } from './context-lines';
 import { HttpRequestLike, NodeOptions, Uninstall } from './interfaces';
 import { RequestContextBuilder } from './request-context';
 
-const SDK = { name: 'watchdog.node', version: '0.4.0' };
+const SDK = { name: 'watchdog.node', version: '0.4.1' };
 const DEFAULT_FLUSH_TIMEOUT_MS = 2_000;
 const EXIT_CODE_UNCAUGHT = 1;
 

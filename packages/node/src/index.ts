@@ -15,4 +15,4 @@ export {
 export { expressErrorHandler } from './express';
 export { ExceptionPolicy } from './exception-policy';
 export type { HttpRequestLike, NodeOptions } from './interfaces';
-export type { Breadcrumb, CaptureContext, Level, UserContext, WatchdogEvent } from '@watchdog/core';
+export type { Breadcrumb, CaptureContext, Level, UserContext, WatchdogEvent } from '@watchdog-sdk/core';

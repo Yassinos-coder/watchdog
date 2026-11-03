@@ -1,4 +1,4 @@
-import type { Breadcrumb, Level } from '@watchdog/core';
+import type { Breadcrumb, Level } from '@watchdog-sdk/core';
 import { Uninstall } from '../interfaces';
 import { DomUtils } from '../utils/dom.utils';
 import { UrlUtils } from '../utils/url.utils';

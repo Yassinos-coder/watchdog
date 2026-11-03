@@ -1,4 +1,4 @@
-import { captureException } from '@watchdog/browser';
+import { captureException } from '@watchdog-sdk/browser';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import type { WatchdogErrorBoundaryProps, WatchdogErrorBoundaryState } from './interfaces';
 

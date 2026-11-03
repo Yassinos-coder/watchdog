@@ -64,6 +64,16 @@ Useful commands:
 - Fill in the pull request template, and add screenshots (including a mobile width) for UI changes.
 - A code-owner review is required to merge.
 
+## Releasing
+
+Maintainers publish the SDK packages by pushing a version tag:
+
+1. Bump the version in the root `package.json` and in every `packages/*/package.json`, and update `CHANGELOG.md`.
+2. Run `bun run build && bun run verify:packages` locally.
+3. Tag and push: `git tag v1.2.3 && git push origin v1.2.3`.
+
+The **Publish packages** workflow checks that the tag matches the package versions, runs the tests and package checks, then publishes `@watchdog-sdk/core`, `browser`, `node`, `react` and `cli` to npm with provenance. It needs the `NPM_TOKEN` repository secret. Versions that are already published are skipped, so a failed run can be retried safely. The same tag also builds the Docker image.
+
 ## License
 
 By contributing you agree that your contributions are licensed under the [MIT License](LICENSE).

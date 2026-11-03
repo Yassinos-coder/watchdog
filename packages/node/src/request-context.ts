@@ -1,4 +1,4 @@
-import type { RequestContext } from '@watchdog/core';
+import type { RequestContext } from '@watchdog-sdk/core';
 import { HttpRequestLike } from './interfaces';
 
 const SAFE_HEADERS = new Set([

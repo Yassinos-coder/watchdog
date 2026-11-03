@@ -1,15 +1,41 @@
 {
-  "name": "@watchdog/cli",
-  "version": "0.4.0",
-  "description": "Watchdog command line: upload source maps",
+  "name": "@watchdog-sdk/cli",
+  "version": "0.4.1",
+  "description": "Watchdog command line tool: upload source maps from your build",
+  "keywords": [
+    "watchdog",
+    "source-maps",
+    "sourcemaps",
+    "cli",
+    "error-tracking"
+  ],
   "license": "MIT",
+  "author": "Watchdog contributors",
+  "homepage": "https://github.com/Yassinos-coder/watchdog#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yassinos-coder/watchdog.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/Yassinos-coder/watchdog/issues"
+  },
   "type": "module",
   "bin": {
     "watchdog": "./dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",

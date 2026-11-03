@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { Transport, WatchdogEvent } from '@watchdog/core';
+import type { Transport, WatchdogEvent } from '@watchdog-sdk/core';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { ContextLines } from './context-lines';
 import { ExceptionPolicy } from './exception-policy';

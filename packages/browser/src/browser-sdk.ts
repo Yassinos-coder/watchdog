@@ -5,12 +5,12 @@ import {
   Level,
   UserContext,
   WatchdogClient,
-} from '@watchdog/core';
+} from '@watchdog-sdk/core';
 import { installClickBreadcrumbs, installConsoleBreadcrumbs, installNavigationBreadcrumbs, installNetworkBreadcrumbs } from './integrations/breadcrumbs';
 import { installGlobalHandlers } from './integrations/global-handlers';
 import { BrowserOptions, Uninstall } from './interfaces';
 
-const SDK = { name: 'watchdog.browser', version: '0.4.0' };
+const SDK = { name: 'watchdog.browser', version: '0.4.1' };
 const DEFAULT_IGNORED_ERRORS: (string | RegExp)[] = [
   /^Script error\.?$/,
   'ResizeObserver loop',

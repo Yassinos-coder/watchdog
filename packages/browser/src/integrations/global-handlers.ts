@@ -1,4 +1,4 @@
-import type { CaptureContext } from '@watchdog/core';
+import type { CaptureContext } from '@watchdog-sdk/core';
 import { Uninstall } from '../interfaces';
 
 type Capture = (error: unknown, context?: CaptureContext) => void;

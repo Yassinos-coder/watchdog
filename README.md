@@ -31,11 +31,11 @@ Open the app and follow the first-run setup. If you did not set `SETUP_TOKEN`, f
 
 ## Send your first error
 
-Create a project in the dashboard and copy its DSN. The SDKs are published from this repository as `@watchdog/*` workspace packages (npm publishing is not set up yet, so install them from the repo for now).
+Create a project in the dashboard and copy its DSN. Install the SDK for your stack from npm, for example `bun add @watchdog-sdk/react`.
 
 ```ts
 // React
-import * as Watchdog from '@watchdog/react';
+import * as Watchdog from '@watchdog-sdk/react';
 
 Watchdog.init({ dsn: 'https://<key>@your-watchdog-host/<project-id>', release: '1.0.0' });
 
@@ -48,8 +48,8 @@ createRoot(root, Watchdog.reactRootErrorHandlers()).render(
 
 ```ts
 // Node.js / NestJS
-import * as Watchdog from '@watchdog/node';
-import { WatchdogExceptionFilter } from '@watchdog/node/nest';
+import * as Watchdog from '@watchdog-sdk/node';
+import { WatchdogExceptionFilter } from '@watchdog-sdk/node/nest';
 
 Watchdog.init({ dsn: '...', release: process.env.APP_VERSION });
 // providers: [{ provide: APP_FILTER, useClass: WatchdogExceptionFilter }]
@@ -72,11 +72,11 @@ The `release` passed to the SDK and to the CLI must match.
 
 | Package | Purpose |
 | --- | --- |
-| `@watchdog/core` | Event model, stack parsing, retrying transport |
-| `@watchdog/browser` | Global handlers, breadcrumbs for clicks, navigation, console and network |
-| `@watchdog/react` | Error boundary, hooks and React 19 root handlers |
-| `@watchdog/node` | Process handlers, source context from disk, Express and NestJS integration |
-| `@watchdog/cli` | Source map upload |
+| `@watchdog-sdk/core` | Event model, stack parsing, retrying transport |
+| `@watchdog-sdk/browser` | Global handlers, breadcrumbs for clicks, navigation, console and network |
+| `@watchdog-sdk/react` | Error boundary, hooks and React 19 root handlers |
+| `@watchdog-sdk/node` | Process handlers, source context from disk, Express and NestJS integration |
+| `@watchdog-sdk/cli` | Source map upload |
 
 ## Configuration
 

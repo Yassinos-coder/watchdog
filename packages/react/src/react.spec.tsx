@@ -1,5 +1,5 @@
-import { close, init } from '@watchdog/browser';
-import type { Transport, WatchdogEvent } from '@watchdog/core';
+import { close, init } from '@watchdog-sdk/browser';
+import type { Transport, WatchdogEvent } from '@watchdog-sdk/core';
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

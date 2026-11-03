@@ -5,7 +5,7 @@ import {
   setContext,
   setTag,
   setUser,
-} from '@watchdog/browser';
+} from '@watchdog-sdk/browser';
 import type { ComponentType } from 'react';
 import { WatchdogErrorBoundary } from './error-boundary';
 import type {

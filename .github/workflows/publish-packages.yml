@@ -1,0 +1,51 @@
+name: Publish packages
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: publish-packages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 26
+          registry-url: https://registry.npmjs.org
+      - run: bun install --frozen-lockfile
+      - name: Check that the tag matches the package versions
+        run: node scripts/check-release-version.mjs
+      - run: bun run build
+      - run: bun run test
+      - name: Verify the packages
+        run: bun run verify:packages
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/packs"
+          for name in core browser node react cli; do
+            package="@watchdog-sdk/$name"
+            version="$(node -p "require('./packages/$name/package.json').version")"
+            if npm view "$package@$version" version >/dev/null 2>&1; then
+              echo "$package@$version is already published, skipping"
+              continue
+            fi
+            (cd "packages/$name" && bun pm pack --destination "$RUNNER_TEMP/packs")
+            tarball="$(ls "$RUNNER_TEMP"/packs/watchdog-sdk-"$name"-*.tgz | head -n 1)"
+            npm publish "$tarball" --access public --provenance
+          done

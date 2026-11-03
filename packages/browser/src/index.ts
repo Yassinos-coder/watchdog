@@ -12,4 +12,4 @@ export {
   setUser,
 } from './browser-sdk';
 export type { BrowserIntegrations, BrowserOptions } from './interfaces';
-export type { Breadcrumb, CaptureContext, Level, UserContext, WatchdogEvent } from '@watchdog/core';
+export type { Breadcrumb, CaptureContext, Level, UserContext, WatchdogEvent } from '@watchdog-sdk/core';

@@ -1,8 +1,25 @@
 {
-  "name": "@watchdog/core",
-  "version": "0.4.0",
-  "description": "Watchdog SDK core: events, stack parsing, transport",
+  "name": "@watchdog-sdk/core",
+  "version": "0.4.1",
+  "description": "Watchdog SDK core: event model, stack parsing and a retrying transport",
+  "keywords": [
+    "watchdog",
+    "error-tracking",
+    "error-monitoring",
+    "sdk",
+    "observability"
+  ],
   "license": "MIT",
+  "author": "Watchdog contributors",
+  "homepage": "https://github.com/Yassinos-coder/watchdog#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yassinos-coder/watchdog.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/Yassinos-coder/watchdog/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "main": "./dist/index.cjs",
@@ -21,8 +38,17 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
