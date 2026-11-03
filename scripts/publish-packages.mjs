@@ -12,7 +12,7 @@ const run = (command, args, options = {}) =>
 
 const isPublished = (name, version) => {
   try {
-    run('npm', ['view', `${name}@${version}`, 'version']);
+    run('npm', ['view', `${name}@${version}`, 'version'], { stdio: ['ignore', 'pipe', 'pipe'] });
     return true;
   } catch {
     return false;
