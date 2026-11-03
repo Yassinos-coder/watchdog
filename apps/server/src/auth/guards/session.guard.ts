@@ -24,11 +24,12 @@ export class SessionGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    if (this.hasFlag(IS_PUBLIC_KEY, context)) {
-      return true;
-    }
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const token: unknown = request.cookies?.[SESSION_COOKIE_NAME];
+    if (this.hasFlag(IS_PUBLIC_KEY, context)) {
+      await this.attachIfSignedIn(request, token);
+      return true;
+    }
     if (typeof token !== 'string' || token.length === 0) {
       throw new UnauthorizedException('Authentication required');
     }
@@ -51,6 +52,16 @@ export class SessionGuard implements CanActivate {
       });
     }
     return true;
+  }
+
+  private async attachIfSignedIn(request: AuthenticatedRequest, token: unknown): Promise<void> {
+    if (typeof token !== 'string' || token.length === 0) {
+      return;
+    }
+    const session = await this.sessionService.resolve(token);
+    if (session) {
+      request.auth = { session, user: session.user };
+    }
   }
 
   private hasFlag(key: string, context: ExecutionContext): boolean {

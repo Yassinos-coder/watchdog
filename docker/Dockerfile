@@ -4,10 +4,11 @@ WORKDIR /app
 COPY package.json bun.lock turbo.json ./
 COPY apps/server/package.json apps/server/package.json
 COPY apps/web/package.json apps/web/package.json
+COPY packages ./packages
 RUN bun install --frozen-lockfile
 
 COPY apps ./apps
-RUN bun run build
+RUN bunx turbo run build --filter=@watchdog/server --filter=@watchdog/web
 
 FROM node:26-slim AS runtime
 WORKDIR /app

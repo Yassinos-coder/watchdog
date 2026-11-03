@@ -215,6 +215,44 @@ describe('Authentication (e2e)', () => {
       expect(followUp.status).toBe(401);
     });
 
+    it('reports session state for pending and verified sessions', async () => {
+      const agent = newAgent(app);
+      const anonymous = await agent.get('/api/auth/session').expect(200);
+      expect(anonymous.body).toEqual({ mfaRequired: false, methods: [], user: null });
+
+      await agent.post('/api/auth/login').send({ email: OWNER_EMAIL, password: OWNER_PASSWORD });
+      const pending = await agent.get('/api/auth/session').expect(200);
+      expect(pending.body).toEqual({ mfaRequired: true, methods: ['TOTP'], user: null });
+
+      await agent
+        .post('/api/auth/mfa/verify')
+        .send({ method: 'totp', code: await generate({ secret: owner.totpSecret }) });
+      const verified = await agent.get('/api/auth/session').expect(200);
+      expect(verified.body).toMatchObject({ mfaRequired: false, user: { email: OWNER_EMAIL } });
+    });
+
+    it('summarizes security settings and protects the last method', async () => {
+      const agent = newAgent(app);
+      await agent.post('/api/auth/login').send({ email: OWNER_EMAIL, password: OWNER_PASSWORD });
+      await agent
+        .post('/api/auth/mfa/verify')
+        .send({ method: 'totp', code: await generate({ secret: owner.totpSecret }) });
+
+      const summary = await agent.get('/api/auth/mfa/summary').expect(200);
+      expect(summary.body).toMatchObject({
+        methods: ['TOTP'],
+        passkeys: [],
+        emailCodeAvailable: false,
+      });
+      expect(summary.body.recoveryCodesRemaining).toBeGreaterThan(0);
+
+      const blocked = await agent.delete('/api/auth/mfa/methods/TOTP').expect(400);
+      expect(blocked.body.message).toContain('at least one');
+      await agent.delete('/api/auth/mfa/methods/EMAIL').expect(404);
+      await agent.delete('/api/auth/mfa/methods/SMS').expect(400);
+      await agent.delete('/api/auth/mfa/passkeys/unknown').expect(404);
+    });
+
     it('invalidates the session on logout', async () => {
       const agent = newAgent(app);
       await agent.post('/api/auth/login').send({ email: OWNER_EMAIL, password: OWNER_PASSWORD });

@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-11-03
+
+### Added
+- Dashboard with first-run setup, sign-in, second-step verification, recovery codes and security settings
+- Project overview with event totals, an events-over-time chart, top releases and environments
+- Issue list with status, search and sort, and an issue page that leads with the failing code and highlights the exact line
+- Stack traces with collapsible frames, library frames hidden by default, and a "Source mapped" marker
+- Breadcrumb timeline, event details and per-event inspection on every issue
+- Project settings with keys and DSNs, setup guide snippets, source map releases and upload token management
+- Browser, React, Node.js and NestJS SDKs with automatic error capture, breadcrumbs and retrying delivery
+- Command line tool that uploads source maps from your build
+- Light and dark themes, self-hosted fonts and a layout that works from phones to wide desktops
+- Security settings API to list and remove passkeys and methods, and an anonymous-safe session endpoint
+
+### Fixed
+- Issues now keep the newest last-seen time and release when events arrive out of order
+- Code lines keep their indentation so the failing line lines up with its neighbours
+- Source maps with the same file name in different folders no longer overwrite each other
+- Recovery codes are no longer skipped when the first two-step method is set up
+- Disabling a project key takes effect immediately instead of after a cache delay
+- Passwords containing a very short email name are no longer rejected
+- Ignored error patterns now also match the bare error message
+
+### Changed
+- Docker image builds from the full workspace and serves the dashboard with a strict content security policy
+- Dependabot no longer proposes major upgrades of TypeScript and Prisma
+
 ## [0.2.0] - 2026-11-03
 
 ### Added

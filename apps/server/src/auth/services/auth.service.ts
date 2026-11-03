@@ -10,7 +10,13 @@ import { PasswordUtils } from '../../shared/utils/password.utils';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { LOCK_DURATION_MS, MAX_FAILED_LOGINS } from '../constants/auth.constants';
 import { LoginDto, SetupDto } from '../dto/auth.dto';
-import { AuthOutcome, AuthStatus, SessionMeta } from '../interfaces/auth.interfaces';
+import {
+  AuthContext,
+  AuthOutcome,
+  AuthResponse,
+  AuthStatus,
+  SessionMeta,
+} from '../interfaces/auth.interfaces';
 import { AuthUserMapper } from '../mappers/auth-user.mapper';
 import { PasswordValidator } from '../validators/password.validator';
 import { SessionService } from './session.service';
@@ -32,6 +38,17 @@ export class AuthService {
       setupRequired: (await this.userRepository.count()) === 0,
       emailCodeAvailable: this.mailService.isConfigured(),
     };
+  }
+
+  getSession(auth: AuthContext | undefined): AuthResponse {
+    if (!auth) {
+      return { mfaRequired: false, methods: [], user: null };
+    }
+    const { session, user } = auth;
+    if (!session.mfaPassed) {
+      return { mfaRequired: true, methods: user.mfaMethods, user: null };
+    }
+    return { mfaRequired: false, methods: [], user: AuthUserMapper.toView(user) };
   }
 
   async setup(dto: SetupDto, meta: SessionMeta): Promise<AuthOutcome> {

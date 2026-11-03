@@ -18,6 +18,10 @@ export class RecoveryCodeRepository {
     ]);
   }
 
+  async deleteAll(userId: string): Promise<void> {
+    await this.prisma.recoveryCode.deleteMany({ where: { userId } });
+  }
+
   async markUsed(userId: string, codeHash: string): Promise<boolean> {
     const result = await this.prisma.recoveryCode.updateMany({
       where: { userId, codeHash, usedAt: null },

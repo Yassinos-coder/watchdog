@@ -1,4 +1,14 @@
-import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  ParseEnumPipe,
+  Post,
+  Res,
+} from '@nestjs/common';
 import type { Response } from 'express';
 import { RateLimit } from 'nestjs-shield';
 import type {
@@ -14,9 +24,11 @@ import {
   AuthContext,
   AuthResponse,
   EnrollmentResult,
+  SecuritySummary,
   TotpEnrollment,
 } from '../interfaces/auth.interfaces';
 import { MfaService } from '../services/mfa.service';
+import { SecurityService } from '../services/security.service';
 import { SessionService } from '../services/session.service';
 
 const MFA_LIMIT = { limit: 30, ttl: 60_000 };
@@ -26,8 +38,34 @@ const MFA_LIMIT = { limit: 30, ttl: 60_000 };
 export class MfaController {
   constructor(
     private readonly mfaService: MfaService,
+    private readonly securityService: SecurityService,
     private readonly sessionService: SessionService,
   ) {}
+
+  @AllowMfaSetup()
+  @Get('summary')
+  getSummary(@CurrentAuth() auth: AuthContext): Promise<SecuritySummary> {
+    return this.securityService.getSummary(auth);
+  }
+
+  @AllowMfaSetup()
+  @HttpCode(204)
+  @Delete('passkeys/:passkeyId')
+  removePasskey(
+    @CurrentAuth() auth: AuthContext,
+    @Param('passkeyId') passkeyId: string,
+  ): Promise<void> {
+    return this.securityService.removePasskey(auth, passkeyId);
+  }
+
+  @HttpCode(204)
+  @Delete('methods/:method')
+  disableMethod(
+    @CurrentAuth() auth: AuthContext,
+    @Param('method', new ParseEnumPipe({ TOTP: 'TOTP', EMAIL: 'EMAIL' })) method: 'TOTP' | 'EMAIL',
+  ): Promise<void> {
+    return this.securityService.disableMethod(auth, method);
+  }
 
   @AllowPendingMfa()
   @HttpCode(200)

@@ -121,7 +121,7 @@ export class EventPayloadValidator {
       lineno: EventPayloadValidator.positiveInt(value.lineno),
       colno: EventPayloadValidator.positiveInt(value.colno),
       inApp: typeof value.inApp === 'boolean' ? value.inApp : undefined,
-      contextLine: EventPayloadValidator.text(value.contextLine, MAX_CONTEXT_LINE_LENGTH),
+      contextLine: EventPayloadValidator.codeLine(value.contextLine),
       preContext: EventPayloadValidator.lines(value.preContext),
       postContext: EventPayloadValidator.lines(value.postContext),
     };
@@ -202,6 +202,10 @@ export class EventPayloadValidator {
       .filter((line): line is string => typeof line === 'string')
       .slice(0, MAX_CONTEXT_LINES)
       .map((line) => line.slice(0, MAX_CONTEXT_LINE_LENGTH));
+  }
+
+  private static codeLine(value: unknown): string | undefined {
+    return typeof value === 'string' ? value.slice(0, MAX_CONTEXT_LINE_LENGTH) : undefined;
   }
 
   private static positiveInt(value: unknown): number | undefined {

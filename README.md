@@ -28,6 +28,55 @@ docker compose --profile app up -d
 
 Open the app and follow the first-run setup. If you did not set `SETUP_TOKEN`, find it in the logs: `docker compose logs watchdog | grep "setup token"`.
 
+## Send your first error
+
+Create a project in the dashboard and copy its DSN. The SDKs are published from this repository as `@watchdog/*` workspace packages (npm publishing is not set up yet, so install them from the repo for now).
+
+```ts
+// React
+import * as Watchdog from '@watchdog/react';
+
+Watchdog.init({ dsn: 'https://<key>@your-watchdog-host/<project-id>', release: '1.0.0' });
+
+createRoot(root, Watchdog.reactRootErrorHandlers()).render(
+  <Watchdog.WatchdogErrorBoundary fallback={<p>Something went wrong.</p>}>
+    <App />
+  </Watchdog.WatchdogErrorBoundary>,
+);
+```
+
+```ts
+// Node.js / NestJS
+import * as Watchdog from '@watchdog/node';
+import { WatchdogExceptionFilter } from '@watchdog/node/nest';
+
+Watchdog.init({ dsn: '...', release: process.env.APP_VERSION });
+// providers: [{ provide: APP_FILTER, useClass: WatchdogExceptionFilter }]
+```
+
+### See the real code, not minified bundles
+
+Upload source maps from your build so stack traces show your original files and the lines around each failure:
+
+```bash
+WATCHDOG_URL=https://your-watchdog-host \
+WATCHDOG_PROJECT_ID=<project-id> \
+WATCHDOG_UPLOAD_TOKEN=<upload token from project settings> \
+bunx watchdog sourcemaps upload ./dist --release 1.0.0
+```
+
+The `release` passed to the SDK and to the CLI must match.
+
+## Packages
+
+| Package | Purpose |
+| --- | --- |
+| `@watchdog/core` | Event model, stack parsing, retrying transport |
+| `@watchdog/browser` | Global handlers, breadcrumbs for clicks, navigation, console and network |
+| `@watchdog/react` | Error boundary, hooks and React 19 root handlers |
+| `@watchdog/node` | Process handlers, source context from disk, Express and NestJS integration |
+| `@watchdog/cli` | Source map upload |
+
 ## Configuration
 
 | Variable | Required | Purpose |

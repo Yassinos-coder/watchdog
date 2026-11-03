@@ -46,12 +46,10 @@ export class IngestRepository {
         firstRelease: event.release,
         lastRelease: event.release,
       },
-      update: {
-        eventCount: { increment: 1 },
-        lastSeen: event.timestamp,
-        ...(event.release ? { lastRelease: event.release } : {}),
-      },
+      update: { eventCount: { increment: 1 } },
     });
+
+    await this.widenSeenRange(tx, issue.id, event);
 
     const regression = await tx.issue.updateMany({
       where: { id: issue.id, status: 'RESOLVED' },
@@ -80,6 +78,27 @@ export class IngestRepository {
       isRegression: regression.count > 0,
       duplicate: false,
     };
+  }
+
+  private async widenSeenRange(
+    tx: Prisma.TransactionClient,
+    issueId: string,
+    event: RecordEventInput['event'],
+  ): Promise<void> {
+    await tx.issue.updateMany({
+      where: { id: issueId, lastSeen: { lt: event.timestamp } },
+      data: {
+        lastSeen: event.timestamp,
+        ...(event.release ? { lastRelease: event.release } : {}),
+      },
+    });
+    await tx.issue.updateMany({
+      where: { id: issueId, firstSeen: { gt: event.timestamp } },
+      data: {
+        firstSeen: event.timestamp,
+        ...(event.release ? { firstRelease: event.release } : {}),
+      },
+    });
   }
 
   private async findDuplicate({ projectId, event }: RecordEventInput): Promise<IngestResult> {

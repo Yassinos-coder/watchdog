@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, Post, Req, Res } from '@nestjs/common'
 import type { Request, Response } from 'express';
 import { RateLimit } from 'nestjs-shield';
 import { AllowMfaSetup, AllowPendingMfa, Public } from '../decorators/access.decorators';
-import { CurrentAuth } from '../decorators/current-auth.decorator';
+import { CurrentAuth, OptionalAuth } from '../decorators/current-auth.decorator';
 import { LoginDto, SetupDto } from '../dto/auth.dto';
 import {
   AuthContext,
@@ -28,6 +28,12 @@ export class AuthController {
   @Get('status')
   getStatus(): Promise<AuthStatus> {
     return this.authService.getStatus();
+  }
+
+  @Public()
+  @Get('session')
+  getSession(@OptionalAuth() auth: AuthContext | undefined): AuthResponse {
+    return this.authService.getSession(auth);
   }
 
   @AllowMfaSetup()

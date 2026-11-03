@@ -1,1 +1,179 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import '@fontsource-variable/bricolage-grotesque';
+@import '@fontsource-variable/hanken-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.5rem;
+  --background: #f2f5f4;
+  --foreground: #0f2a30;
+  --card: #ffffff;
+  --card-foreground: #0f2a30;
+  --popover: #ffffff;
+  --popover-foreground: #0f2a30;
+  --primary: #0f2a30;
+  --primary-foreground: #f2f5f4;
+  --secondary: #e3eae8;
+  --secondary-foreground: #0f2a30;
+  --muted: #e8eeec;
+  --muted-foreground: #4f656b;
+  --accent: #e3eae8;
+  --accent-foreground: #0f2a30;
+  --destructive: #c23838;
+  --border: #d5dfdc;
+  --input: #c4d1ce;
+  --ring: #b7791f;
+  --lantern: #b7791f;
+  --lantern-soft: #fbefd2;
+  --signal: #c23838;
+  --signal-soft: #fbe3e1;
+  --moss: #2f8059;
+  --moss-soft: #dcf0e5;
+  --chart-1: #0e7c86;
+  --chart-2: #b7791f;
+  --chart-3: #c23838;
+  --chart-4: #2f8059;
+  --chart-5: #5b6fa8;
+}
+
+.dark {
+  --background: #0a1a1f;
+  --foreground: #e8eeec;
+  --card: #102830;
+  --card-foreground: #e8eeec;
+  --popover: #102830;
+  --popover-foreground: #e8eeec;
+  --primary: #e8eeec;
+  --primary-foreground: #0a1a1f;
+  --secondary: #17353e;
+  --secondary-foreground: #e8eeec;
+  --muted: #12303a;
+  --muted-foreground: #8fa9af;
+  --accent: #17353e;
+  --accent-foreground: #e8eeec;
+  --destructive: #f05a5a;
+  --border: #1e3a43;
+  --input: #25454f;
+  --ring: #f0b429;
+  --lantern: #f0b429;
+  --lantern-soft: #3a3016;
+  --signal: #f05a5a;
+  --signal-soft: #3b1f24;
+  --moss: #4cc38a;
+  --moss-soft: #14342a;
+  --chart-1: #3fb5c0;
+  --chart-2: #f0b429;
+  --chart-3: #f05a5a;
+  --chart-4: #4cc38a;
+  --chart-5: #8fa1e0;
+}
+
+@theme inline {
+  --font-sans: 'Hanken Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Hanken Grotesk Variable', ui-sans-serif, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-lantern: var(--lantern);
+  --color-lantern-soft: var(--lantern-soft);
+  --color-signal: var(--signal);
+  --color-signal-soft: var(--signal-soft);
+  --color-moss: var(--moss);
+  --color-moss-soft: var(--moss-soft);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  :where(.grid:not([class*='grid-cols-'])) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--lantern) 35%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .scroll-x {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  code,
+  pre {
+    font-variant-ligatures: none;
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}

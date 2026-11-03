@@ -64,6 +64,13 @@ export class UserRepository {
     });
   }
 
+  async disableTotp(id: string, methods: MfaMethod[]): Promise<void> {
+    await this.prisma.user.update({
+      where: { id },
+      data: { totpSecretEnc: null, totpPendingSecretEnc: null, mfaMethods: methods },
+    });
+  }
+
   async setMfaMethods(id: string, methods: MfaMethod[]): Promise<void> {
     await this.prisma.user.update({ where: { id }, data: { mfaMethods: methods } });
   }

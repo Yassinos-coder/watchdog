@@ -94,6 +94,32 @@ describe('EventPayloadValidator.parse', () => {
     expect(event.tags).toEqual({ region: 'eu', retries: '3', ok: 'true' });
   });
 
+  it('keeps the indentation of source code lines', () => {
+    const event = EventPayloadValidator.parse({
+      exception: {
+        type: 'E',
+        value: 'v',
+        stacktrace: {
+          frames: [
+            {
+              filename: 'a.ts',
+              lineno: 3,
+              contextLine: '    return total;',
+              preContext: ['  if (ready) {'],
+              postContext: ['  }'],
+            },
+          ],
+        },
+      },
+    });
+
+    expect(event.exception?.frames[0]).toMatchObject({
+      contextLine: '    return total;',
+      preContext: ['  if (ready) {'],
+      postContext: ['  }'],
+    });
+  });
+
   it('replaces oversized extra data with a marker', () => {
     const event = EventPayloadValidator.parse({ message: 'm', extra: { blob: 'x'.repeat(100_000) } });
 

@@ -1,7 +1,39 @@
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { MfaChallengePage } from '@/features/auth/pages/MfaChallengePage';
+import { LoginPage } from '@/features/auth/pages/LoginPage';
+import { MfaSetupPage } from '@/features/auth/pages/MfaSetupPage';
+import { SecurityPage } from '@/features/auth/pages/SecurityPage';
+import { SetupPage } from '@/features/auth/pages/SetupPage';
+import { RequireAuth } from '@/features/auth/routes/RequireAuth';
+import { IssueDetailPage } from '@/features/issues/pages/IssueDetailPage';
+import { IssuesPage } from '@/features/issues/pages/IssuesPage';
+import { ProjectOverviewPage } from '@/features/issues/pages/ProjectOverviewPage';
+import { ProjectSettingsPage } from '@/features/projects/pages/ProjectSettingsPage';
+import { ProjectsPage } from '@/features/projects/pages/ProjectsPage';
+import { HomeRedirect } from '@/features/projects/routes/HomeRedirect';
+import { AppShell } from '@/layout/AppShell';
+
 export function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-950 text-neutral-100">
-      <h1 className="text-3xl font-semibold tracking-tight">Watchdog</h1>
-    </main>
+    <Routes>
+      <Route path="/setup" element={<SetupPage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/login/verify" element={<MfaChallengePage />} />
+      <Route path="/security/setup" element={<MfaSetupPage />} />
+
+      <Route element={<RequireAuth />}>
+        <Route element={<AppShell />}>
+          <Route index element={<HomeRedirect />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/projects/:projectId" element={<ProjectOverviewPage />} />
+          <Route path="/projects/:projectId/issues" element={<IssuesPage />} />
+          <Route path="/projects/:projectId/issues/:issueId" element={<IssueDetailPage />} />
+          <Route path="/projects/:projectId/settings" element={<ProjectSettingsPage />} />
+          <Route path="/security" element={<SecurityPage />} />
+        </Route>
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

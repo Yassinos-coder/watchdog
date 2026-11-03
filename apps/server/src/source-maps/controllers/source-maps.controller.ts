@@ -30,7 +30,10 @@ export class SourceMapsController {
   @RateLimit({ limit: 120, ttl: 60_000 })
   @Post(':version/sourcemaps')
   @UseInterceptors(
-    FilesInterceptor('files', MAX_FILES_PER_REQUEST, { limits: { fileSize: MAX_FILE_BYTES } }),
+    FilesInterceptor('files', MAX_FILES_PER_REQUEST, {
+      limits: { fileSize: MAX_FILE_BYTES },
+      preservePath: true,
+    }),
   )
   upload(
     @Param('projectId', ParseUUIDPipe) projectId: string,

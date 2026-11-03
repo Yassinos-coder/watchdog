@@ -29,6 +29,15 @@ export class PasskeyRepository {
     await this.prisma.passkey.create({ data: { ...input, counter: BigInt(input.counter) } });
   }
 
+  async deleteForUser(userId: string, id: string): Promise<boolean> {
+    const result = await this.prisma.passkey.deleteMany({ where: { id, userId } });
+    return result.count === 1;
+  }
+
+  countByUser(userId: string): Promise<number> {
+    return this.prisma.passkey.count({ where: { userId } });
+  }
+
   async recordUse(id: string, counter: number): Promise<void> {
     await this.prisma.passkey.update({
       where: { id },

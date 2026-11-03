@@ -12,6 +12,7 @@ import { EmailOtpService } from './services/email-otp.service';
 import { MfaService } from './services/mfa.service';
 import { PasskeyService } from './services/passkey.service';
 import { RecoveryCodeService } from './services/recovery-code.service';
+import { SecurityService } from './services/security.service';
 import { SessionService } from './services/session.service';
 import { SetupTokenService } from './services/setup-token.service';
 import { TotpService } from './services/totp.service';
@@ -31,6 +32,7 @@ import { TotpService } from './services/totp.service';
     EmailOtpService,
     PasskeyService,
     MfaService,
+    SecurityService,
     AuthService,
   ],
   exports: [SessionService],

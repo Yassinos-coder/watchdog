@@ -190,6 +190,36 @@ describe('Projects, ingest and issues (e2e)', () => {
       });
     });
 
+    it('keeps the newest last-seen and oldest first-seen when events arrive out of order', async () => {
+      const day = 86_400_000;
+      const project = await owner.agent.post('/api/projects').send({ name: 'Ordering' }).expect(201);
+      const frame = [{ filename: 'src/late.ts', function: 'late', lineno: 1, inApp: true }];
+      const late = (daysAgo: number, release: string) =>
+        ingest(
+          {
+            eventId: randomUUID(),
+            timestamp: Date.now() - daysAgo * day,
+            release,
+            exception: { type: 'LateError', value: 'arrived out of order', stacktrace: { frames: frame } },
+          },
+          project.body.keys[0].publicKey,
+          project.body.id,
+        ).expect(202);
+
+      await late(0, '2.0.0');
+      await late(3, '1.0.0');
+      await late(1, '1.5.0');
+
+      const listed = await owner.agent.get(`/api/projects/${project.body.id}/issues`).expect(200);
+      const issue = listed.body.items[0];
+      expect(listed.body.total).toBe(1);
+      expect(issue.eventCount).toBe(3);
+      expect(issue.lastRelease).toBe('2.0.0');
+      expect(issue.firstRelease).toBe('1.0.0');
+      expect(Date.now() - new Date(issue.lastSeen).getTime()).toBeLessThan(day / 2);
+      expect(Date.now() - new Date(issue.firstSeen).getTime()).toBeGreaterThan(2.5 * day);
+    });
+
     it('creates a separate issue for a different error', async () => {
       await send({ message: 'Payment provider timed out', level: 'warning' }).expect(202);
 
@@ -326,10 +356,25 @@ describe('Projects, ingest and issues (e2e)', () => {
       expect(unmapped.payload.exception.frames[0].symbolicated).toBeUndefined();
     });
 
+    it('keeps maps with the same file name in different folders apart', async () => {
+      const response = await request(app.getHttpServer())
+        .post(`/api/projects/${projectId}/releases/3.0.0/sourcemaps`)
+        .set('authorization', `Bearer ${uploadToken}`)
+        .attach('files', Buffer.from(SOURCE_MAP), { filename: 'main.js.map', filepath: 'en/main.js.map' })
+        .attach('files', Buffer.from(SOURCE_MAP), { filename: 'main.js.map', filepath: 'fr/main.js.map' })
+        .expect(201);
+
+      const releases = await owner.agent.get(`/api/projects/${projectId}/releases`).expect(200);
+      const release = releases.body.find((item: { version: string }) => item.version === '3.0.0');
+      expect(response.body.stored).toBe(2);
+      expect(release.sourceMapCount).toBe(2);
+    });
+
     it('lists releases with their map counts', async () => {
       const response = await owner.agent.get(`/api/projects/${projectId}/releases`).expect(200);
 
-      expect(response.body[0]).toMatchObject({ version: '2.0.0', sourceMapCount: 1 });
+      const release = response.body.find((item: { version: string }) => item.version === '2.0.0');
+      expect(release).toMatchObject({ version: '2.0.0', sourceMapCount: 1 });
     });
   });
 });

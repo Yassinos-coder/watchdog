@@ -60,3 +60,18 @@ export interface EnrollmentResult {
   recoveryCodes: string[] | null;
   user: AuthUserView;
 }
+
+export interface PasskeyView {
+  id: string;
+  name: string;
+  deviceType: string;
+  createdAt: Date;
+  lastUsedAt: Date | null;
+}
+
+export interface SecuritySummary {
+  methods: MfaMethod[];
+  passkeys: PasskeyView[];
+  recoveryCodesRemaining: number;
+  emailCodeAvailable: boolean;
+}
