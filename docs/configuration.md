@@ -20,6 +20,7 @@ All settings are environment variables.
 | `CORS_ORIGINS` | none | Extra allowed origins, comma separated |
 | `INGEST_EVENTS_PER_MINUTE` | `6000` | Per-project ingest limit |
 | `DOCS_URL` | GitHub docs | Where in-app help links point |
+| `UPDATE_CHECK` | `true` | Owners and admins see a notice when a newer Watchdog version is published. Set to `false` to stop the server contacting the npm registry |
 
 ## Email
 

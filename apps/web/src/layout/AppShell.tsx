@@ -8,11 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useLogout } from '@/features/auth/hooks/useAuthMutations';
 import { useAuthSession } from '@/features/auth/hooks/useAuthQueries';
+import { useUpdateNotice } from '@/features/updates/hooks/useUpdateNotice';
 import { useProjects } from '@/features/projects/hooks/useProjectQueries';
 import { cn } from '@/lib/utils';
 
 export function AppShell() {
   const [menuOpen, setMenuOpen] = useState(false);
+  useUpdateNotice();
 
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[17rem_minmax(0,1fr)]">

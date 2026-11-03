@@ -20,6 +20,7 @@ import { RetentionModule } from './retention/retention.module';
 import { SourceMapsModule } from './source-maps/source-maps.module';
 import { StaticWebModule } from './static-web/static-web.module';
 import { TeamModule } from './team/team.module';
+import { UpdatesModule } from './updates/updates.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -45,6 +46,7 @@ import { UsersModule } from './users/users.module';
     RetentionModule,
     TeamModule,
     OAuthModule,
+    UpdatesModule,
     AlertsModule,
     HealthModule,
     PublicConfigModule,

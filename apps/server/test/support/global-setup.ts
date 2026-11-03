@@ -26,6 +26,7 @@ export default async function setup(): Promise<() => Promise<void>> {
   process.env.APP_URL = 'http://localhost:3000';
   process.env.REDIS_URL = '';
   process.env.LOG_LEVEL = 'silent';
+  process.env.UPDATE_CHECK = 'false';
   process.env.SHIELD_ENABLED = 'false';
   process.env.INGEST_EVENTS_PER_MINUTE = '600';
 

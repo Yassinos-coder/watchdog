@@ -14,7 +14,7 @@ import { installReplay } from './integrations/replay';
 import { installGlobalHandlers } from './integrations/global-handlers';
 import { BrowserOptions, Uninstall } from './interfaces';
 
-const SDK = { name: 'watchdog.browser', version: '0.5.0' };
+const SDK = { name: 'watchdog.browser', version: '0.5.1' };
 const DEFAULT_IGNORED_ERRORS: (string | RegExp)[] = [
   /^Script error\.?$/,
   'ResizeObserver loop',

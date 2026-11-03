@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 const DEFAULT_PORT = 3000;
 const DEFAULT_API_PREFIX = 'api';
 const DEFAULT_SMTP_PORT = 587;
@@ -16,7 +19,18 @@ const parseDays = (value: string | undefined, fallback: number): number => {
   return Number.isFinite(days) && days >= 0 ? Math.floor(days) : fallback;
 };
 
-const resolvePort =(): number => Number(process.env.PORT) || DEFAULT_PORT;
+const readServerVersion = (): string => {
+  try {
+    const manifest = JSON.parse(readFileSync(join(process.cwd(), 'package.json'), 'utf8')) as {
+      version?: string;
+    };
+    return manifest.version ?? 'unknown';
+  } catch {
+    return 'unknown';
+  }
+};
+
+const resolvePort = (): number => Number(process.env.PORT) || DEFAULT_PORT;
 
 const toOrigin = (value: string): string => {
   const withProtocol = /^https?:\/\//.test(value) ? value : `https://${value}`;
@@ -80,6 +94,10 @@ export default () => {
     },
     ingest: {
       eventsPerMinute: Number(process.env.INGEST_EVENTS_PER_MINUTE) || DEFAULT_EVENTS_PER_MINUTE,
+    },
+    updates: {
+      enabled: process.env.UPDATE_CHECK !== 'false',
+      currentVersion: readServerVersion(),
     },
     oauth: {
       google: {

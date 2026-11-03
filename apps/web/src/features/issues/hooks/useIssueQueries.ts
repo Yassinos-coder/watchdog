@@ -2,6 +2,8 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { issuesService } from '../services/issuesService';
 import type { IssueListParams, StatsRange } from '../types/issue.types';
 
+const LIVE_REFRESH_MS = 15_000;
+
 export const issueKeys = {
   list: (projectId: string, params: IssueListParams) => ['issues', projectId, params] as const,
   lists: (projectId: string) => ['issues', projectId] as const,
@@ -16,6 +18,8 @@ export function useIssues(projectId: string, params: IssueListParams) {
     queryKey: issueKeys.list(projectId, params),
     queryFn: () => issuesService.list(projectId, params),
     placeholderData: keepPreviousData,
+    refetchInterval: LIVE_REFRESH_MS,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -43,6 +47,7 @@ export function useProjectStats(projectId: string, range: StatsRange) {
   return useQuery({
     queryKey: issueKeys.stats(projectId, range),
     queryFn: () => issuesService.getStats(projectId, range),
-    refetchInterval: 30_000,
+    refetchInterval: LIVE_REFRESH_MS,
+    refetchOnWindowFocus: true,
   });
 }
