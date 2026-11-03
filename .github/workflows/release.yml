@@ -75,7 +75,7 @@ jobs:
             type=raw,value=${{ needs.release.outputs.version }}
             type=raw,value=${{ steps.tags.outputs.minor }}
             type=raw,value=latest
-      - uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
