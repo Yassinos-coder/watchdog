@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.3] - 2026-11-03
+
+### Added
+- A landing page for the documentation site, with a deploy button, a feature overview, an honest "what to expect" section on setup and an FAQ, plus search metadata: social preview image, canonical links, structured data and a sitemap
+- A "Watchdog vs Sentry" page comparing what Watchdog covers and what it does not
+
+### Changed
+- The README has a logo, badges, a Railway deploy button and an up-to-date feature list, packages and configuration table
+
 ## [0.5.2] - 2026-11-03
 
 ### Fixed

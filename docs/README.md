@@ -5,6 +5,7 @@
 - [Getting started](getting-started.md): run Watchdog and send your first error
 - [Deploy to Railway](railway.md): one-click hosting
 - [Configuration](configuration.md): every environment variable
+- [Watchdog vs Sentry](sentry-alternative.md): what it covers and what it does not
 
 **SDKs**
 

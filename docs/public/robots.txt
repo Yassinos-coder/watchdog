@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://yassinos-coder.github.io/watchdog/sitemap.xml
