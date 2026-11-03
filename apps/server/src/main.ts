@@ -1,21 +1,26 @@
 import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import helmet from 'helmet';
+import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
+import { configureApp } from './bootstrap/configure-app';
+import { LoggerOptionsFactory } from './logging/factories/logger-options.factory';
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bodyParser: false,
+    logger: WinstonModule.createLogger(LoggerOptionsFactory.fromEnvironment()),
+  });
+  configureApp(app);
+
   const configService = app.get(ConfigService);
+  const port = configService.getOrThrow<number>('port');
+  await app.listen(port, '0.0.0.0');
 
-  app.use(helmet());
-  app.setGlobalPrefix(configService.getOrThrow<string>('apiPrefix'));
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.enableCors({ origin: configService.getOrThrow<string[]>('corsOrigins') });
-  app.enableShutdownHooks();
-
-  await app.listen(configService.getOrThrow<number>('port'), '0.0.0.0');
+  new Logger('Bootstrap').log(
+    `Watchdog listening on ${configService.getOrThrow<string>('appUrl')} (port ${port})`,
+  );
 }
 
 void bootstrap();

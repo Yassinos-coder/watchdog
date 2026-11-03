@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ideas and questions
+    url: https://github.com/Yassinos-coder/watchdog/discussions
+    about: Open-ended ideas, "how do I...?" questions and show-and-tell belong in Discussions.
+  - name: Report a security vulnerability
+    url: https://github.com/Yassinos-coder/watchdog/security/advisories/new
+    about: Please report vulnerabilities privately, never in a public issue.

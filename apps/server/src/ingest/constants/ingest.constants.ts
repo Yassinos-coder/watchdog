@@ -1,0 +1,15 @@
+export const MAX_MESSAGE_LENGTH = 8_000;
+export const MAX_TITLE_LENGTH = 200;
+export const MAX_FRAMES = 100;
+export const MAX_BREADCRUMBS = 100;
+export const MAX_TAGS = 50;
+export const MAX_TAG_LENGTH = 200;
+export const MAX_JSON_FIELD_BYTES = 32_768;
+export const MAX_CONTEXT_LINES = 11;
+export const MAX_CONTEXT_LINE_LENGTH = 400;
+export const MAX_FILENAME_LENGTH = 1_024;
+export const MAX_FUTURE_SKEW_MS = 24 * 60 * 60 * 1000;
+export const CONTEXT_RADIUS = 5;
+export const FINGERPRINT_FRAME_LIMIT = 5;
+export const INGEST_BODY_LIMIT = '1mb';
+export const LEVELS = ['fatal', 'error', 'warning', 'info', 'debug'] as const;

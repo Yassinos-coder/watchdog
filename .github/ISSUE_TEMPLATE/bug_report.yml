@@ -1,0 +1,65 @@
+name: Bug report
+description: Something isn't working as expected
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please do **not** include secrets, DSN keys, upload tokens or personal data.
+        For security vulnerabilities, use [private reporting](../security/advisories/new) instead of a public issue.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what did you see instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Watchdog version or image tag
+      placeholder: "0.1.0 or ghcr.io/yassinos-coder/watchdog:latest"
+    validations:
+      required: true
+  - type: dropdown
+    id: deployment
+    attributes:
+      label: How are you running it?
+      options:
+        - Docker Compose
+        - Railway template
+        - Other hosting provider
+        - Running from source
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen?
+      options:
+        - Server / API
+        - Dashboard
+        - Browser or React SDK
+        - Node SDK
+        - CLI (source map upload)
+        - Docker / deployment
+        - Documentation
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and screenshots
+      description: Server logs, browser console output or screenshots. Redact anything sensitive.
+      render: shell

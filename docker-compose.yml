@@ -33,7 +33,7 @@ services:
 
   watchdog:
     build:
-      context: ..
+      context: .
       dockerfile: docker/Dockerfile
     restart: unless-stopped
     profiles: ['app']
@@ -47,8 +47,15 @@ services:
       REDIS_URL: redis://redis:6379
       PORT: 3000
       APP_URL: ${APP_URL:-http://localhost:3000}
-      WATCHDOG_SECRET_KEY: ${WATCHDOG_SECRET_KEY:-}
+      WATCHDOG_SECRET_KEY: ${WATCHDOG_SECRET_KEY:?Set WATCHDOG_SECRET_KEY in .env (generate one with openssl rand -hex 32)}
       SETUP_TOKEN: ${SETUP_TOKEN:-}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+      SMTP_FROM: ${SMTP_FROM:-}
     ports:
       - '3000:3000'
 

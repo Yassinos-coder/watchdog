@@ -1,0 +1,66 @@
+name: Feature request
+description: Suggest an improvement or a new capability for Watchdog
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping shape Watchdog. A good request describes the **problem** first; the solution comes second.
+        Have a loose idea rather than a concrete request? Start a thread in [Discussions](../discussions/categories/ideas) instead.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: What are you trying to do, and what gets in the way today?
+      placeholder: "When I deploy Watchdog for my team, I can't..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+      description: Describe the behavior you have in mind. Sketches and examples help.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other tools, workarounds or designs, and why they fall short.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Error tracking / issues
+        - Source maps and code frames
+        - Alerts and integrations
+        - Performance and tracing
+        - Session replay
+        - SDKs
+        - Dashboard / UI
+        - Authentication and security
+        - Self-hosting, Docker and deployment templates
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Would you like to implement it?
+      description: A maintainer will confirm the direction first, then you can open a pull request. See CONTRIBUTING.md.
+      options:
+        - "No, I'd rather someone else builds it"
+        - "Yes, I'd like to open a pull request"
+        - "Maybe, with some guidance"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and discussions and found no duplicate
+          required: true
