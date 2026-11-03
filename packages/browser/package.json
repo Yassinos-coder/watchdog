@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/browser",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Watchdog SDK for browsers: global error handlers, breadcrumbs and request context",
   "keywords": [
     "watchdog",

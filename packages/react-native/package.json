@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/react-native",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Watchdog SDK for React Native and Expo: JavaScript crash handling, breadcrumbs, error boundary, tracing and metrics",
   "keywords": [
     "watchdog",
