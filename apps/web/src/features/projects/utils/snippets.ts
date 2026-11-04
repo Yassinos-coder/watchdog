@@ -3,6 +3,8 @@ export interface SetupSnippets {
   browser: string;
   node: string;
   nestjs: string;
+  python: string;
+  reactNative: string;
   sourceMaps: string;
 }
 
@@ -63,6 +65,36 @@ import { WatchdogExceptionFilter } from '@watchdog-sdk/node/nest';
   providers: [{ provide: APP_FILTER, useClass: WatchdogExceptionFilter }],
 })
 export class AppModule {}`,
+      python: `pip install watchdog-sdk   # or: uv add watchdog-sdk
+
+import watchdog_sdk as watchdog
+
+watchdog.init(
+    dsn='${dsn}',
+    release='1.0.0',
+    environment='production',
+)
+
+# Unhandled exceptions and logger.error(...) are reported automatically.
+# Optional: time a unit of work and count things.
+with watchdog.start_transaction('handle_job', op='job'):
+    ...
+
+watchdog.increment('jobs.completed')`,
+      reactNative: `npx expo install @watchdog-sdk/react-native   # or: bun add @watchdog-sdk/react-native
+
+import * as Watchdog from '@watchdog-sdk/react-native';
+
+Watchdog.init({
+  dsn: '${dsn}',
+  release: '1.0.0',
+  environment: __DEV__ ? 'development' : 'production',
+});
+
+// Wrap your app to catch render errors
+<Watchdog.WatchdogErrorBoundary fallback={<Fallback />}>
+  <App />
+</Watchdog.WatchdogErrorBoundary>`,
       sourceMaps: `bun add -d @watchdog-sdk/cli
 
 # after your production build
@@ -79,6 +111,8 @@ bunx @watchdog-sdk/cli sourcemaps upload ./dist --release 1.0.0`,
       javascript: 'browser',
       node: 'node',
       nestjs: 'nestjs',
+      python: 'python',
+      'react-native': 'reactNative',
     };
     return map[platform] ?? 'browser';
   }

@@ -13,6 +13,8 @@ const TABS: { value: keyof SetupSnippets; label: string }[] = [
   { value: 'browser', label: 'Browser' },
   { value: 'node', label: 'Node.js' },
   { value: 'nestjs', label: 'NestJS' },
+  { value: 'python', label: 'Python' },
+  { value: 'reactNative', label: 'React Native' },
   { value: 'sourceMaps', label: 'Source maps' },
 ];
 
