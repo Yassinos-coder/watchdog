@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-11-04
+
+### Added
+- Color-coded durations and failure rates on the Performance page: values turn yellow when slow and red when very slow, in the transactions table, the details of a run and the span waterfall. Each colored value also has an icon and a text label, so color is never the only signal
+- Limits are judged per kind of work (web requests, outgoing HTTP calls, database, cache and UI). Jobs and other long-running work are not colored, because they have no single normal length
+- A "Reading the colors" section in the tracing documentation lists the limits
+
+### Changed
+- A darker amber is used for warning text in light mode so it meets the contrast needed for small text
+
 ## [0.6.1] - 2026-11-03
 
 ### Fixed

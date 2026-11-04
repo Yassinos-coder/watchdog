@@ -2,6 +2,7 @@ export type PerfRange = '1h' | '24h' | '7d' | '30d';
 export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99';
 export type SeriesSource = 'METRIC' | 'TRANSACTIONS';
 export type WidgetDisplay = 'LINE' | 'BAR' | 'NUMBER';
+export type Severity = 'good' | 'warning' | 'critical';
 
 export interface TransactionSummary {
   name: string;
