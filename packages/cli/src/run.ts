@@ -3,7 +3,7 @@ import { MapCollector } from './collect-maps';
 import { Output } from './interfaces';
 import { SourceMapUploader } from './uploader';
 
-const CLI_VERSION = '0.7.1';
+const CLI_VERSION = '0.7.2';
 
 export async function run(
   argv: string[],

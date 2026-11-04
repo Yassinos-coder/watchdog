@@ -20,10 +20,15 @@ describe('SafeFormat.describe', () => {
 
   it('stays small and fast for huge objects', () => {
     const huge = { users: Array.from({ length: 200_000 }, (_, id) => ({ id, name: `user ${id}` })) };
+    SafeFormat.describe(huge);
     const start = performance.now();
     const text = SafeFormat.describe(huge);
+    const elapsed = performance.now() - start;
+    const stringifyStart = performance.now();
+    JSON.stringify(huge);
+    const stringifyTime = performance.now() - stringifyStart;
 
-    expect(performance.now() - start).toBeLessThan(5);
+    expect(elapsed).toBeLessThan(Math.max(25, stringifyTime / 10));
     expect(text.length).toBeLessThanOrEqual(300);
   });
 

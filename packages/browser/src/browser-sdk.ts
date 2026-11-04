@@ -15,7 +15,7 @@ import { installGlobalHandlers } from './integrations/global-handlers';
 import { BrowserOptions, Uninstall } from './interfaces';
 
 const DEFAULT_REPLAY_SAMPLE_RATE = 0.1;
-const SDK = { name: 'watchdog.browser', version: '0.7.1' };
+const SDK = { name: 'watchdog.browser', version: '0.7.2' };
 const DEFAULT_IGNORED_ERRORS: (string | RegExp)[] = [
   /^Script error\.?$/,
   'ResizeObserver loop',
