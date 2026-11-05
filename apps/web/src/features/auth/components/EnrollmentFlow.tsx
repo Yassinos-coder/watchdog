@@ -10,8 +10,9 @@ import {
   useRegisterPasskey,
   useSendEmailCode,
 } from '../hooks/useAuthMutations';
-import { useAuthStatus } from '../hooks/useAuthQueries';
+import { useAuthStatus, useSecuritySummary } from '../hooks/useAuthQueries';
 import type { EnrollmentResult, MfaMethod } from '../types/auth.types';
+import { AppUrlMismatchBanner } from './AppUrlMismatchBanner';
 import { CodeField } from './CodeField';
 import { RecoveryCodesStep } from './RecoveryCodesStep';
 
@@ -184,10 +185,12 @@ function TotpStep({ onEnrolled }: { onEnrolled: (result: EnrollmentResult) => vo
 
 function PasskeyStep({ onEnrolled }: { onEnrolled: (result: EnrollmentResult) => void }) {
   const register = useRegisterPasskey();
+  const { data: summary } = useSecuritySummary();
   const [name, setName] = useState('');
 
   return (
     <div className="grid gap-5">
+      <AppUrlMismatchBanner mismatch={summary?.appUrlMismatch ?? null} />
       <div>
         <h2 className="text-lg font-semibold">Add a passkey</h2>
         <p className="mt-1 text-sm text-muted-foreground">

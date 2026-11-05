@@ -73,9 +73,10 @@ export class MfaService {
 
   createPasskeyRegistrationOptions(
     context: AuthContext,
+    requestOrigin: string,
   ): Promise<PublicKeyCredentialCreationOptionsJSON> {
     this.assertFull(context);
-    return this.passkeyService.createRegistrationOptions(context);
+    return this.passkeyService.createRegistrationOptions(context, requestOrigin);
   }
 
   async verifyPasskeyRegistration(
@@ -90,9 +91,10 @@ export class MfaService {
 
   createPasskeyAuthenticationOptions(
     context: AuthContext,
+    requestOrigin: string,
   ): Promise<PublicKeyCredentialRequestOptionsJSON> {
     this.assertPending(context);
-    return this.passkeyService.createAuthenticationOptions(context);
+    return this.passkeyService.createAuthenticationOptions(context, requestOrigin);
   }
 
   async verifyPasskeyAuthentication(

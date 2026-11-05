@@ -15,6 +15,7 @@ import { UserRepository } from '../../users/repositories/user.repository';
 import { AuthContext } from '../interfaces/auth.interfaces';
 import { PasskeyRepository } from '../repositories/passkey.repository';
 import { SessionRepository } from '../repositories/session.repository';
+import { AppHostValidator } from '../validators/app-host.validator';
 
 const DEFAULT_PASSKEY_NAME = 'Passkey';
 
@@ -27,10 +28,11 @@ export class PasskeyService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async createRegistrationOptions({
-    session,
-    user,
-  }: AuthContext): Promise<PublicKeyCredentialCreationOptionsJSON> {
+  async createRegistrationOptions(
+    { session, user }: AuthContext,
+    requestOrigin: string,
+  ): Promise<PublicKeyCredentialCreationOptionsJSON> {
+    this.assertOriginMatchesRpId(requestOrigin);
     const existing = await this.passkeyRepository.findByUser(user.id);
     const options = await generateRegistrationOptions({
       rpName: this.configService.getOrThrow<string>('webauthn.rpName'),
@@ -82,10 +84,11 @@ export class PasskeyService {
     }
   }
 
-  async createAuthenticationOptions({
-    session,
-    user,
-  }: AuthContext): Promise<PublicKeyCredentialRequestOptionsJSON> {
+  async createAuthenticationOptions(
+    { session, user }: AuthContext,
+    requestOrigin: string,
+  ): Promise<PublicKeyCredentialRequestOptionsJSON> {
+    this.assertOriginMatchesRpId(requestOrigin);
     const passkeys = await this.passkeyRepository.findByUser(user.id);
     if (passkeys.length === 0) {
       throw new BadRequestException('No passkeys registered');
@@ -130,5 +133,9 @@ export class PasskeyService {
     }
     await this.passkeyRepository.recordUse(passkey.id, verification.authenticationInfo.newCounter);
     return true;
+  }
+
+  private assertOriginMatchesRpId(requestOrigin: string): void {
+    AppHostValidator.assertMatches(requestOrigin, this.configService.getOrThrow<string>('appUrl'));
   }
 }

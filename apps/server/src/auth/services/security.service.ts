@@ -1,21 +1,27 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MailService } from '../../mail/mail.service';
 import { UserRepository } from '../../users/repositories/user.repository';
-import { AuthContext, SecuritySummary } from '../interfaces/auth.interfaces';
+import { AppUrlMismatch, AuthContext, SecuritySummary } from '../interfaces/auth.interfaces';
 import { AuthUserMapper } from '../mappers/auth-user.mapper';
 import { PasskeyRepository } from '../repositories/passkey.repository';
 import { RecoveryCodeRepository } from '../repositories/recovery-code.repository';
+import { AppHostValidator } from '../validators/app-host.validator';
 
 @Injectable()
 export class SecurityService {
+  private readonly logger = new Logger(SecurityService.name);
+  private readonly reportedHosts = new Set<string>();
+
   constructor(
+    private readonly configService: ConfigService,
     private readonly userRepository: UserRepository,
     private readonly passkeyRepository: PasskeyRepository,
     private readonly recoveryCodeRepository: RecoveryCodeRepository,
     private readonly mailService: MailService,
   ) {}
 
-  async getSummary({ user }: AuthContext): Promise<SecuritySummary> {
+  async getSummary({ user }: AuthContext, requestOrigin: string): Promise<SecuritySummary> {
     const [passkeys, recoveryCodesRemaining] = await Promise.all([
       this.passkeyRepository.findByUser(user.id),
       this.recoveryCodeRepository.countUnused(user.id),
@@ -31,6 +37,7 @@ export class SecurityService {
       })),
       recoveryCodesRemaining,
       emailCodeAvailable: await this.mailService.isConfigured(),
+      appUrlMismatch: this.detectAppUrlMismatch(requestOrigin),
     };
   }
 
@@ -62,6 +69,18 @@ export class SecurityService {
       await this.userRepository.setMfaMethods(user.id, methods);
     }
     await this.clearRecoveryCodesIfUnprotected(user.id, methods.length);
+  }
+
+  private detectAppUrlMismatch(requestOrigin: string): AppUrlMismatch | null {
+    const mismatch = AppHostValidator.findMismatch(
+      requestOrigin,
+      this.configService.getOrThrow<string>('appUrl'),
+    );
+    if (mismatch && !this.reportedHosts.has(mismatch.host)) {
+      this.reportedHosts.add(mismatch.host);
+      this.logger.warn(AppHostValidator.describe(mismatch));
+    }
+    return mismatch;
   }
 
   private assertCanDisable(user: AuthContext['user'], method: string): void {

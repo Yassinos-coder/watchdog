@@ -69,9 +69,16 @@ export interface PasskeyView {
   lastUsedAt: Date | null;
 }
 
+export interface AppUrlMismatch {
+  host: string;
+  configuredUrl: string;
+  expectedUrl: string;
+}
+
 export interface SecuritySummary {
   methods: MfaMethod[];
   passkeys: PasskeyView[];
   recoveryCodesRemaining: number;
   emailCodeAvailable: boolean;
+  appUrlMismatch: AppUrlMismatch | null;
 }

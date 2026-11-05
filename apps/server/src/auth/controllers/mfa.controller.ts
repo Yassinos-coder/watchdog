@@ -19,6 +19,7 @@ import type {
 } from '@simplewebauthn/server';
 import { AllowMfaSetup, AllowPendingMfa } from '../decorators/access.decorators';
 import { CurrentAuth } from '../decorators/current-auth.decorator';
+import { RequestOrigin } from '../decorators/request-origin.decorator';
 import { ConfirmCodeDto, PasskeyResponseDto, VerifyMfaDto } from '../dto/auth.dto';
 import {
   AuthContext,
@@ -44,8 +45,11 @@ export class MfaController {
 
   @AllowMfaSetup()
   @Get('summary')
-  getSummary(@CurrentAuth() auth: AuthContext): Promise<SecuritySummary> {
-    return this.securityService.getSummary(auth);
+  getSummary(
+    @CurrentAuth() auth: AuthContext,
+    @RequestOrigin() requestOrigin: string,
+  ): Promise<SecuritySummary> {
+    return this.securityService.getSummary(auth, requestOrigin);
   }
 
   @AllowMfaSetup()
@@ -120,8 +124,9 @@ export class MfaController {
   @Post('passkey/register/options')
   passkeyRegistrationOptions(
     @CurrentAuth() auth: AuthContext,
+    @RequestOrigin() requestOrigin: string,
   ): Promise<PublicKeyCredentialCreationOptionsJSON> {
-    return this.mfaService.createPasskeyRegistrationOptions(auth);
+    return this.mfaService.createPasskeyRegistrationOptions(auth, requestOrigin);
   }
 
   @AllowMfaSetup()
@@ -143,8 +148,9 @@ export class MfaController {
   @Post('passkey/authenticate/options')
   passkeyAuthenticationOptions(
     @CurrentAuth() auth: AuthContext,
+    @RequestOrigin() requestOrigin: string,
   ): Promise<PublicKeyCredentialRequestOptionsJSON> {
-    return this.mfaService.createPasskeyAuthenticationOptions(auth);
+    return this.mfaService.createPasskeyAuthenticationOptions(auth, requestOrigin);
   }
 
   @AllowPendingMfa()

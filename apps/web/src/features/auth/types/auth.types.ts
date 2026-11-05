@@ -40,11 +40,18 @@ export interface PasskeySummary {
   lastUsedAt: string | null;
 }
 
+export interface AppUrlMismatch {
+  host: string;
+  configuredUrl: string;
+  expectedUrl: string;
+}
+
 export interface SecuritySummary {
   methods: MfaMethod[];
   passkeys: PasskeySummary[];
   recoveryCodesRemaining: number;
   emailCodeAvailable: boolean;
+  appUrlMismatch: AppUrlMismatch | null;
 }
 
 export interface SetupInput {

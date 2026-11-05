@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-11-05
+
+### Added
+- A warning appears on the Security page and in the passkey dialog when Watchdog is open on a different address than `APP_URL`, naming both and the value to set. The server also logs it once per address, and logs a notice at startup when `APP_URL` is not set and was taken from the hosting provider
+- Adding or using a passkey on a different address than `APP_URL` now fails with a clear message that names both addresses and the fix, instead of the browser "RP ID is invalid" error
+- The "Access temporarily blocked" screen now says how long a temporarily blocked network address stays blocked, and how a self-hosting owner can lift it sooner
+- `SHIELD_WHITELIST` lists trusted IPs or CIDR ranges that skip rate limits and temporary IP blocks
+
+### Documentation
+- "Moving to a custom domain" in the Railway guide: set `APP_URL` before registering passkeys, what happens to old passkeys, keeping recovery codes, updating the DSN host in every app, and removing the old domain
+- "Blocked by the shield" in the Railway guide: how automatic IP blocks work and how to recover (wait, restart, or the shield dashboard)
+
 ## [0.7.2] - 2026-11-04
 
 ### Fixed

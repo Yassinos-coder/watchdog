@@ -18,9 +18,14 @@ async function bootstrap(): Promise<void> {
   const port = configService.getOrThrow<number>('port');
   await app.listen(port, '0.0.0.0');
 
-  new Logger('Bootstrap').log(
-    `Watchdog listening on ${configService.getOrThrow<string>('appUrl')} (port ${port})`,
-  );
+  const logger = new Logger('Bootstrap');
+  const appUrl = configService.getOrThrow<string>('appUrl');
+  logger.log(`Watchdog listening on ${appUrl} (port ${port})`);
+  if (!configService.getOrThrow<boolean>('appUrlExplicit') && !appUrl.startsWith('http://localhost')) {
+    logger.warn(
+      `APP_URL is not set, so ${appUrl} was taken from the hosting provider. If you move Watchdog to another domain, set APP_URL to the new address before adding passkeys.`,
+    );
+  }
 }
 
 void bootstrap();

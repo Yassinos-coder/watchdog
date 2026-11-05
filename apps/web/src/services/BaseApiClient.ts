@@ -1,4 +1,9 @@
+import { IpBanMessage } from '@/services/ipBanMessage';
+
 const API_BASE = `${import.meta.env.VITE_API_URL ?? ''}/api`;
+
+export const IP_BANNED_CODE = 'IP_BANNED';
+const AUTO_BAN_LAYER = 'auto-ban';
 
 export class ApiError extends Error {
   readonly status: number;
@@ -15,6 +20,8 @@ export class ApiError extends Error {
 interface ErrorBody {
   message?: string | string[];
   code?: string;
+  layer?: string;
+  retryAfter?: number;
 }
 
 export class BaseApiClient {
@@ -55,6 +62,9 @@ export class BaseApiClient {
       return undefined as T;
     }
     const data = (await response.json().catch(() => null)) as (ErrorBody & T) | null;
+    if (!response.ok && data?.layer === AUTO_BAN_LAYER) {
+      throw new ApiError(response.status, IpBanMessage.describe(data.retryAfter), IP_BANNED_CODE);
+    }
     if (!response.ok) {
       const message = Array.isArray(data?.message) ? data.message.join('. ') : data?.message;
       throw new ApiError(response.status, message ?? 'Something went wrong', data?.code);

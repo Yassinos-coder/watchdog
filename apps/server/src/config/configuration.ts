@@ -80,6 +80,7 @@ export default () => {
     port: resolvePort(),
     apiPrefix: process.env.API_PREFIX || DEFAULT_API_PREFIX,
     appUrl,
+    appUrlExplicit: Boolean(process.env.APP_URL),
     corsOrigins,
     webDistPath: process.env.WEB_DIST_PATH || undefined,
     database: {

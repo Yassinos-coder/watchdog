@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Format } from '@/lib/format';
+import { AppUrlMismatchBanner } from '../components/AppUrlMismatchBanner';
 import { EnrollmentFlow } from '../components/EnrollmentFlow';
 import { RecoveryCodesStep } from '../components/RecoveryCodesStep';
 import {
@@ -55,6 +56,7 @@ export function SecurityPage() {
       />
 
       <div className="grid max-w-3xl grid-cols-1 gap-10 [&>*]:min-w-0">
+        <AppUrlMismatchBanner mismatch={summary.appUrlMismatch} />
         <section aria-labelledby="methods-heading" className="grid grid-cols-1 gap-3">
           <h2 id="methods-heading" className="text-lg font-semibold">
             Two-step verification
