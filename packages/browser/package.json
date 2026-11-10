@@ -60,15 +60,15 @@
     "@watchdog-sdk/core": "workspace:*"
   },
   "devDependencies": {
-    "@rrweb/record": "^2.2.0",
+    "@rrweb/record": "^2.2.1",
     "jsdom": "^30.1.3",
-    "rimraf": "^6.1.3",
+    "rimraf": "^6.1.4",
     "tsup": "^9.0.0",
     "typescript": "^6.0.3",
     "vitest": "^5.1.0"
   },
   "peerDependencies": {
-    "@rrweb/record": "^2.2.0"
+    "@rrweb/record": "^2.2.1"
   },
   "peerDependenciesMeta": {
     "@rrweb/record": {
