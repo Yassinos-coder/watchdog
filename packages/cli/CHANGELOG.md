@@ -1,5 +1,9 @@
 # @watchdog-sdk/cli
 
+## 0.8.1
+
+No changes in this release.
+
 ## 0.4.4
 
 No changes in this release.

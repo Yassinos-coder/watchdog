@@ -1,5 +1,11 @@
 # @watchdog-sdk/react
 
+## 0.8.1
+
+### Patch Changes
+
+- @watchdog-sdk/browser@0.8.1
+
 ## 0.4.4
 
 ### Patch Changes

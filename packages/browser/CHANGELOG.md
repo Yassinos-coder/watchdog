@@ -1,5 +1,12 @@
 # @watchdog-sdk/browser
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @watchdog-sdk/core@0.8.1
+
 ## 0.4.4
 
 ### Patch Changes

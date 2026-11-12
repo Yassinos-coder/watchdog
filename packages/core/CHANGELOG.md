@@ -1,5 +1,11 @@
 # @watchdog-sdk/core
 
+## 0.8.1
+
+### Patch Changes
+
+- Updated dependencies: jsdom 31, 22 minor and patch updates, and newer versions of the GitHub Actions used by the build, docs and release workflows
+
 ## 0.4.4
 
 ### Patch Changes
