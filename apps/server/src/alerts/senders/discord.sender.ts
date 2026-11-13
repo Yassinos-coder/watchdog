@@ -12,6 +12,9 @@ const COLORS: Record<string, number> = {
 const MAX_TITLE = 250;
 const MAX_FIELD = 1000;
 
+const NOTICE_COLORS: Record<string, number> = { good: 0x4cc38a, bad: 0xf05a5a };
+const MAX_DESCRIPTION = 4000;
+
 @Injectable()
 export class DiscordSender implements ChannelSender {
   readonly type = 'DISCORD' as const;
@@ -23,6 +26,19 @@ export class DiscordSender implements ChannelSender {
   }
 
   payload(message: AlertMessage): Record<string, unknown> {
+    if (message.notice) {
+      return {
+        allowed_mentions: { parse: [] },
+        embeds: [
+          {
+            title: message.reason.slice(0, MAX_TITLE),
+            url: message.issueUrl,
+            description: message.notice.lines.join('\n').slice(0, MAX_DESCRIPTION),
+            color: NOTICE_COLORS[message.notice.tone] ?? COLORS.info,
+          },
+        ],
+      };
+    }
     const fields = [
       { name: 'Project', value: message.projectName, inline: true },
       ...(message.metric ? [] : [{ name: 'Level', value: message.level, inline: true }]),

@@ -81,6 +81,7 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/getting-started' },
       { text: 'Sentry alternative', link: '/sentry-alternative' },
+      { text: 'Changelog', link: '/changelog' },
       { text: 'GitHub', link: 'https://github.com/Yassinos-coder/watchdog' },
     ],
     sidebar: [
@@ -91,6 +92,7 @@ export default defineConfig({
           { text: 'Deploy to Railway', link: '/railway' },
           { text: 'Configuration', link: '/configuration' },
           { text: 'Watchdog vs Sentry', link: '/sentry-alternative' },
+          { text: 'Changelog', link: '/changelog' },
         ],
       },
       {

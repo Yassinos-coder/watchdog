@@ -14,6 +14,9 @@ export class EmailSender implements ChannelSender {
   }
 
   body(message: AlertMessage): string {
+    if (message.notice) {
+      return [message.reason, '', ...message.notice.lines, '', `Open Watchdog: ${message.issueUrl}`].join('\n');
+    }
     return [
       message.reason,
       '',

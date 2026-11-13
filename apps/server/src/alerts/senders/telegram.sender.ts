@@ -20,6 +20,9 @@ export class TelegramSender implements ChannelSender {
   }
 
   text(message: AlertMessage): string {
+    if (message.notice) {
+      return [`<b>${this.escape(message.reason)}</b>`, ...message.notice.lines.map((line) => this.escape(line))].join('\n');
+    }
     const details = [message.projectName, message.metric ? null : message.level, message.environment, message.release]
       .filter(Boolean)
       .map((part) => this.escape(String(part)))

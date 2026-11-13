@@ -13,6 +13,10 @@ export class SlackSender implements ChannelSender {
   }
 
   payload(message: AlertMessage): Record<string, unknown> {
+    if (message.notice) {
+      const text = [`*${this.escape(message.reason)}*`, ...message.notice.lines.map((line) => this.escape(line))].join('\n');
+      return { text: message.reason, blocks: [{ type: 'section', text: { type: 'mrkdwn', text } }] };
+    }
     const details = [
       message.projectName,
       message.metric ? null : message.level,

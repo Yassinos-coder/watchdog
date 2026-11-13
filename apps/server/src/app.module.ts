@@ -11,6 +11,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { IngestModule } from './ingest/ingest.module';
 import { IssuesModule } from './issues/issues.module';
+import { LifecycleModule } from './lifecycle/lifecycle.module';
 import { MailModule } from './mail/mail.module';
 import { OAuthModule } from './oauth/oauth.module';
 import { PerformanceModule } from './performance/performance.module';
@@ -49,6 +50,7 @@ import { UsersModule } from './users/users.module';
     OAuthModule,
     UpdatesModule,
     AlertsModule,
+    LifecycleModule,
     HealthModule,
     PublicConfigModule,
     StaticWebModule.register(),

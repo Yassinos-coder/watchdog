@@ -8,6 +8,6 @@ import { SmtpSettingsService } from './services/smtp-settings.service';
 @Module({
   controllers: [SmtpSettingsController],
   providers: [InstanceSettingRepository, SmtpSettingsService, MailService],
-  exports: [MailService, SmtpSettingsService],
+  exports: [MailService, SmtpSettingsService, InstanceSettingRepository],
 })
 export class MailModule {}

@@ -31,13 +31,13 @@ features:
     details: Upload source maps and see your original file, line and the code around every frame instead of minified bundles.
   - icon: ⚡
     title: Performance tracing
-    details: Transactions, spans, custom metrics and dashboards show which endpoints are slow and where the time goes, with p50 and p95.
+    details: Transactions, spans, custom metrics and dashboards show which endpoints are slow and where the time goes, with percentiles, rates and charts split by tag. Hourly rollups keep long ranges fast.
   - icon: 🎬
     title: Session replay
     details: Watch what users did before an error, with inputs masked by default and the replay linked to the issue it caused.
   - icon: 🔔
     title: Alerts where you work
-    details: Get notified in Slack, Discord, Telegram or email when a new issue appears, a fixed one comes back, or errors spike.
+    details: Get notified in Slack, Discord, Telegram or email when a new issue appears, a fixed one comes back, errors spike, or a metric crosses a threshold. Watchdog also tells you when it restarts and which apps are sending data again.
   - icon: 📱
     title: SDKs for your stack
     details: Browser, React, Node.js and NestJS, Python, and React Native and Expo. All open source and published on npm and PyPI.

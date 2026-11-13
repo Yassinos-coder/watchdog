@@ -55,6 +55,16 @@ To recover:
 
 To tune it, set `SHIELD_AUTOBAN_THRESHOLD`, `SHIELD_AUTOBAN_WINDOW` and `SHIELD_AUTOBAN_DURATION` (milliseconds), or list trusted addresses in `SHIELD_WHITELIST` (comma-separated IPs or CIDR ranges, for example `203.0.113.7,198.51.100.0/24`). Whitelisted addresses skip every check, so only list addresses you control.
 
+## Telling your channels about restarts
+
+Watchdog sends a message to your alert channels when it is about to stop and again when it is back. Railway only waits 0 seconds after asking a service to stop by default, so the template sets this variable on the Watchdog service. If you deployed another way, add it yourself or the first message may not leave in time:
+
+```
+RAILWAY_DEPLOYMENT_DRAINING_SECONDS=10
+```
+
+See [Restart notices](alerts/overview.md#restart-notices).
+
 ## Keeping the database small
 
 Replays and performance data grow fastest. Lower [`RETENTION_REPLAY_DAYS` and `RETENTION_PERFORMANCE_DAYS`](retention.md) if storage becomes a concern.

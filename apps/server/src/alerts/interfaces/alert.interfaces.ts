@@ -42,8 +42,13 @@ export interface MetricAlertDetail {
   windowMins: number;
 }
 
+export interface NoticeDetail {
+  tone: string;
+  lines: string[];
+}
+
 export interface AlertMessage {
-  trigger: AlertTrigger;
+  trigger: AlertTrigger | 'SYSTEM';
   reason: string;
   title: string;
   culprit: string | null;
@@ -54,6 +59,7 @@ export interface AlertMessage {
   eventCount: number;
   issueUrl: string;
   metric?: MetricAlertDetail;
+  notice?: NoticeDetail;
 }
 
 export interface ChannelSender {

@@ -45,5 +45,6 @@ import { HttpPoster } from './services/http-poster.service';
     MetricAlertService,
     IssueSignalListener,
   ],
+  exports: [AlertChannelRepository, AlertChannelsService],
 })
 export class AlertsModule {}
