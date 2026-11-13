@@ -103,13 +103,14 @@ enum IssueStatus {
 }
 
 model Project {
-  id              String   @id @default(uuid())
-  name            String
-  slug            String   @unique
-  platform        String   @default("javascript")
-  uploadTokenHash String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String   @id @default(uuid())
+  name             String
+  slug             String   @unique
+  platform         String   @default("javascript")
+  uploadTokenHash  String?
+  dashboardsSeeded Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   keys          ProjectKey[]
   issues        Issue[]
@@ -319,6 +320,7 @@ enum MetricType {
 enum WidgetSource {
   METRIC
   TRANSACTIONS
+  ERRORS
 }
 
 enum WidgetAggregation {

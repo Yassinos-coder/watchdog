@@ -2,7 +2,7 @@ import type { MetricType } from '../../generated/prisma/enums';
 
 export type RangeKey = '1h' | '24h' | '7d' | '30d' | '90d';
 export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99' | 'RATE';
-export type SeriesSource = 'METRIC' | 'TRANSACTIONS';
+export type SeriesSource = 'METRIC' | 'TRANSACTIONS' | 'ERRORS';
 export type WidgetDisplayKind = 'LINE' | 'BAR' | 'NUMBER' | 'TABLE';
 
 export interface SpanInput {

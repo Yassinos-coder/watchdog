@@ -1,4 +1,4 @@
-import type { Aggregation, Series, SeriesPoint, Span } from '../types/performance.types';
+import type { Aggregation, MockShape, Series, SeriesPoint, Span } from '../types/performance.types';
 
 const SECOND_MS = 1_000;
 const MINUTE_MS = 60 * SECOND_MS;
@@ -30,6 +30,21 @@ export class PerformanceUtils {
 
   static number(value: number, maximumFractionDigits: number): string {
     return new Intl.NumberFormat('en', { maximumFractionDigits }).format(value);
+  }
+
+  static mockSeries(shape: MockShape, count = 24): number[] {
+    return Array.from({ length: count }, (_, index) => {
+      const progress = index / (count - 1);
+      const wave = Math.sin(index * 0.7) * 0.25 + Math.sin(index * 1.9) * 0.1;
+      const spike = index % 7 === 3 ? 0.9 : 0.1;
+      const levels: Record<MockShape, number> = {
+        wave: 0.55 + wave,
+        steady: 0.5 + wave * 0.3,
+        spiky: spike + Math.abs(wave) * 0.3,
+        rising: 0.2 + progress * 0.6 + wave * 0.2,
+      };
+      return Math.round(Math.max(levels[shape], 0.03) * 100);
+    });
   }
 
   static toChartData(series: Series): {

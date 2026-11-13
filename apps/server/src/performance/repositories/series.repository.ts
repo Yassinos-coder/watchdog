@@ -22,6 +22,8 @@ import type {
 interface Dataset {
   table: Prisma.Sql;
   time: Prisma.Sql;
+  named?: boolean;
+  tagged?: boolean;
   aggregate: (aggregation: Aggregation, seconds: number) => Prisma.Sql;
 }
 
@@ -95,6 +97,14 @@ const DATASETS = {
     time: Prisma.raw('"timestamp"'),
     aggregate: rawAggregate('"durationMs"', (seconds) => Prisma.sql`COUNT(*) / ${seconds}::float8`),
   },
+  ERRORS: {
+    table: Prisma.raw('"events"'),
+    time: Prisma.raw('"timestamp"'),
+    named: false,
+    tagged: false,
+    aggregate: (aggregation: Aggregation, seconds: number): Prisma.Sql =>
+      aggregation === 'RATE' ? Prisma.sql`COUNT(*) / ${seconds}::float8` : Prisma.sql`COUNT(*)`,
+  },
   ROLLUP: {
     table: Prisma.raw('"metric_rollups"'),
     time: Prisma.raw('"bucket"'),
@@ -146,6 +156,9 @@ export class SeriesRepository {
   }
 
   async tagKeys(projectId: string, source: SeriesSource, name?: string, now = Date.now()): Promise<TagKeyView[]> {
+    if (source === 'ERRORS') {
+      return [];
+    }
     const { table } = DATASETS[source];
     const since = new Date(now - TAG_KEY_LOOKBACK_MS);
     const nameFilter = name ? Prisma.sql`AND "name" = ${name}` : Prisma.empty;
@@ -191,13 +204,13 @@ export class SeriesRepository {
   private filters(query: SeriesQuery, dataset: Dataset): Prisma.Sql {
     const from = dataset === DATASETS.ROLLUP ? new Date(Math.floor(query.from.getTime() / ROLLUP_HOUR_MS) * ROLLUP_HOUR_MS) : query.from;
     const clauses = [Prisma.sql`"projectId" = ${query.projectId}`, Prisma.sql`${dataset.time} >= ${from}`];
-    if (query.name) {
+    if (query.name && dataset.named !== false) {
       clauses.push(Prisma.sql`"name" = ${query.name}`);
     }
     if (query.environment) {
       clauses.push(Prisma.sql`"environment" = ${query.environment}`);
     }
-    if (query.tag) {
+    if (query.tag && dataset.tagged !== false) {
       clauses.push(Prisma.sql`"tags" ->> ${query.tag.key}::text = ${query.tag.value}::text`);
     }
     return Prisma.join(clauses, ' AND ');

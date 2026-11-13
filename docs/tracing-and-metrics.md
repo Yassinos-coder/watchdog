@@ -46,9 +46,12 @@ Metric names start with a letter and may contain letters, digits, `_`, `.`, `-` 
 
 ## Dashboards
 
-Open **Dashboards** in a project to build widgets from a metric or from transactions.
+Open **Dashboards** in a project. Every project starts with an **Overview** dashboard showing errors, requests, response time (p95) and average response time, so there is something to look at before you build anything. It is a normal dashboard: add widgets to it, or create your own and delete Overview when you do not need it. Overview is created once and does not come back after you delete it.
+
+**Add widget** opens a gallery of cards. Each card previews the chart with your own data when you have it, and with example data when you do not yet. Pick a card, adjust it if you like, and add it. You can build widgets from a metric, from transactions, or from errors.
 
 - **Aggregation**: average, sum, min, max, count, p50, p95, p99, or **rate per second**. For metrics the rate is the sum divided by the time covered, which suits counters such as `calls.started`. For transactions it is throughput, the number of transactions per second.
+- **Errors** can be counted or shown as a rate. They cannot be split or filtered by tag.
 - **Display**: line chart, bar chart, single number, or a table.
 - **Split by tag**: draw one line, stacked bar or table row per value of a tag, for example calls per minute split by `tier` or `language`. The eight largest values are shown, and metrics without that tag appear as `(none)`.
 - **Only where tag**: limit the widget to metrics or transactions whose tag has one value, for example `tier=pro`.

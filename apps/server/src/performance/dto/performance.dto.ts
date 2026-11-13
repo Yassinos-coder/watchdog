@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsIn, IsInt, IsOptional, IsString, Max, MaxLength, Min, ValidateIf } from 'class-validator';
-import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, RANGE_KEYS } from '../constants/performance.constants';
+import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, RANGE_KEYS, SERIES_SOURCES } from '../constants/performance.constants';
 import type { Aggregation, RangeKey, SeriesSource } from '../interfaces/performance.interfaces';
 
 export class RangeQueryDto {
@@ -16,7 +16,7 @@ export class RangeQueryDto {
 
 export class SeriesQueryDto extends RangeQueryDto {
   @IsOptional()
-  @IsIn(['METRIC', 'TRANSACTIONS'])
+  @IsIn(SERIES_SOURCES)
   source?: SeriesSource;
 
   @IsOptional()
@@ -46,7 +46,7 @@ export class SeriesQueryDto extends RangeQueryDto {
 
 export class TagKeysQueryDto {
   @IsOptional()
-  @IsIn(['METRIC', 'TRANSACTIONS'])
+  @IsIn(SERIES_SOURCES)
   source?: SeriesSource;
 
   @IsOptional()

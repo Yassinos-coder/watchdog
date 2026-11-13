@@ -20,6 +20,10 @@ export const AGGREGATION_OPTIONS: { value: Aggregation; label: string }[] = [
   { value: 'RATE', label: 'Rate per second' },
 ];
 
+export const ERROR_AGGREGATION_OPTIONS = AGGREGATION_OPTIONS.filter(
+  (option) => option.value === 'COUNT' || option.value === 'RATE',
+);
+
 export const DISPLAY_OPTIONS: { value: WidgetDisplay; label: string }[] = [
   { value: 'LINE', label: 'Line chart' },
   { value: 'BAR', label: 'Bar chart' },

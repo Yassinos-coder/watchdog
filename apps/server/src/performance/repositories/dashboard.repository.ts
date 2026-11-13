@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import type { Dashboard, DashboardWidget } from '../../generated/prisma/client';
+import { DEFAULT_DASHBOARD_NAME, DEFAULT_WIDGETS } from '../constants/default-dashboard.constants';
 import type { WidgetInput } from '../dto/dashboard.dto';
 
 export type DashboardWithWidgets = Dashboard & { widgets: DashboardWidget[] };
@@ -21,6 +22,24 @@ export class DashboardRepository {
     return this.prisma.dashboard.findUnique({
       where: { id: dashboardId },
       include: { widgets: { orderBy: { position: 'asc' } } },
+    });
+  }
+
+  async claimDefault(projectId: string): Promise<boolean> {
+    const result = await this.prisma.project.updateMany({
+      where: { id: projectId, dashboardsSeeded: false },
+      data: { dashboardsSeeded: true },
+    });
+    return result.count === 1;
+  }
+
+  async createDefault(projectId: string): Promise<void> {
+    await this.prisma.dashboard.create({
+      data: {
+        projectId,
+        name: DEFAULT_DASHBOARD_NAME,
+        widgets: { create: DEFAULT_WIDGETS.map((widget, position) => ({ ...widget, position })) },
+      },
     });
   }
 

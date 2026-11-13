@@ -1,5 +1,5 @@
 import { IsIn, IsOptional, IsString, MaxLength, MinLength, ValidateIf } from 'class-validator';
-import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, WIDGET_DISPLAYS } from '../constants/performance.constants';
+import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, SERIES_SOURCES, WIDGET_DISPLAYS } from '../constants/performance.constants';
 import type { Aggregation, SeriesSource, WidgetDisplayKind } from '../interfaces/performance.interfaces';
 
 export class CreateDashboardDto {
@@ -15,7 +15,7 @@ export class WidgetInput {
   @MaxLength(80)
   title!: string;
 
-  @IsIn(['METRIC', 'TRANSACTIONS'])
+  @IsIn(SERIES_SOURCES)
   source!: SeriesSource;
 
   @ValidateIf((input: WidgetInput) => input.source === 'METRIC')

@@ -8,6 +8,7 @@ import {
 } from '../constants/performance.constants';
 import { CreateDashboardDto, WidgetInput } from '../dto/dashboard.dto';
 import type { DashboardView, WidgetView } from '../interfaces/performance.interfaces';
+import { SeriesSourceValidator } from '../validators/series-source.validator';
 import { PerformanceMapper } from '../mappers/performance.mapper';
 import { DashboardRepository } from '../repositories/dashboard.repository';
 
@@ -20,6 +21,9 @@ export class DashboardsService {
 
   async list(projectId: string): Promise<DashboardView[]> {
     await this.requireProject(projectId);
+    if (await this.dashboardRepository.claimDefault(projectId)) {
+      await this.dashboardRepository.createDefault(projectId);
+    }
     const dashboards = await this.dashboardRepository.list(projectId);
     return dashboards.map(PerformanceMapper.toDashboardView);
   }
@@ -44,6 +48,7 @@ export class DashboardsService {
   async addWidget(user: User, dashboardId: string, input: WidgetInput): Promise<WidgetView> {
     RoleValidator.assertAtLeast(user.role, 'ADMIN');
     await this.requireDashboard(dashboardId);
+    SeriesSourceValidator.assertSupported(input);
     if (input.tagKey !== undefined && input.tagValue === undefined) {
       throw new BadRequestException('A tag filter needs both a key and a value');
     }

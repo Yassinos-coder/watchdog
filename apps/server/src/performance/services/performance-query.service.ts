@@ -15,6 +15,7 @@ import type {
   TransactionSummaryRow,
   TransactionView,
 } from '../interfaces/performance.interfaces';
+import { SeriesSourceValidator } from '../validators/series-source.validator';
 import { PerformanceMapper } from '../mappers/performance.mapper';
 import { MetricRepository } from '../repositories/metric.repository';
 import { SeriesRepository } from '../repositories/series.repository';
@@ -73,10 +74,13 @@ export class PerformanceQueryService {
 
   async series(projectId: string, query: SeriesQueryDto): Promise<SeriesView> {
     await this.requireProject(projectId);
+    const source = query.source ?? 'TRANSACTIONS';
+    const aggregation = query.aggregation ?? (source === 'ERRORS' ? 'COUNT' : 'P95');
+    SeriesSourceValidator.assertSupported({ source, aggregation, groupBy: query.groupBy, tagKey: query.tagKey });
     return this.seriesFor(projectId, {
-      source: query.source ?? 'TRANSACTIONS',
+      source,
       name: query.name,
-      aggregation: query.aggregation ?? 'P95',
+      aggregation,
       range: query.range ?? DEFAULT_RANGE,
       environment: query.environment,
       groupBy: query.groupBy,

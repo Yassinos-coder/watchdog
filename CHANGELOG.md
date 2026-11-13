@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-11-13
+
+### Added
+- Every project now starts with an Overview dashboard (errors, requests, response time p95 and average response time), created once and free to edit or delete, and Add widget opens a gallery of cards that preview your own data or an example, with a new Errors data source for counting errors on dashboards
+
 ## [0.10.0] - 2026-11-13
 
 ### Added

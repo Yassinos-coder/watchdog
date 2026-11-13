@@ -57,7 +57,14 @@ describe('PerformanceUtils.toChartData', () => {
       total: null,
       bucketMs: 60_000,
       groups: [
-        { key: 'pro', total: 5, points: [{ timestamp: '2026-01-01T00:01:00Z', value: 2 }, { timestamp: '2026-01-01T00:00:00Z', value: 1 }] },
+        {
+          key: 'pro',
+          total: 5,
+          points: [
+            { timestamp: '2026-01-01T00:01:00Z', value: 2 },
+            { timestamp: '2026-01-01T00:00:00Z', value: 1 },
+          ],
+        },
         { key: 'free', total: 1, points: [{ timestamp: '2026-01-01T00:01:00Z', value: 1 }] },
       ],
     });
@@ -73,5 +80,16 @@ describe('PerformanceUtils.toChartData', () => {
 describe('PerformanceUtils.value', () => {
   it('formats rates per second', () => {
     expect(PerformanceUtils.value(0.0016667, false, 'RATE')).toBe('0.0017/s');
+  });
+});
+
+describe('PerformanceUtils.mockSeries', () => {
+  it('is deterministic and never empty or negative', () => {
+    expect(PerformanceUtils.mockSeries('spiky')).toEqual(PerformanceUtils.mockSeries('spiky'));
+    for (const shape of ['wave', 'steady', 'spiky', 'rising'] as const) {
+      const values = PerformanceUtils.mockSeries(shape, 12);
+      expect(values).toHaveLength(12);
+      expect(Math.min(...values)).toBeGreaterThan(0);
+    }
   });
 });

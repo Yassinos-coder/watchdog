@@ -35,7 +35,11 @@ export function WidgetCard({ projectId, widget, range, canManage, onRemove }: Wi
     (option) => option.value === widget.aggregation,
   )?.label;
   const subject =
-    widget.source === 'METRIC' ? widget.metricName : (widget.filterName ?? 'All transactions');
+    widget.source === 'METRIC'
+      ? widget.metricName
+      : widget.source === 'ERRORS'
+        ? 'errors'
+        : (widget.filterName ?? 'All transactions');
 
   return (
     <section

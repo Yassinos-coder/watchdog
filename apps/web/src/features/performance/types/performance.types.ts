@@ -1,6 +1,7 @@
 export type PerfRange = '1h' | '24h' | '7d' | '30d' | '90d';
 export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99' | 'RATE';
-export type SeriesSource = 'METRIC' | 'TRANSACTIONS';
+export type SeriesSource = 'METRIC' | 'TRANSACTIONS' | 'ERRORS';
+export type MockShape = 'wave' | 'steady' | 'spiky' | 'rising';
 export type WidgetDisplay = 'LINE' | 'BAR' | 'NUMBER' | 'TABLE';
 export type Severity = 'good' | 'warning' | 'critical';
 

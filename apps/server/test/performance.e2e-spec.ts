@@ -201,6 +201,54 @@ describe('Performance tracing and metrics (e2e)', () => {
     });
   });
 
+  describe('default dashboard and error series', () => {
+    let freshProjectId: string;
+
+    beforeAll(async () => {
+      const created = await owner.agent.post('/api/projects').send({ name: 'Fresh app' }).expect(201);
+      freshProjectId = created.body.id;
+    });
+
+    it('gives every project an Overview dashboard once, even after it is deleted', async () => {
+      const first = await owner.agent.get(`/api/projects/${freshProjectId}/dashboards`).expect(200);
+
+      expect(first.body).toHaveLength(1);
+      expect(first.body[0].name).toBe('Overview');
+      expect(first.body[0].widgets.map((widget: { title: string }) => widget.title)).toEqual([
+        'Errors',
+        'Requests',
+        'Response time (p95)',
+        'Average response time',
+      ]);
+
+      await owner.agent.delete(`/api/dashboards/${first.body[0].id}`).expect(204);
+      const second = await owner.agent.get(`/api/projects/${freshProjectId}/dashboards`).expect(200);
+      expect(second.body).toHaveLength(0);
+    });
+
+    it('charts the number of errors and rejects what errors cannot do', async () => {
+      await request(app.getHttpServer())
+        .post(`/api/ingest/v1/${projectId}/events`)
+        .set('x-watchdog-key', publicKey)
+        .send({ eventId: randomUUID(), exception: { type: 'Error', value: 'boom' } })
+        .expect(202);
+
+      const series = await owner.agent
+        .get(`/api/projects/${projectId}/series?source=ERRORS&aggregation=COUNT&range=1h`)
+        .expect(200);
+      expect(series.body.total).toBe(1);
+      expect(series.body.points.length).toBeGreaterThan(0);
+
+      await owner.agent.get(`/api/projects/${projectId}/series?source=ERRORS&aggregation=P95&range=1h`).expect(400);
+      await owner.agent
+        .get(`/api/projects/${projectId}/series?source=ERRORS&aggregation=COUNT&range=1h&groupBy=tier`)
+        .expect(400);
+
+      const tagKeys = await owner.agent.get(`/api/projects/${projectId}/tag-keys?source=ERRORS`).expect(200);
+      expect(tagKeys.body).toEqual([]);
+    });
+  });
+
   it('manages dashboards and widgets', async () => {
     const dashboard = await owner.agent
       .post(`/api/projects/${projectId}/dashboards`)
@@ -217,7 +265,8 @@ describe('Performance tracing and metrics (e2e)', () => {
       .expect(400);
 
     const list = await owner.agent.get(`/api/projects/${projectId}/dashboards`).expect(200);
-    expect(list.body[0].widgets).toHaveLength(1);
+    const checkout = list.body.find((entry: { name: string }) => entry.name === 'Checkout health');
+    expect(checkout.widgets).toHaveLength(1);
 
     await owner.agent.delete(`/api/widgets/${widget.body.id}`).expect(204);
     await owner.agent.delete(`/api/dashboards/${dashboard.body.id}`).expect(204);
