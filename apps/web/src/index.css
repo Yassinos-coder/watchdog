@@ -180,3 +180,18 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* Dashboard canvas */
+.react-grid-item.react-grid-placeholder {
+  background: var(--lantern);
+  border-radius: 0.75rem;
+  opacity: 0.18;
+}
+.react-grid-item.react-draggable-dragging,
+.react-grid-item.resizing {
+  z-index: 3;
+  filter: drop-shadow(0 8px 24px rgb(0 0 0 / 0.18));
+}
+.react-grid-item > .react-resizable-handle::after {
+  border-color: var(--muted-foreground);
+}

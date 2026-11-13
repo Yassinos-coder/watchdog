@@ -1,5 +1,31 @@
-import { IsIn, IsOptional, IsString, MaxLength, MinLength, ValidateIf } from 'class-validator';
-import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, SERIES_SOURCES, WIDGET_DISPLAYS } from '../constants/performance.constants';
+import { Type } from 'class-transformer';
+import {
+  ArrayMaxSize,
+  IsArray,
+  IsIn,
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
+import {
+  AGGREGATIONS,
+  DASHBOARD_COLUMNS,
+  MAX_TAG_KEY_LENGTH,
+  MAX_WIDGET_HEIGHT,
+  MAX_WIDGET_ROW,
+  MAX_WIDGETS_PER_DASHBOARD,
+  MIN_WIDGET_HEIGHT,
+  MIN_WIDGET_WIDTH,
+  SERIES_SOURCES,
+  WIDGET_DISPLAYS,
+} from '../constants/performance.constants';
 import type { Aggregation, SeriesSource, WidgetDisplayKind } from '../interfaces/performance.interfaces';
 
 export class CreateDashboardDto {
@@ -52,4 +78,41 @@ export class WidgetInput {
   @MinLength(1)
   @MaxLength(200)
   tagValue?: string;
+}
+
+export class WidgetLayoutItem {
+  @IsUUID()
+  id!: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(DASHBOARD_COLUMNS - MIN_WIDGET_WIDTH)
+  x!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  @Max(MAX_WIDGET_ROW)
+  y!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(MIN_WIDGET_WIDTH)
+  @Max(DASHBOARD_COLUMNS)
+  w!: number;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(MIN_WIDGET_HEIGHT)
+  @Max(MAX_WIDGET_HEIGHT)
+  h!: number;
+}
+
+export class UpdateLayoutDto {
+  @IsArray()
+  @ArrayMaxSize(MAX_WIDGETS_PER_DASHBOARD)
+  @ValidateNested({ each: true })
+  @Type(() => WidgetLayoutItem)
+  items!: WidgetLayoutItem[];
 }

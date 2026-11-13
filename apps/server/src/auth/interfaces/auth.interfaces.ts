@@ -6,6 +6,15 @@ export interface SessionWithUser extends Session {
   user: User;
 }
 
+export interface SessionView {
+  id: string;
+  userAgent: string | null;
+  ip: string | null;
+  createdAt: Date;
+  expiresAt: Date;
+  current: boolean;
+}
+
 export interface AuthContext {
   session: SessionWithUser;
   user: User;

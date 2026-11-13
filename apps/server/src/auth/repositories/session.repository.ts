@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
+import type { Session } from '../../generated/prisma/client';
 import { SessionMeta, SessionWithUser } from '../interfaces/auth.interfaces';
 
 interface CreateSessionInput extends SessionMeta {
@@ -68,6 +69,22 @@ export class SessionRepository {
 
   async delete(id: string): Promise<void> {
     await this.prisma.session.deleteMany({ where: { id } });
+  }
+
+  listActive(userId: string): Promise<Session[]> {
+    return this.prisma.session.findMany({
+      where: { userId, mfaPassed: true, expiresAt: { gt: new Date() } },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async deleteOthers(userId: string, keepId: string): Promise<void> {
+    await this.prisma.session.deleteMany({ where: { userId, id: { not: keepId } } });
+  }
+
+  async deleteOwned(userId: string, id: string): Promise<number> {
+    const result = await this.prisma.session.deleteMany({ where: { id, userId } });
+    return result.count;
   }
 
   async deleteExpired(): Promise<void> {

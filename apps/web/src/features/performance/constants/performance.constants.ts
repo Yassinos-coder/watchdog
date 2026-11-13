@@ -30,3 +30,10 @@ export const DISPLAY_OPTIONS: { value: WidgetDisplay; label: string }[] = [
   { value: 'NUMBER', label: 'Single number' },
   { value: 'TABLE', label: 'Table' },
 ];
+
+export const DASHBOARD_COLUMNS = 12;
+export const DASHBOARD_ROW_HEIGHT = 56;
+export const DASHBOARD_MARGIN = 16;
+export const MIN_WIDGET_WIDTH = 3;
+export const MIN_WIDGET_HEIGHT = 3;
+export const STACKED_BREAKPOINT = 720;

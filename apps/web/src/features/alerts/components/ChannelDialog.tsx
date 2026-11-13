@@ -1,5 +1,5 @@
 import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { DocsLink } from '@/components/DocsLink';
 import { FieldRow } from '@/components/FieldRow';
@@ -20,20 +20,25 @@ import { cn } from '@/lib/utils';
 
 interface ChannelDialogProps {
   open: boolean;
+  initialType?: ChannelType;
   onOpenChange: (open: boolean) => void;
 }
 
-export function ChannelDialog({ open, onOpenChange }: ChannelDialogProps) {
+export function ChannelDialog({ open, initialType = 'SLACK', onOpenChange }: ChannelDialogProps) {
   const create = useCreateChannel();
-  const [type, setType] = useState<ChannelType>('SLACK');
+  const [type, setType] = useState<ChannelType>(initialType);
   const [name, setName] = useState('');
   const [webhookUrl, setWebhookUrl] = useState('');
   const [botToken, setBotToken] = useState('');
   const [chatId, setChatId] = useState('');
   const [recipients, setRecipients] = useState('');
 
+  useEffect(() => {
+    if (open) setType(initialType);
+  }, [open, initialType]);
+
   const reset = (): void => {
-    setType('SLACK');
+    setType(initialType);
     setName('');
     setWebhookUrl('');
     setBotToken('');

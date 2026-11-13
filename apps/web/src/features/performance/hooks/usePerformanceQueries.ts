@@ -1,6 +1,8 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, queryOptions, useQuery } from '@tanstack/react-query';
+import { useAuthSession } from '@/features/auth/hooks/useAuthQueries';
 import { performanceService } from '../services/performanceService';
 import type { PerfRange, SeriesParams, SeriesSource } from '../types/performance.types';
+import { DashboardCache } from '../utils/dashboardCache';
 
 export const performanceKeys = {
   summary: (projectId: string, range: PerfRange) =>
@@ -69,9 +71,21 @@ export function useTagKeys(
   });
 }
 
-export function useDashboards(projectId: string) {
-  return useQuery({
+export const dashboardsQueryOptions = (projectId: string, userId: string | undefined) => {
+  const cached = DashboardCache.read(userId, projectId);
+  return queryOptions({
     queryKey: performanceKeys.dashboards(projectId),
-    queryFn: () => performanceService.listDashboards(projectId),
+    queryFn: async () => {
+      const dashboards = await performanceService.listDashboards(projectId);
+      DashboardCache.write(userId, projectId, dashboards);
+      return dashboards;
+    },
+    initialData: cached?.data,
+    initialDataUpdatedAt: cached?.savedAt,
   });
+};
+
+export function useDashboards(projectId: string) {
+  const { data: session } = useAuthSession();
+  return useQuery(dashboardsQueryOptions(projectId, session?.user?.id));
 }

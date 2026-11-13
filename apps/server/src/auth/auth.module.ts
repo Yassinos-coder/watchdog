@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './controllers/auth.controller';
 import { MfaController } from './controllers/mfa.controller';
+import { ProfileController } from './controllers/profile.controller';
 import { SessionGuard } from './guards/session.guard';
 import { PasskeyRepository } from './repositories/passkey.repository';
 import { RecoveryCodeRepository } from './repositories/recovery-code.repository';
@@ -11,6 +12,7 @@ import { AuthService } from './services/auth.service';
 import { EmailOtpService } from './services/email-otp.service';
 import { MfaService } from './services/mfa.service';
 import { PasskeyService } from './services/passkey.service';
+import { ProfileService } from './services/profile.service';
 import { RecoveryCodeService } from './services/recovery-code.service';
 import { SecurityService } from './services/security.service';
 import { SessionService } from './services/session.service';
@@ -19,7 +21,7 @@ import { TotpService } from './services/totp.service';
 
 @Module({
   imports: [UsersModule],
-  controllers: [AuthController, MfaController],
+  controllers: [AuthController, MfaController, ProfileController],
   providers: [
     { provide: APP_GUARD, useClass: SessionGuard },
     SessionRepository,
@@ -33,6 +35,7 @@ import { TotpService } from './services/totp.service';
     PasskeyService,
     MfaService,
     SecurityService,
+    ProfileService,
     AuthService,
   ],
   exports: [SessionService],

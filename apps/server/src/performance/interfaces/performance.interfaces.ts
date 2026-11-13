@@ -127,6 +127,17 @@ export interface MetricNameView {
   samples: number;
 }
 
+export interface WidgetLayout {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface WidgetLayoutUpdate extends WidgetLayout {
+  id: string;
+}
+
 export interface WidgetView {
   id: string;
   title: string;
@@ -138,6 +149,7 @@ export interface WidgetView {
   groupBy: string | null;
   tagKey: string | null;
   tagValue: string | null;
+  layout: WidgetLayout;
   position: number;
 }
 

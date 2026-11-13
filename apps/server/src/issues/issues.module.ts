@@ -8,5 +8,6 @@ import { IssuesService } from './services/issues.service';
   imports: [ProjectsModule],
   controllers: [IssuesController],
   providers: [IssueRepository, IssuesService],
+  exports: [IssuesService],
 })
 export class IssuesModule {}

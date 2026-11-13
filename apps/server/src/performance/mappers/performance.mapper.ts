@@ -36,6 +36,7 @@ export class PerformanceMapper {
       groupBy: widget.groupBy,
       tagKey: widget.tagKey,
       tagValue: widget.tagValue,
+      layout: { x: widget.layoutX, y: widget.layoutY, w: widget.layoutW, h: widget.layoutH },
       position: widget.position,
     };
   }

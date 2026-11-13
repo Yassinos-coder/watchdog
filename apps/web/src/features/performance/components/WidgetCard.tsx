@@ -1,4 +1,4 @@
-import { Trash2 } from 'lucide-react';
+import { GripVertical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { AGGREGATION_OPTIONS } from '../constants/performance.constants';
@@ -43,11 +43,17 @@ export function WidgetCard({ projectId, widget, range, canManage, onRemove }: Wi
 
   return (
     <section
-      className="flex min-w-0 flex-col rounded-xl border bg-card p-4"
+      className="flex h-full min-w-0 flex-col rounded-xl border bg-card p-4"
       aria-label={widget.title}
     >
-      <header className="mb-3 flex items-start justify-between gap-2">
-        <div className="min-w-0">
+      <header className="mb-3 flex shrink-0 items-start justify-between gap-2">
+        <div
+          className={`flex min-w-0 flex-1 items-start gap-1.5 ${canManage ? 'widget-drag cursor-grab active:cursor-grabbing' : ''}`}
+        >
+          {canManage && (
+            <GripVertical className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+          )}
+          <div className="min-w-0">
           <h3 className="truncate font-semibold">{widget.title}</h3>
           <p className="truncate text-xs text-muted-foreground">
             {aggregationLabel} of <span className="font-mono">{subject}</span>
@@ -67,6 +73,7 @@ export function WidgetCard({ projectId, widget, range, canManage, onRemove }: Wi
               </>
             )}
           </p>
+          </div>
         </div>
         {canManage && (
           <Button
@@ -80,30 +87,36 @@ export function WidgetCard({ projectId, widget, range, canManage, onRemove }: Wi
           </Button>
         )}
       </header>
-      {isLoading && <Skeleton className="h-40 w-full" />}
+      {isLoading && <Skeleton className="h-full min-h-24 w-full" />}
       {error && <p className="text-sm text-destructive">{error.message}</p>}
       {data && widget.display === 'NUMBER' && (
-        <p className="font-display text-5xl font-semibold tabular">
-          {PerformanceUtils.value(data.total, isDuration, widget.aggregation)}
-        </p>
+        <div className="grid min-h-0 flex-1 place-items-center">
+          <p className="font-display text-5xl font-semibold tabular">
+            {PerformanceUtils.value(data.total, isDuration, widget.aggregation)}
+          </p>
+        </div>
       )}
       {data && widget.display === 'TABLE' && (
-        <GroupTable
-          groups={data.groups ?? [{ key: 'All', points: data.points, total: data.total }]}
-          groupLabel={widget.groupBy ?? 'Group'}
-          aggregation={widget.aggregation}
-          isDuration={isDuration}
-        />
+        <div className="min-h-0 flex-1">
+          <GroupTable
+            groups={data.groups ?? [{ key: 'All', points: data.points, total: data.total }]}
+            groupLabel={widget.groupBy ?? 'Group'}
+            aggregation={widget.aggregation}
+            isDuration={isDuration}
+          />
+        </div>
       )}
       {data && (widget.display === 'LINE' || widget.display === 'BAR') && (
-        <SeriesChart
-          series={data}
-          range={range}
-          aggregation={widget.aggregation}
-          isDuration={isDuration}
-          kind={widget.display}
-          height="h-44"
-        />
+        <div className="min-h-0 flex-1">
+          <SeriesChart
+            series={data}
+            range={range}
+            aggregation={widget.aggregation}
+            isDuration={isDuration}
+            kind={widget.display}
+            height="h-full"
+          />
+        </div>
       )}
     </section>
   );

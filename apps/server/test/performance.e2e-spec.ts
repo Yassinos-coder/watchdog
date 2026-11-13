@@ -249,6 +249,63 @@ describe('Performance tracing and metrics (e2e)', () => {
     });
   });
 
+  describe('widget layout', () => {
+    let dashboardId: string;
+    let widgetIds: string[];
+
+    const widgetBody = (title: string) => ({
+      title,
+      source: 'ERRORS',
+      aggregation: 'COUNT',
+      display: 'BAR',
+    });
+
+    beforeAll(async () => {
+      const dashboard = await owner.agent
+        .post(`/api/projects/${projectId}/dashboards`)
+        .send({ name: 'Canvas' })
+        .expect(201);
+      dashboardId = dashboard.body.id;
+      const first = await owner.agent.post(`/api/dashboards/${dashboardId}/widgets`).send(widgetBody('One')).expect(201);
+      const second = await owner.agent.post(`/api/dashboards/${dashboardId}/widgets`).send(widgetBody('Two')).expect(201);
+      widgetIds = [first.body.id, second.body.id];
+    });
+
+    const layoutOf = async () => {
+      const list = await owner.agent.get(`/api/projects/${projectId}/dashboards`).expect(200);
+      const dashboard = list.body.find((entry: { id: string }) => entry.id === dashboardId);
+      return Object.fromEntries(dashboard.widgets.map((widget: { id: string; layout: unknown }) => [widget.id, widget.layout]));
+    };
+
+    it('places new widgets under the existing ones', async () => {
+      const layout = await layoutOf();
+
+      expect(layout[widgetIds[0]]).toEqual({ x: 0, y: 0, w: 6, h: 4 });
+      expect(layout[widgetIds[1]]).toEqual({ x: 0, y: 4, w: 6, h: 4 });
+    });
+
+    it('saves moved and resized widgets', async () => {
+      await owner.agent
+        .patch(`/api/dashboards/${dashboardId}/layout`)
+        .send({ items: [{ id: widgetIds[0], x: 3, y: 2, w: 9, h: 6 }, { id: widgetIds[1], x: 0, y: 8, w: 12, h: 3 }] })
+        .expect(204);
+
+      const layout = await layoutOf();
+      expect(layout[widgetIds[0]]).toEqual({ x: 3, y: 2, w: 9, h: 6 });
+      expect(layout[widgetIds[1]]).toEqual({ x: 0, y: 8, w: 12, h: 3 });
+    });
+
+    it('rejects layouts that leave the grid or name unknown widgets', async () => {
+      const patch = (item: Record<string, unknown>) =>
+        owner.agent.patch(`/api/dashboards/${dashboardId}/layout`).send({ items: [item] });
+
+      await patch({ id: widgetIds[0], x: 8, y: 0, w: 6, h: 4 }).expect(400);
+      await patch({ id: widgetIds[0], x: 0, y: 0, w: 1, h: 4 }).expect(400);
+      await patch({ id: widgetIds[0], x: 0, y: 0, w: 6, h: 50 }).expect(400);
+      await patch({ id: randomUUID(), x: 0, y: 0, w: 6, h: 4 }).expect(400);
+    });
+  });
+
   it('manages dashboards and widgets', async () => {
     const dashboard = await owner.agent
       .post(`/api/projects/${projectId}/dashboards`)

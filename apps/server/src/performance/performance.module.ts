@@ -28,6 +28,6 @@ import { PerformanceQueryService } from './services/performance-query.service';
     DashboardsService,
     MetricRollupService,
   ],
-  exports: [TransactionRepository, MetricRepository, SeriesRepository, PerformanceQueryService],
+  exports: [TransactionRepository, MetricRepository, SeriesRepository, PerformanceQueryService, DashboardsService],
 })
 export class PerformanceModule {}

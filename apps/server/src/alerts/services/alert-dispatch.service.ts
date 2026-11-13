@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import type { AlertTrigger } from '../../generated/prisma/enums';
-import { LEVEL_RANK, MAX_ERROR_LENGTH, MINUTE_MS } from '../constants/alert.constants';
+import { ALERT_TRIGGERED, LEVEL_RANK, MAX_ERROR_LENGTH, MINUTE_MS } from '../constants/alert.constants';
 import { AlertMessage, IssueSignal } from '../interfaces/alert.interfaces';
 import { AlertMessageMapper } from '../mappers/alert-message.mapper';
 import { AlertDeliveryRepository } from '../repositories/alert-delivery.repository';
@@ -19,6 +20,7 @@ export class AlertDispatchService {
     private readonly deliveryRepository: AlertDeliveryRepository,
     private readonly channelsService: AlertChannelsService,
     private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async handleSignal(signal: IssueSignal): Promise<void> {
@@ -39,6 +41,12 @@ export class AlertDispatchService {
       const count = this.spikes.record(`${rule.id}:${signal.issueId}`, rule.spikeThreshold, rule.spikeWindowMins);
       if (count !== null) {
         const reason = AlertMessageMapper.reason('SPIKE', { count, windowMins: rule.spikeWindowMins });
+        this.eventEmitter.emit(ALERT_TRIGGERED, {
+          type: 'issue.spike',
+          projectId: signal.projectId,
+          rule: { id: rule.id, name: rule.name },
+          data: { issueId: signal.issueId, count, windowMins: rule.spikeWindowMins, environment: signal.environment },
+        });
         await this.deliver(rule, signal, 'SPIKE', reason);
       }
     }

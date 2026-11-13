@@ -31,7 +31,8 @@ Watchdog catches errors from your web, Node.js, Python and React Native apps, sh
 - **Real code lines**: upload source maps and see the original file, line and surrounding code for every frame
 - **Performance tracing**: transactions, spans, custom metrics (counters, gauges, distributions) and dashboards with p50 and p95
 - **Session replay** with inputs masked by default, linked to the errors that happened during the session
-- **Alerts** to Slack, Discord, Telegram and email, using your own SMTP server
+- **Alerts** to Slack, Discord, Telegram and email, using your own SMTP server, plus signed **webhooks** to your own tools
+- **Set up by your AI assistant**: connect Claude through MCP and say "set up Watchdog in this repo", or ask it to read the latest issue and fix the code behind it
 - **Teams**: invites, owner, admin and member roles, required two-step verification (authenticator app, passkey or emailed code) and sign in with Google or GitHub
 - **SDKs** for browser, React, Node.js and NestJS, Python, and React Native and Expo
 - **Data retention** that deletes old events, traces and replays on a schedule

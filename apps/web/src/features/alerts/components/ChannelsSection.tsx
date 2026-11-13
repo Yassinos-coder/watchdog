@@ -1,5 +1,4 @@
 import { Loader2, Plus, Send, Trash2 } from 'lucide-react';
-import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,15 +7,17 @@ import { CHANNEL_META } from '../constants/alert.constants';
 import { useDeleteChannel, useTestChannel, useUpdateChannel } from '../hooks/useAlertMutations';
 import { useChannels } from '../hooks/useAlertQueries';
 import { useCanManage } from '../hooks/useCanManage';
-import { ChannelDialog } from './ChannelDialog';
 
-export function ChannelsSection() {
+interface ChannelsSectionProps {
+  onAdd: () => void;
+}
+
+export function ChannelsSection({ onAdd }: ChannelsSectionProps) {
   const { data: channels, isLoading } = useChannels();
   const canManage = useCanManage();
   const update = useUpdateChannel();
   const remove = useDeleteChannel();
   const test = useTestChannel();
-  const [adding, setAdding] = useState(false);
 
   return (
     <section aria-labelledby="channels-heading" className="grid grid-cols-1 gap-4">
@@ -30,8 +31,8 @@ export function ChannelsSection() {
           </p>
         </div>
         {canManage && (
-          <Button onClick={() => setAdding(true)}>
-            <Plus className="size-4" /> Add channel
+          <Button onClick={onAdd}>
+            <Plus className="size-4" /> New integration
           </Button>
         )}
       </div>
@@ -106,7 +107,6 @@ export function ChannelsSection() {
         </ul>
       )}
 
-      <ChannelDialog open={adding} onOpenChange={setAdding} />
     </section>
   );
 }

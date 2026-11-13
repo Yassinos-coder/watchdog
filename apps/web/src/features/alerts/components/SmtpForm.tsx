@@ -13,7 +13,7 @@ import { useCanManage } from '../hooks/useCanManage';
 
 const DEFAULT_PORT = 587;
 
-export function SmtpSection() {
+export function SmtpForm() {
   const { data: smtp, isLoading, error } = useSmtpSettings();
   const canManage = useCanManage();
   const save = useSaveSmtp();
@@ -49,13 +49,8 @@ export function SmtpSection() {
         : 'Not set up yet. Email channels and email sign-in codes need this.';
 
   return (
-    <section aria-labelledby="smtp-heading" className="grid grid-cols-1 gap-4">
-      <div>
-        <h2 id="smtp-heading" className="text-lg font-semibold">
-          Email (SMTP)
-        </h2>
-        <p className="text-sm text-muted-foreground">{sourceText}</p>
-      </div>
+    <div className="grid grid-cols-1 gap-4">
+      <p className="text-sm text-muted-foreground">{sourceText}</p>
 
       {isLoading ? (
         <Skeleton className="h-48 w-full" />
@@ -154,6 +149,6 @@ export function SmtpSection() {
           </Button>
         </div>
       )}
-    </section>
+    </div>
   );
 }

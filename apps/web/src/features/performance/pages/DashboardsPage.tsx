@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCanManage } from '@/features/alerts/hooks/useCanManage';
-import { WidgetCard } from '../components/WidgetCard';
+import { DashboardGrid } from '../components/DashboardGrid';
 import { WidgetDialog } from '../components/WidgetDialog';
 import { PERF_RANGES } from '../constants/performance.constants';
 import {
@@ -139,18 +139,15 @@ export function DashboardsPage() {
               This dashboard is empty. Add a widget to start charting.
             </p>
           ) : (
-            <div className="grid gap-4 lg:grid-cols-2">
-              {active.widgets.map((widget) => (
-                <WidgetCard
-                  key={widget.id}
-                  projectId={projectId}
-                  widget={widget}
-                  range={range}
-                  canManage={canManage}
-                  onRemove={(target) => removeWidget.mutate(target.id, { onError: (failure) => toast.error(failure.message) })}
-                />
-              ))}
-            </div>
+            <DashboardGrid
+              key={active.id}
+              projectId={projectId}
+              dashboardId={active.id}
+              widgets={active.widgets}
+              range={range}
+              canManage={canManage}
+              onRemove={(target) => removeWidget.mutate(target.id, { onError: (failure) => toast.error(failure.message) })}
+            />
           )}
           <WidgetDialog projectId={projectId} dashboardId={active.id} open={widgetOpen} onOpenChange={setWidgetOpen} />
         </div>

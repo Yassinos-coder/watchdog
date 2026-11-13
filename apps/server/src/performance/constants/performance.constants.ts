@@ -11,6 +11,13 @@ export const TRACE_ID_PATTERN = /^[a-zA-Z0-9-]{8,64}$/;
 export const METRIC_TYPES = ['COUNTER', 'GAUGE', 'DISTRIBUTION'] as const;
 export const DEFAULT_PAGE_SIZE = 25;
 export const MAX_WIDGETS_PER_DASHBOARD = 24;
+export const DASHBOARD_COLUMNS = 12;
+export const MIN_WIDGET_WIDTH = 3;
+export const MIN_WIDGET_HEIGHT = 3;
+export const MAX_WIDGET_HEIGHT = 20;
+export const MAX_WIDGET_ROW = 999;
+export const NEW_WIDGET_WIDTH = 6;
+export const NEW_WIDGET_HEIGHT = 4;
 export const MAX_DASHBOARDS_PER_PROJECT = 20;
 
 export const RANGES = {

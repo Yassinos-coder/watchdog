@@ -117,8 +117,16 @@ export default defineConfig({
         ],
       },
       {
+        text: 'Integrations',
+        items: [
+          { text: 'MCP for AI assistants', link: '/mcp' },
+          { text: 'Webhooks', link: '/webhooks' },
+        ],
+      },
+      {
         text: 'Access',
         items: [
+          { text: 'Settings', link: '/settings' },
           { text: 'Authentication', link: '/authentication' },
           { text: 'Team, invites and roles', link: '/team' },
           { text: 'Sign in with Google or GitHub', link: '/oauth' },

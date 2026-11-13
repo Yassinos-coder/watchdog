@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.12.0] - 2026-11-13
+
+### Added
+- The sidebar collapses to an icon rail and expands again, remembering your choice, with the logo and name handled in both states
+- Dashboards work like a canvas: drag widgets by their handle and resize them from the corner, and the layout is saved for everyone. Layouts are fetched when you sign in and cached in the browser, so a dashboard opens instantly without shifting
+- Integrations has a submenu for Channels, MCP and Webhooks, and New integration opens a picker with Slack, Discord, Telegram, Email and SMTP, where SMTP opens its own settings dialog
+- MCP server for AI assistants such as Claude: Integrations has an MCP page with the server address built from your own URL and API keys with per-key permissions. Assistants can read issues with source-mapped stack traces, code context and breadcrumbs, query metrics, change issue status, and set up projects by reading DSNs and creating upload tokens
+- Settings pages split into user settings (profile name and email, security with password change, passkeys and two-step verification, and signed-in sessions) and account settings (general, projects with delete, team, and data retention)
+- Webhooks: send signed JSON requests to your own server for the events you choose (new issues, regressions, spikes, metric alerts and Watchdog restarts), with a signing secret, test deliveries, a delivery log and refusal of private network addresses
+
 ## [0.11.1] - 2026-11-13
 
 ### Fixed

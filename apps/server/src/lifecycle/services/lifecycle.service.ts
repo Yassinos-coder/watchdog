@@ -7,7 +7,8 @@ import {
   OnModuleDestroy,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ONLINE_DELAY } from '../constants/lifecycle.constants';
+import { LIVE_WINDOW_MS, ONLINE_DELAY } from '../constants/lifecycle.constants';
+import { WebhookDispatcher } from '../../webhooks/services/webhook-dispatcher.service';
 import { InstanceRecord } from '../interfaces/lifecycle.interfaces';
 import { LifecycleMessageMapper } from '../mappers/lifecycle-message.mapper';
 import { LifecycleRecordRepository } from '../repositories/lifecycle-record.repository';
@@ -27,6 +28,7 @@ export class LifecycleService implements OnApplicationBootstrap, OnModuleDestroy
     private readonly activityRepository: ProjectActivityRepository,
     private readonly notifier: LifecycleNotifier,
     @Inject(ONLINE_DELAY) private readonly onlineDelayMs: number,
+    private readonly webhookDispatcher: WebhookDispatcher,
   ) {}
 
   async onApplicationBootstrap(): Promise<void> {
@@ -55,7 +57,10 @@ export class LifecycleService implements OnApplicationBootstrap, OnModuleDestroy
         return;
       }
       await this.recordRepository.save(this.record(new Date()));
-      await this.notifier.broadcast(LifecycleMessageMapper.stopping(this.appUrl()));
+      await Promise.all([
+        this.notifier.broadcast(LifecycleMessageMapper.stopping(this.appUrl())),
+        this.webhookDispatcher.emit('watchdog.restarting', { version: this.version(), url: this.appUrl() }),
+      ]);
     } catch (error) {
       this.logger.error(
         `Could not announce the shutdown: ${error instanceof Error ? error.message : String(error)}`,
@@ -65,15 +70,29 @@ export class LifecycleService implements OnApplicationBootstrap, OnModuleDestroy
 
   private async announceOnline(previous: InstanceRecord): Promise<void> {
     try {
+      const projects = await this.activityRepository.list();
+      const now = new Date();
       const message = LifecycleMessageMapper.online({
         version: this.version(),
         previous,
         bootedAt: this.bootedAt,
-        projects: await this.activityRepository.list(),
+        projects,
         appUrl: this.appUrl(),
-        now: new Date(),
+        now,
       });
-      await this.notifier.broadcast(message);
+      await Promise.all([
+        this.notifier.broadcast(message),
+        this.webhookDispatcher.emit('watchdog.online', {
+          version: this.version(),
+          previousVersion: previous.version,
+          url: this.appUrl(),
+          projects: projects.map((project) => ({
+            name: project.name,
+            lastSeen: project.lastSeen,
+            live: project.lastSeen !== null && now.getTime() - project.lastSeen.getTime() <= LIVE_WINDOW_MS,
+          })),
+        }),
+      ]);
     } catch (error) {
       this.logger.error(
         `Could not announce that Watchdog is online: ${error instanceof Error ? error.message : String(error)}`,

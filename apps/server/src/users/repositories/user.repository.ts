@@ -16,6 +16,14 @@ export class UserRepository {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
+  updateProfile(id: string, data: { name?: string; email?: string }): Promise<User> {
+    return this.prisma.user.update({ where: { id }, data });
+  }
+
+  async updatePasswordHash(id: string, passwordHash: string): Promise<void> {
+    await this.prisma.user.update({ where: { id }, data: { passwordHash } });
+  }
+
   listAll(): Promise<User[]> {
     return this.prisma.user.findMany({ orderBy: { createdAt: 'asc' } });
   }

@@ -1,5 +1,11 @@
 # @watchdog-sdk/node
 
+## 0.12.0
+
+### Patch Changes
+
+- @watchdog-sdk/core@0.12.0
+
 ## 0.11.1
 
 ### Patch Changes

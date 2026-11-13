@@ -2,6 +2,10 @@
 
 Watchdog is a single container plus PostgreSQL. It catches errors, tracks performance and records sessions from your apps.
 
+::: tip Skip the clicking: let your AI assistant set it up
+Once Watchdog is running, open **Integrations → MCP**, create an API key with **Set up projects and credentials** turned on, and connect Claude Code or another assistant. Then say: *"Use Watchdog to set up error tracking in this repo."* It creates the project, installs the right SDK, adds the init code and writes the DSN and source map keys to your `.env` file. See [MCP](mcp.md).
+:::
+
 ## 1. Run it
 
 The quickest route is [Railway](railway.md). To run it yourself:

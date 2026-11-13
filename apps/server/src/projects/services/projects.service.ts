@@ -42,6 +42,10 @@ export class ProjectsService {
 
   async create(user: User, dto: CreateProjectDto): Promise<CreatedProjectView> {
     RoleValidator.assertAtLeast(user.role, 'ADMIN');
+    return this.provision(dto);
+  }
+
+  async provision(dto: CreateProjectDto): Promise<CreatedProjectView> {
     const uploadToken = this.createUploadToken();
     const project = await this.projectRepository.create({
       name: dto.name.trim(),
@@ -71,6 +75,10 @@ export class ProjectsService {
 
   async rotateUploadToken(user: User, id: string): Promise<{ uploadToken: string }> {
     RoleValidator.assertAtLeast(user.role, 'ADMIN');
+    return this.issueUploadToken(id);
+  }
+
+  async issueUploadToken(id: string): Promise<{ uploadToken: string }> {
     await this.get(id);
     const uploadToken = this.createUploadToken();
     await this.projectRepository.setUploadTokenHash(id, TokenUtils.sha256(uploadToken));

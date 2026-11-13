@@ -11,14 +11,14 @@ interface GroupTableProps {
 export function GroupTable({ groups, groupLabel, aggregation, isDuration }: GroupTableProps) {
   if (groups.length === 0) {
     return (
-      <div className="grid h-44 place-items-center rounded-lg border border-dashed text-sm text-muted-foreground">
+      <div className="grid h-full min-h-24 place-items-center rounded-lg border border-dashed text-sm text-muted-foreground">
         No data in this range yet.
       </div>
     );
   }
 
   return (
-    <div className="max-h-44 overflow-auto rounded-lg border">
+    <div className="h-full min-h-0 overflow-auto rounded-lg border">
       <table className="w-full text-sm">
         <thead className="sticky top-0 bg-card text-left text-xs text-muted-foreground">
           <tr>

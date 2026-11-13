@@ -1,6 +1,6 @@
 {
   "name": "@watchdog/web",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -29,6 +29,7 @@
     "radix-ui": "^1.8.1",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
+    "react-grid-layout": "2.3.0",
     "react-hook-form": "^7.91.0",
     "react-router-dom": "^7.18.5",
     "recharts": "3.10.1",

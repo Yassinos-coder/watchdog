@@ -1,5 +1,11 @@
 # @watchdog-sdk/react
 
+## 0.12.0
+
+### Patch Changes
+
+- @watchdog-sdk/browser@0.12.0
+
 ## 0.11.1
 
 ### Patch Changes

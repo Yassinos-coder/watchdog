@@ -1,4 +1,5 @@
 export const ISSUE_EVENT_RECORDED = 'issue.event';
+export const ALERT_TRIGGERED = 'alert.triggered';
 
 export const SMTP_SETTING_KEY = 'smtp';
 

@@ -49,6 +49,6 @@ import { TelegramChatResolver } from './services/telegram-chat-resolver.service'
     MetricAlertService,
     IssueSignalListener,
   ],
-  exports: [AlertChannelRepository, AlertChannelsService],
+  exports: [AlertChannelRepository, AlertChannelsService, AlertRulesService],
 })
 export class AlertsModule {}

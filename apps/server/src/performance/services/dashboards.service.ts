@@ -6,8 +6,9 @@ import {
   MAX_DASHBOARDS_PER_PROJECT,
   MAX_WIDGETS_PER_DASHBOARD,
 } from '../constants/performance.constants';
-import { CreateDashboardDto, WidgetInput } from '../dto/dashboard.dto';
+import { CreateDashboardDto, UpdateLayoutDto, WidgetInput } from '../dto/dashboard.dto';
 import type { DashboardView, WidgetView } from '../interfaces/performance.interfaces';
+import { WidgetLayoutValidator } from '../validators/widget-layout.validator';
 import { SeriesSourceValidator } from '../validators/series-source.validator';
 import { PerformanceMapper } from '../mappers/performance.mapper';
 import { DashboardRepository } from '../repositories/dashboard.repository';
@@ -56,8 +57,22 @@ export class DashboardsService {
     if (position >= MAX_WIDGETS_PER_DASHBOARD) {
       throw new BadRequestException(`A dashboard can have at most ${MAX_WIDGETS_PER_DASHBOARD} widgets`);
     }
-    const widget = await this.dashboardRepository.addWidget(dashboardId, input, position);
+    const row = await this.dashboardRepository.bottomRow(dashboardId);
+    const widget = await this.dashboardRepository.addWidget(dashboardId, input, position, row);
     return PerformanceMapper.toWidgetView(widget);
+  }
+
+  async updateLayout(user: User, dashboardId: string, dto: UpdateLayoutDto): Promise<void> {
+    RoleValidator.assertAtLeast(user.role, 'ADMIN');
+    const dashboard = await this.dashboardRepository.find(dashboardId);
+    if (!dashboard) {
+      throw new NotFoundException('Dashboard not found');
+    }
+    WidgetLayoutValidator.assertFits(
+      dto.items,
+      dashboard.widgets.map((widget) => widget.id),
+    );
+    await this.dashboardRepository.updateLayout(dashboardId, dto.items);
   }
 
   async remove(user: User, dashboardId: string): Promise<void> {

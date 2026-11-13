@@ -1,8 +1,10 @@
 import { Injectable, Logger, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { SeriesRepository } from '../../performance/repositories/series.repository';
 import { ProjectRepository } from '../../projects/repositories/project.repository';
 import {
+  ALERT_TRIGGERED,
   METRIC_EVALUATION_INTERVAL_MS,
   METRIC_EVALUATION_STARTUP_DELAY_MS,
   MINUTE_MS,
@@ -27,6 +29,7 @@ export class MetricAlertService implements OnApplicationBootstrap, OnApplication
     private readonly seriesRepository: SeriesRepository,
     private readonly projectRepository: ProjectRepository,
     private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   onApplicationBootstrap(): void {
@@ -88,6 +91,12 @@ export class MetricAlertService implements OnApplicationBootstrap, OnApplication
         appUrl: this.configService.getOrThrow<string>('appUrl'),
       },
     );
+    this.eventEmitter.emit(ALERT_TRIGGERED, {
+      type: 'metric.alert',
+      projectId: rule.projectId,
+      rule: { id: rule.id, name: rule.name },
+      data: { metric: message.metric, title: message.title, environment: rule.environment },
+    });
     await this.dispatchService.sendToChannels(rule, message);
   }
 

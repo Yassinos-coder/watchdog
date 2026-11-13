@@ -1,11 +1,20 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { AlertRulesPage } from '@/features/alerts/pages/AlertRulesPage';
+import { IntegrationsLayout } from '@/features/alerts/components/IntegrationsTabs';
 import { IntegrationsPage } from '@/features/alerts/pages/IntegrationsPage';
 import { MfaChallengePage } from '@/features/auth/pages/MfaChallengePage';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { MfaSetupPage } from '@/features/auth/pages/MfaSetupPage';
 import { SecurityPage } from '@/features/auth/pages/SecurityPage';
 import { SetupPage } from '@/features/auth/pages/SetupPage';
+import { McpPage } from '@/features/mcp/pages/McpPage';
+import { SettingsLayout } from '@/features/settings/components/SettingsLayout';
+import { AccountProjectsPage } from '@/features/settings/pages/AccountProjectsPage';
+import { DataPage } from '@/features/settings/pages/DataPage';
+import { GeneralPage } from '@/features/settings/pages/GeneralPage';
+import { ProfilePage } from '@/features/settings/pages/ProfilePage';
+import { SessionsPage } from '@/features/settings/pages/SessionsPage';
+import { WebhooksPage } from '@/features/webhooks/pages/WebhooksPage';
 import { RequireAuth } from '@/features/auth/routes/RequireAuth';
 import { DashboardsPage } from '@/features/performance/pages/DashboardsPage';
 import { PerformancePage } from '@/features/performance/pages/PerformancePage';
@@ -41,9 +50,23 @@ export function App() {
           <Route path="/projects/:projectId/dashboards" element={<DashboardsPage />} />
           <Route path="/projects/:projectId/replays" element={<ReplaysPage />} />
           <Route path="/projects/:projectId/alerts" element={<AlertRulesPage />} />
-          <Route path="/integrations" element={<IntegrationsPage />} />
-          <Route path="/team" element={<TeamPage />} />
-          <Route path="/security" element={<SecurityPage />} />
+          <Route path="/integrations" element={<IntegrationsLayout />}>
+            <Route index element={<IntegrationsPage />} />
+            <Route path="mcp" element={<McpPage />} />
+            <Route path="webhooks" element={<WebhooksPage />} />
+          </Route>
+          <Route path="/settings" element={<SettingsLayout />}>
+            <Route index element={<Navigate to="/settings/profile" replace />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="security" element={<SecurityPage />} />
+            <Route path="sessions" element={<SessionsPage />} />
+            <Route path="account" element={<GeneralPage />} />
+            <Route path="account/projects" element={<AccountProjectsPage />} />
+            <Route path="account/team" element={<TeamPage />} />
+            <Route path="account/data" element={<DataPage />} />
+          </Route>
+          <Route path="/team" element={<Navigate to="/settings/account/team" replace />} />
+          <Route path="/security" element={<Navigate to="/settings/security" replace />} />
         </Route>
       </Route>
 

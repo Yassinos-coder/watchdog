@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import type { Dashboard, DashboardWidget } from '../../generated/prisma/client';
 import { DEFAULT_DASHBOARD_NAME, DEFAULT_WIDGETS } from '../constants/default-dashboard.constants';
+import { NEW_WIDGET_HEIGHT, NEW_WIDGET_WIDTH } from '../constants/performance.constants';
 import type { WidgetInput } from '../dto/dashboard.dto';
+import type { WidgetLayoutUpdate } from '../interfaces/performance.interfaces';
 
 export type DashboardWithWidgets = Dashboard & { widgets: DashboardWidget[] };
 
@@ -38,7 +40,16 @@ export class DashboardRepository {
       data: {
         projectId,
         name: DEFAULT_DASHBOARD_NAME,
-        widgets: { create: DEFAULT_WIDGETS.map((widget, position) => ({ ...widget, position })) },
+        widgets: {
+          create: DEFAULT_WIDGETS.map(({ layout, ...widget }, position) => ({
+            ...widget,
+            layoutX: layout.x,
+            layoutY: layout.y,
+            layoutW: layout.w,
+            layoutH: layout.h,
+            position,
+          })),
+        },
       },
     });
   }
@@ -74,7 +85,26 @@ export class DashboardRepository {
     await this.prisma.dashboard.delete({ where: { id: dashboardId } });
   }
 
-  addWidget(dashboardId: string, input: WidgetInput, position: number): Promise<DashboardWidget> {
+  async bottomRow(dashboardId: string): Promise<number> {
+    const widgets = await this.prisma.dashboardWidget.findMany({
+      where: { dashboardId },
+      select: { layoutY: true, layoutH: true },
+    });
+    return widgets.reduce((bottom, widget) => Math.max(bottom, widget.layoutY + widget.layoutH), 0);
+  }
+
+  async updateLayout(dashboardId: string, items: WidgetLayoutUpdate[]): Promise<void> {
+    await this.prisma.$transaction(
+      items.map((item) =>
+        this.prisma.dashboardWidget.updateMany({
+          where: { id: item.id, dashboardId },
+          data: { layoutX: item.x, layoutY: item.y, layoutW: item.w, layoutH: item.h },
+        }),
+      ),
+    );
+  }
+
+  addWidget(dashboardId: string, input: WidgetInput, position: number, row: number): Promise<DashboardWidget> {
     return this.prisma.dashboardWidget.create({
       data: {
         dashboardId,
@@ -87,6 +117,10 @@ export class DashboardRepository {
         groupBy: input.groupBy,
         tagKey: input.tagKey,
         tagValue: input.tagValue,
+        layoutX: 0,
+        layoutY: row,
+        layoutW: NEW_WIDGET_WIDTH,
+        layoutH: NEW_WIDGET_HEIGHT,
         position,
       },
     });

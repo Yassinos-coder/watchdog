@@ -12,6 +12,7 @@ import type {
   TransactionSummary,
   Widget,
   WidgetInput,
+  WidgetLayoutItem,
 } from '../types/performance.types';
 
 const PAGE_SIZE = 25;
@@ -74,6 +75,10 @@ class PerformanceService extends BaseApiClient {
 
   addWidget(dashboardId: string, input: WidgetInput): Promise<Widget> {
     return this.post(`/dashboards/${dashboardId}/widgets`, input);
+  }
+
+  saveLayout(dashboardId: string, items: WidgetLayoutItem[]): Promise<void> {
+    return this.patch(`/dashboards/${dashboardId}/layout`, { items });
   }
 
   removeWidget(widgetId: string): Promise<void> {

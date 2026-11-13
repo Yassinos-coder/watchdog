@@ -10,9 +10,11 @@ import { EnvironmentValidator } from './config/validators/environment.validator'
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './health/health.module';
 import { IngestModule } from './ingest/ingest.module';
+import { InstanceModule } from './instance/instance.module';
 import { IssuesModule } from './issues/issues.module';
 import { LifecycleModule } from './lifecycle/lifecycle.module';
 import { MailModule } from './mail/mail.module';
+import { McpModule } from './mcp/mcp.module';
 import { OAuthModule } from './oauth/oauth.module';
 import { PerformanceModule } from './performance/performance.module';
 import { ProjectsModule } from './projects/projects.module';
@@ -24,6 +26,7 @@ import { StaticWebModule } from './static-web/static-web.module';
 import { TeamModule } from './team/team.module';
 import { UpdatesModule } from './updates/updates.module';
 import { UsersModule } from './users/users.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 
 @Module({
   imports: [
@@ -51,6 +54,9 @@ import { UsersModule } from './users/users.module';
     UpdatesModule,
     AlertsModule,
     LifecycleModule,
+    McpModule,
+    InstanceModule,
+    WebhooksModule,
     HealthModule,
     PublicConfigModule,
     StaticWebModule.register(),

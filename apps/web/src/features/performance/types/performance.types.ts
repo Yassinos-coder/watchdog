@@ -92,6 +92,17 @@ export interface TagKey {
   values: string[];
 }
 
+export interface WidgetLayout {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+}
+
+export interface WidgetLayoutItem extends WidgetLayout {
+  id: string;
+}
+
 export interface Widget {
   id: string;
   title: string;
@@ -103,6 +114,7 @@ export interface Widget {
   groupBy: string | null;
   tagKey: string | null;
   tagValue: string | null;
+  layout: WidgetLayout;
   position: number;
 }
 
