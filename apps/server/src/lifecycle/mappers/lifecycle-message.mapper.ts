@@ -47,6 +47,8 @@ export class LifecycleMessageMapper {
       'Apps being watched:',
       ...listed.map((project) => LifecycleMessageMapper.project(project, context.now)),
       ...(hidden > 0 ? [`…and ${hidden} more`] : []),
+      '',
+      'A white dot means no data lately, not that the app is down. Quiet apps send nothing.',
     ];
   }
 
@@ -56,7 +58,7 @@ export class LifecycleMessageMapper {
     }
     const age = Math.max(now.getTime() - project.lastSeen.getTime(), 0);
     const live = age <= LIVE_WINDOW_MS;
-    return `${live ? '🟢' : '🔴'} ${project.name}: last data ${LifecycleUtils.span(age)} ago`;
+    return `${live ? '🟢' : '⚪'} ${project.name}: last data ${LifecycleUtils.span(age)} ago`;
   }
 
   private static notice(reason: string, tone: string, url: string, lines: string[]): AlertMessage {

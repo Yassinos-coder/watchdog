@@ -1,4 +1,4 @@
-import { LayoutDashboard, Loader2, Plus, Trash2 } from 'lucide-react';
+import { Check, LayoutDashboard, Loader2, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -13,6 +13,7 @@ import { useCanManage } from '@/features/alerts/hooks/useCanManage';
 import { DashboardGrid } from '../components/DashboardGrid';
 import { WidgetDialog } from '../components/WidgetDialog';
 import { PERF_RANGES } from '../constants/performance.constants';
+import { useWidgetLayout } from '../hooks/useWidgetLayout';
 import {
   useCreateDashboard,
   useRemoveDashboard,
@@ -32,18 +33,41 @@ export function DashboardsPage() {
   const [range, setRange] = useState<PerfRange>('24h');
   const [name, setName] = useState('');
   const [widgetOpen, setWidgetOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+
+  const active = dashboards?.find((dashboard) => dashboard.id === activeId) ?? dashboards?.[0];
+  const editor = useWidgetLayout(projectId, active?.id ?? '', active?.widgets ?? []);
 
   if (error) {
     return <ErrorState message={error.message} onRetry={() => void refetch()} />;
   }
 
-  const active = dashboards?.find((dashboard) => dashboard.id === activeId) ?? dashboards?.[0];
+  const switchDashboard = (id: string | null): void => {
+    setEditing(false);
+    setActiveId(id);
+  };
+
+  const stopEditing = (): void => {
+    editor.reset();
+    setEditing(false);
+  };
+
+  const finishEditing = (): void => {
+    if (!editor.dirty) {
+      setEditing(false);
+      return;
+    }
+    editor.commit(() => {
+      setEditing(false);
+      toast.success('Dashboard saved');
+    });
+  };
 
   const create = (): void => {
     createDashboard.mutate(name.trim(), {
       onSuccess: (dashboard) => {
         setName('');
-        setActiveId(dashboard.id);
+        switchDashboard(dashboard.id);
       },
       onError: (failure) => toast.error(failure.message),
     });
@@ -100,7 +124,7 @@ export function DashboardsPage() {
       {dashboards && dashboards.length > 0 && active && (
         <div className="grid gap-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Tabs value={active.id} onValueChange={setActiveId} className="max-w-full min-w-0">
+            <Tabs value={active.id} onValueChange={switchDashboard} className="max-w-full min-w-0">
               <div className="max-w-full overflow-x-auto">
                 <TabsList className="w-max">
                   {dashboards.map((dashboard) => (
@@ -111,24 +135,39 @@ export function DashboardsPage() {
                 </TabsList>
               </div>
             </Tabs>
-            {canManage && (
-              <div className="flex gap-2">
-                <Button size="sm" onClick={() => setWidgetOpen(true)}>
+            {canManage && !editing && (
+              <Button size="sm" variant="outline" onClick={() => setEditing(true)}>
+                <Pencil className="size-4" />
+                Edit dashboard
+              </Button>
+            )}
+            {canManage && editing && (
+              <div className="flex flex-wrap gap-2">
+                <Button size="sm" variant="outline" onClick={() => setWidgetOpen(true)}>
                   <Plus className="size-4" />
                   Add widget
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() =>
+                  onClick={() => {
+                    if (!window.confirm(`Delete the dashboard "${active.name}" and all its widgets?`)) return;
                     removeDashboard.mutate(active.id, {
-                      onSuccess: () => setActiveId(null),
+                      onSuccess: () => switchDashboard(null),
                       onError: (failure) => toast.error(failure.message),
-                    })
-                  }
+                    });
+                  }}
                 >
                   <Trash2 className="size-4" />
                   Delete dashboard
+                </Button>
+                <Button size="sm" variant="ghost" onClick={stopEditing} disabled={editor.saving}>
+                  <X className="size-4" />
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={finishEditing} disabled={editor.saving}>
+                  {editor.saving ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
+                  Save dashboard
                 </Button>
               </div>
             )}
@@ -142,10 +181,11 @@ export function DashboardsPage() {
             <DashboardGrid
               key={active.id}
               projectId={projectId}
-              dashboardId={active.id}
               widgets={active.widgets}
+              layout={editor.layout}
               range={range}
-              canManage={canManage}
+              editing={editing}
+              onLayoutChange={editor.setLayout}
               onRemove={(target) => removeWidget.mutate(target.id, { onError: (failure) => toast.error(failure.message) })}
             />
           )}

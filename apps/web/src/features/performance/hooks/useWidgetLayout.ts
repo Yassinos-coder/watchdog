@@ -24,16 +24,27 @@ export function useWidgetLayout(projectId: string, dashboardId: string, widgets:
   useEffect(() => {
     setLayout(toItems(widgets));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [saved]);
+  }, [saved, dashboardId]);
 
-  const commit = (next: Layout): void => {
-    setLayout(next);
-    const items: WidgetLayoutItem[] = next.map((item) => ({ id: item.i, x: item.x, y: item.y, w: item.w, h: item.h }));
+  const dirty = layout.some((item) => {
+    const widget = widgets.find((entry) => entry.id === item.i);
+    if (!widget) return false;
+    const { x, y, w, h } = widget.layout;
+    return item.x !== x || item.y !== y || item.w !== w || item.h !== h;
+  });
+
+  const reset = (): void => setLayout(toItems(widgets));
+
+  const commit = (onSaved: () => void): void => {
+    const items: WidgetLayoutItem[] = layout.map((item) => ({ id: item.i, x: item.x, y: item.y, w: item.w, h: item.h }));
     save.mutate(
       { dashboardId, items },
-      { onError: (error) => toast.error(`Could not save the layout: ${error.message}`) },
+      {
+        onSuccess: onSaved,
+        onError: (error) => toast.error(`Could not save the layout: ${error.message}`),
+      },
     );
   };
 
-  return { layout, setLayout, commit };
+  return { layout, setLayout, dirty, reset, commit, saving: save.isPending };
 }

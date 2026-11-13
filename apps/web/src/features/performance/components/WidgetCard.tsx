@@ -12,11 +12,11 @@ interface WidgetCardProps {
   projectId: string;
   widget: Widget;
   range: PerfRange;
-  canManage: boolean;
+  editing: boolean;
   onRemove: (widget: Widget) => void;
 }
 
-export function WidgetCard({ projectId, widget, range, canManage, onRemove }: WidgetCardProps) {
+export function WidgetCard({ projectId, widget, range, editing, onRemove }: WidgetCardProps) {
   const name =
     widget.source === 'METRIC'
       ? (widget.metricName ?? undefined)
@@ -43,14 +43,14 @@ export function WidgetCard({ projectId, widget, range, canManage, onRemove }: Wi
 
   return (
     <section
-      className="flex h-full min-w-0 flex-col rounded-xl border bg-card p-4"
+      className={`flex h-full min-w-0 flex-col rounded-xl border bg-card p-4 ${editing ? 'border-dashed ring-1 ring-primary/30' : ''}`}
       aria-label={widget.title}
     >
       <header className="mb-3 flex shrink-0 items-start justify-between gap-2">
         <div
-          className={`flex min-w-0 flex-1 items-start gap-1.5 ${canManage ? 'widget-drag cursor-grab active:cursor-grabbing' : ''}`}
+          className={`flex min-w-0 flex-1 items-start gap-1.5 ${editing ? 'widget-drag cursor-grab touch-none select-none active:cursor-grabbing' : ''}`}
         >
-          {canManage && (
+          {editing && (
             <GripVertical className="mt-0.5 size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
           )}
           <div className="min-w-0">
@@ -75,7 +75,7 @@ export function WidgetCard({ projectId, widget, range, canManage, onRemove }: Wi
           </p>
           </div>
         </div>
-        {canManage && (
+        {editing && (
           <Button
             variant="ghost"
             size="icon"

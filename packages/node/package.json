@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/node",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Watchdog SDK for Node.js, Express and NestJS with source code context for every frame",
   "keywords": [
     "watchdog",
