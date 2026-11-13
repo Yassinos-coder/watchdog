@@ -5,10 +5,12 @@ import 'react-grid-layout/css/styles.css';
 import {
   DASHBOARD_COLUMNS,
   DASHBOARD_MARGIN,
+  DASHBOARD_MAX_ROWS,
   DASHBOARD_ROW_HEIGHT,
   STACKED_BREAKPOINT,
 } from '../constants/performance.constants';
 import type { PerfRange, Widget } from '../types/performance.types';
+import { GridGuide, GridGuideUtils } from './GridGuide';
 import { WidgetCard } from './WidgetCard';
 
 interface DashboardGridProps {
@@ -21,14 +23,18 @@ interface DashboardGridProps {
   onRemove: (widget: Widget) => void;
 }
 
-const CANVAS = getCompactor(null, false, true);
+const CANVAS = getCompactor('vertical', false, false);
 
 export function DashboardGrid({ projectId, widgets, layout, range, editing, onLayoutChange, onRemove }: DashboardGridProps) {
   const { width, containerRef, mounted } = useContainerWidth();
   const stacked = width < STACKED_BREAKPOINT;
 
   return (
-    <div ref={containerRef} className={editing ? 'select-none' : undefined}>
+    <div
+      ref={containerRef}
+      className={`relative ${editing ? 'select-none' : ''}`}
+      style={editing && !stacked ? { minHeight: GridGuideUtils.height(layout) } : undefined}
+    >
       {mounted && stacked && (
         <div className="grid gap-4">
           {widgets.map((widget) => (
@@ -38,11 +44,12 @@ export function DashboardGrid({ projectId, widgets, layout, range, editing, onLa
           ))}
         </div>
       )}
+      {mounted && !stacked && editing && <GridGuide width={width} layout={layout} />}
       {mounted && !stacked && (
         <GridLayout
           width={width}
           layout={layout}
-          gridConfig={{ cols: DASHBOARD_COLUMNS, rowHeight: DASHBOARD_ROW_HEIGHT, margin: [DASHBOARD_MARGIN, DASHBOARD_MARGIN] }}
+          gridConfig={{ cols: DASHBOARD_COLUMNS, rowHeight: DASHBOARD_ROW_HEIGHT, maxRows: DASHBOARD_MAX_ROWS, margin: [DASHBOARD_MARGIN, DASHBOARD_MARGIN], containerPadding: [0, 0] }}
           dragConfig={{ enabled: editing, handle: '.widget-drag' }}
           resizeConfig={{ enabled: editing }}
           compactor={CANVAS}

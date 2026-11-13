@@ -18,7 +18,7 @@ import {
 import { installGlobalHandler, installUnhandledRejections } from './integrations/global-handlers';
 import type { NativeOptions, NavigationRefLike, Uninstall } from './interfaces';
 
-const SDK = { name: 'watchdog.react-native', version: '0.12.1' };
+const SDK = { name: 'watchdog.react-native', version: '0.12.2' };
 const DEFAULT_FLUSH_TIMEOUT_MS = 2_000;
 
 let client: WatchdogClient | null = null;
