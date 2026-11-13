@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.1] - 2026-11-13
+
+### Fixed
+- Telegram channels accept your own @username: Watchdog looks up the numeric chat ID of the person who pressed Start in the bot and stores it, and a missing chat now says to open the bot and press Start instead of failing with "chat not found"
+
 ## [0.11.0] - 2026-11-13
 
 ### Added

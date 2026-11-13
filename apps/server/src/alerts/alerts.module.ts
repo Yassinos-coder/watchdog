@@ -16,12 +16,16 @@ import { AlertDispatchService } from './services/alert-dispatch.service';
 import { AlertRulesService } from './services/alert-rules.service';
 import { MetricAlertService } from './services/metric-alert.service';
 import { HttpPoster } from './services/http-poster.service';
+import { TelegramApi } from './services/telegram-api.service';
+import { TelegramChatResolver } from './services/telegram-chat-resolver.service';
 
 @Module({
   imports: [ProjectsModule, PerformanceModule],
   controllers: [AlertsController],
   providers: [
     HttpPoster,
+    TelegramApi,
+    TelegramChatResolver,
     SlackSender,
     DiscordSender,
     TelegramSender,

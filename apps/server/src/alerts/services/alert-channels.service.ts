@@ -10,12 +10,14 @@ import { AlertMessageMapper } from '../mappers/alert-message.mapper';
 import { AlertChannelRepository } from '../repositories/alert-channel.repository';
 import { ChannelConfigValidator } from '../validators/channel-config.validator';
 import { CHANNEL_SENDERS } from '../alerts.tokens';
+import { TelegramChatResolver } from './telegram-chat-resolver.service';
 
 @Injectable()
 export class AlertChannelsService {
   constructor(
     private readonly channelRepository: AlertChannelRepository,
     private readonly configService: ConfigService,
+    private readonly telegramResolver: TelegramChatResolver,
     @Inject(CHANNEL_SENDERS) private readonly senders: ChannelSender[],
   ) {}
 
@@ -28,7 +30,7 @@ export class AlertChannelsService {
     if ((await this.channelRepository.count()) >= MAX_CHANNELS) {
       throw new BadRequestException(`You can have at most ${MAX_CHANNELS} channels`);
     }
-    const config = ChannelConfigValidator.parse(dto.type, dto.config);
+    const config = await this.resolveTelegramChat(ChannelConfigValidator.parse(dto.type, dto.config));
     const channel = await this.channelRepository.create({
       type: dto.type,
       name: dto.name.trim(),
@@ -41,7 +43,9 @@ export class AlertChannelsService {
   async update(user: User, id: string, dto: UpdateChannelDto): Promise<ChannelView> {
     RoleValidator.assertAtLeast(user.role, 'ADMIN');
     const existing = await this.require(id);
-    const config = dto.config ? ChannelConfigValidator.parse(existing.type, dto.config) : null;
+    const config = dto.config
+      ? await this.resolveTelegramChat(ChannelConfigValidator.parse(existing.type, dto.config))
+      : null;
     const channel = await this.channelRepository.update(id, {
       name: dto.name?.trim(),
       enabled: dto.enabled,
@@ -72,6 +76,13 @@ export class AlertChannelsService {
       throw new TypeError(`Unsupported channel type ${channel.type}`);
     }
     await sender.send(this.decrypt(channel.configEnc), message);
+  }
+
+  private async resolveTelegramChat(config: ChannelConfig): Promise<ChannelConfig> {
+    if (!('botToken' in config)) {
+      return config;
+    }
+    return { ...config, chatId: await this.telegramResolver.resolve(config.botToken, config.chatId) };
   }
 
   private async require(id: string): Promise<AlertChannel> {

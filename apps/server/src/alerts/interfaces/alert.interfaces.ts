@@ -19,6 +19,16 @@ export interface EmailConfig {
   recipients: string[];
 }
 
+export type TelegramApiResult<T> = { ok: true; result: T } | { ok: false; status: number; description: string };
+
+export interface TelegramBotInfo {
+  username: string;
+}
+
+export interface TelegramUpdate {
+  message?: { chat: { id: number; type: string; username?: string } };
+}
+
 export type ChannelConfig = WebhookConfig | TelegramConfig | EmailConfig;
 
 export interface MetricRuleSpec {

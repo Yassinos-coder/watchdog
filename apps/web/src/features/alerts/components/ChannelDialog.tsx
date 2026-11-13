@@ -144,7 +144,7 @@ export function ChannelDialog({ open, onOpenChange }: ChannelDialogProps) {
                   className="font-mono text-xs"
                 />
               </FieldRow>
-              <FieldRow label="Chat ID" htmlFor="chat-id" hint="A number such as -1001234567890, or @yourchannel.">
+              <FieldRow label="Chat ID or @username" htmlFor="chat-id" hint="Your own @username works once you have pressed Start in your bot. Groups use a number such as -1001234567890, and public channels use @channelname.">
                 <Input id="chat-id" value={chatId} onChange={(event) => setChatId(event.target.value)} autoComplete="off" />
               </FieldRow>
             </>

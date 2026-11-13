@@ -30,5 +30,6 @@ export const WEBHOOK_HOSTS = {
 } as const;
 
 export const TELEGRAM_API_HOST = 'api.telegram.org';
+export const TELEGRAM_UPDATES_LIMIT = 100;
 export const TELEGRAM_TOKEN_PATTERN = /^\d{5,}:[\w-]{20,}$/;
 export const TELEGRAM_CHAT_PATTERN = /^(@[A-Za-z][\w]{3,}|-?\d{3,})$/;
