@@ -39,6 +39,7 @@ export class RetentionService implements OnApplicationBootstrap, OnApplicationSh
   async run(now = Date.now()): Promise<RetentionResult> {
     const eventCutoff = RetentionUtils.cutoff(this.policy.eventDays, now);
     const performanceCutoff = RetentionUtils.cutoff(this.policy.performanceDays, now);
+    const rollupCutoff = RetentionUtils.cutoff(this.policy.rollupDays, now);
     const replayCutoff = RetentionUtils.cutoff(this.policy.replayDays, now);
 
     return {
@@ -48,6 +49,7 @@ export class RetentionService implements OnApplicationBootstrap, OnApplicationSh
         ? await this.retentionRepository.deleteTransactionsBefore(performanceCutoff)
         : 0,
       metrics: performanceCutoff ? await this.retentionRepository.deleteMetricsBefore(performanceCutoff) : 0,
+      rollups: rollupCutoff ? await this.retentionRepository.deleteRollupsBefore(rollupCutoff) : 0,
       replays: replayCutoff ? await this.retentionRepository.deleteReplaysBefore(replayCutoff) : 0,
     };
   }

@@ -5,6 +5,7 @@ export const PERF_RANGES: { value: PerfRange; label: string }[] = [
   { value: '24h', label: '24 hours' },
   { value: '7d', label: '7 days' },
   { value: '30d', label: '30 days' },
+  { value: '90d', label: '90 days' },
 ];
 
 export const AGGREGATION_OPTIONS: { value: Aggregation; label: string }[] = [
@@ -16,10 +17,12 @@ export const AGGREGATION_OPTIONS: { value: Aggregation; label: string }[] = [
   { value: 'MIN', label: 'Minimum' },
   { value: 'SUM', label: 'Sum' },
   { value: 'COUNT', label: 'Count' },
+  { value: 'RATE', label: 'Rate per second' },
 ];
 
 export const DISPLAY_OPTIONS: { value: WidgetDisplay; label: string }[] = [
   { value: 'LINE', label: 'Line chart' },
   { value: 'BAR', label: 'Bar chart' },
   { value: 'NUMBER', label: 'Single number' },
+  { value: 'TABLE', label: 'Table' },
 ];

@@ -18,7 +18,23 @@ export const RANGES = {
   '24h': { ms: 24 * 60 * 60 * 1000, bucket: '1 hour', bucketMs: 3_600_000 },
   '7d': { ms: 7 * 24 * 60 * 60 * 1000, bucket: '6 hours', bucketMs: 6 * 3_600_000 },
   '30d': { ms: 30 * 24 * 60 * 60 * 1000, bucket: '1 day', bucketMs: 86_400_000 },
+  '90d': { ms: 90 * 24 * 60 * 60 * 1000, bucket: '1 day', bucketMs: 86_400_000 },
 } as const;
 
-export const RANGE_KEYS = ['1h', '24h', '7d', '30d'] as const;
-export const AGGREGATIONS = ['AVG', 'SUM', 'MIN', 'MAX', 'COUNT', 'P50', 'P95', 'P99'] as const;
+export const RANGE_KEYS = ['1h', '24h', '7d', '30d', '90d'] as const;
+export const ROLLUP_RANGE_KEYS = ['7d', '30d', '90d'] as const;
+export const AGGREGATIONS = ['AVG', 'SUM', 'MIN', 'MAX', 'COUNT', 'P50', 'P95', 'P99', 'RATE'] as const;
+export const WIDGET_DISPLAYS = ['LINE', 'BAR', 'NUMBER', 'TABLE'] as const;
+export const MAX_GROUPS = 8;
+export const MAX_TAG_KEY_LENGTH = 100;
+export const NO_GROUP_LABEL = '(none)';
+export const TAG_KEY_SAMPLE_ROWS = 1000;
+export const TAG_KEY_LOOKBACK_MS = 7 * 24 * 60 * 60 * 1000;
+export const MAX_TAG_KEYS_LISTED = 50;
+export const MAX_TAG_VALUES_LISTED = 25;
+
+export const ROLLUP_HOUR_MS = 3_600_000;
+export const ROLLUP_REFRESH_OVERLAP_HOURS = 2;
+export const ROLLUP_CHUNK_HOURS = 24;
+export const ROLLUP_INTERVAL_MS = 5 * 60_000;
+export const ROLLUP_STARTUP_DELAY_MS = 30_000;

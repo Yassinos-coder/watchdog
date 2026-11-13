@@ -21,12 +21,12 @@ export class EmailSender implements ChannelSender {
       message.culprit ?? '',
       '',
       `Project: ${message.projectName}`,
-      `Level: ${message.level}`,
+      message.metric ? '' : `Level: ${message.level}`,
       message.environment ? `Environment: ${message.environment}` : '',
       message.release ? `Release: ${message.release}` : '',
-      `Events: ${message.eventCount}`,
+      message.metric ? '' : `Events: ${message.eventCount}`,
       '',
-      `Open the issue: ${message.issueUrl}`,
+      `${message.metric ? 'Open the dashboards' : 'Open the issue'}: ${message.issueUrl}`,
     ]
       .filter((line, index, lines) => line !== '' || lines[index - 1] !== '')
       .join('\n');

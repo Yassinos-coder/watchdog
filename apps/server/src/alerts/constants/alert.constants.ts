@@ -11,6 +11,11 @@ export const MAX_ERROR_LENGTH = 300;
 export const SPIKE_COUNTER_LIMIT = 5_000;
 export const MINUTE_MS = 60_000;
 
+export const ALERT_TRIGGERS = ['NEW_ISSUE', 'REGRESSION', 'SPIKE', 'METRIC'] as const;
+export const METRIC_AGGREGATIONS = ['AVG', 'SUM', 'MIN', 'MAX', 'COUNT', 'P50', 'P95', 'P99', 'RATE'] as const;
+export const METRIC_EVALUATION_INTERVAL_MS = MINUTE_MS;
+export const METRIC_EVALUATION_STARTUP_DELAY_MS = 45_000;
+
 export const LEVEL_RANK: Record<string, number> = {
   debug: 0,
   info: 1,

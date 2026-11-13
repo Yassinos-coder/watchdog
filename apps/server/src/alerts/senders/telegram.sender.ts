@@ -20,7 +20,7 @@ export class TelegramSender implements ChannelSender {
   }
 
   text(message: AlertMessage): string {
-    const details = [message.projectName, message.level, message.environment, message.release]
+    const details = [message.projectName, message.metric ? null : message.level, message.environment, message.release]
       .filter(Boolean)
       .map((part) => this.escape(String(part)))
       .join(' · ');
@@ -28,7 +28,7 @@ export class TelegramSender implements ChannelSender {
       `<b>${this.escape(message.reason)}</b>`,
       `<a href="${this.escape(message.issueUrl)}">${this.escape(message.title)}</a>`,
       message.culprit ? `<code>${this.escape(message.culprit)}</code>` : null,
-      `${details} · ${message.eventCount} ${message.eventCount === 1 ? 'event' : 'events'}`,
+      message.metric ? details : `${details} · ${message.eventCount} ${message.eventCount === 1 ? 'event' : 'events'}`,
     ]
       .filter(Boolean)
       .join('\n');

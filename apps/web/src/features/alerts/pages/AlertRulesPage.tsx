@@ -9,11 +9,30 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Switch } from '@/components/ui/switch';
 import { RuleDialog } from '../components/RuleDialog';
-import { LEVELS, TRIGGER_LABEL } from '../constants/alert.constants';
+import {
+  COMPARATOR_LABEL,
+  LEVELS,
+  METRIC_AGGREGATION_LABEL,
+  TRIGGER_LABEL,
+} from '../constants/alert.constants';
 import { useDeleteRule, useUpdateRule } from '../hooks/useAlertMutations';
 import { useChannels, useRules } from '../hooks/useAlertQueries';
 import { useCanManage } from '../hooks/useCanManage';
 import type { AlertRule } from '../types/alert.types';
+
+const describeMetric = (rule: AlertRule): string => {
+  const subject = rule.metricName ?? 'transaction duration';
+  const aggregation = rule.metricAggregation
+    ? METRIC_AGGREGATION_LABEL[rule.metricAggregation]
+    : '';
+  const comparator = rule.metricComparator ? COMPARATOR_LABEL[rule.metricComparator] : '';
+  const parts = [
+    `${aggregation} of ${subject} ${comparator} ${rule.metricThreshold} over ${rule.metricWindowMins} min`,
+    rule.metricTagKey ? `${rule.metricTagKey}=${rule.metricTagValue}` : null,
+    rule.environment ? `only ${rule.environment}` : null,
+  ];
+  return parts.filter(Boolean).join(' · ');
+};
 
 export function AlertRulesPage() {
   const { projectId = '' } = useParams();
@@ -31,9 +50,14 @@ export function AlertRulesPage() {
   };
 
   const describe = (rule: AlertRule): string => {
+    if (rule.trigger === 'METRIC') {
+      return describeMetric(rule);
+    }
     const level = LEVELS.find((item) => item.value === rule.minLevel)?.label ?? rule.minLevel;
     const parts = [
-      rule.trigger === 'SPIKE' ? `${rule.spikeThreshold} events in ${rule.spikeWindowMins} min` : TRIGGER_LABEL[rule.trigger],
+      rule.trigger === 'SPIKE'
+        ? `${rule.spikeThreshold} events in ${rule.spikeWindowMins} min`
+        : TRIGGER_LABEL[rule.trigger],
       level,
       rule.environment ? `only ${rule.environment}` : null,
     ];
@@ -88,7 +112,13 @@ export function AlertRulesPage() {
                 <p className="truncate font-medium">{rule.name}</p>
                 <p className="text-sm text-muted-foreground">{describe(rule)}</p>
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                  To {rule.channelIds.map((id) => channels?.find((channel) => channel.id === id)?.name ?? 'removed channel').join(', ')}
+                  To{' '}
+                  {rule.channelIds
+                    .map(
+                      (id) =>
+                        channels?.find((channel) => channel.id === id)?.name ?? 'removed channel',
+                    )
+                    .join(', ')}
                 </p>
               </div>
               {canManage && (
@@ -97,7 +127,10 @@ export function AlertRulesPage() {
                     checked={rule.enabled}
                     aria-label={`${rule.name} is ${rule.enabled ? 'on' : 'off'}`}
                     onCheckedChange={(enabled) =>
-                      update.mutate({ ruleId: rule.id, changes: { enabled } }, { onError: (failure) => toast.error(failure.message) })
+                      update.mutate(
+                        { ruleId: rule.id, changes: { enabled } },
+                        { onError: (failure) => toast.error(failure.message) },
+                      )
                     }
                   />
                   <Button
@@ -117,7 +150,9 @@ export function AlertRulesPage() {
                     aria-label={`Delete ${rule.name}`}
                     onClick={() => {
                       if (window.confirm(`Delete the rule "${rule.name}"?`)) {
-                        remove.mutate(rule.id, { onError: (failure) => toast.error(failure.message) });
+                        remove.mutate(rule.id, {
+                          onError: (failure) => toast.error(failure.message),
+                        });
                       }
                     }}
                   >
@@ -130,7 +165,12 @@ export function AlertRulesPage() {
         </ul>
       )}
 
-      <RuleDialog projectId={projectId} rule={editing} open={dialogOpen} onOpenChange={setDialogOpen} />
+      <RuleDialog
+        projectId={projectId}
+        rule={editing}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
     </>
   );
 }

@@ -44,6 +44,9 @@ export class DashboardsService {
   async addWidget(user: User, dashboardId: string, input: WidgetInput): Promise<WidgetView> {
     RoleValidator.assertAtLeast(user.role, 'ADMIN');
     await this.requireDashboard(dashboardId);
+    if (input.tagKey !== undefined && input.tagValue === undefined) {
+      throw new BadRequestException('A tag filter needs both a key and a value');
+    }
     const position = await this.dashboardRepository.countWidgets(dashboardId);
     if (position >= MAX_WIDGETS_PER_DASHBOARD) {
       throw new BadRequestException(`A dashboard can have at most ${MAX_WIDGETS_PER_DASHBOARD} widgets`);

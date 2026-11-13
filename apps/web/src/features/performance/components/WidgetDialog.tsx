@@ -12,10 +12,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { AGGREGATION_OPTIONS, DISPLAY_OPTIONS } from '../constants/performance.constants';
 import { useAddWidget } from '../hooks/usePerformanceMutations';
-import { useMetricNames, useTransactionSummary } from '../hooks/usePerformanceQueries';
+import { useMetricNames, useTagKeys, useTransactionSummary } from '../hooks/usePerformanceQueries';
 import type { Aggregation, SeriesSource, WidgetDisplay } from '../types/performance.types';
 
 interface WidgetDialogProps {
@@ -26,6 +32,7 @@ interface WidgetDialogProps {
 }
 
 const ALL_TRANSACTIONS = '__all__';
+const NONE = '__none__';
 
 export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: WidgetDialogProps) {
   const addWidget = useAddWidget(projectId);
@@ -37,8 +44,29 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
   const [filterName, setFilterName] = useState(ALL_TRANSACTIONS);
   const [aggregation, setAggregation] = useState<Aggregation>('AVG');
   const [display, setDisplay] = useState<WidgetDisplay>('LINE');
+  const [groupBy, setGroupBy] = useState(NONE);
+  const [tagKey, setTagKey] = useState(NONE);
+  const [tagValue, setTagValue] = useState('');
+  const subject =
+    source === 'METRIC' ? metricName : filterName === ALL_TRANSACTIONS ? undefined : filterName;
+  const { data: tagKeys } = useTagKeys(
+    projectId,
+    source,
+    subject || undefined,
+    open && (source === 'TRANSACTIONS' || metricName.length > 0),
+  );
+  const filterValues = tagKeys?.find((entry) => entry.key === tagKey)?.values ?? [];
 
-  const valid = title.trim().length > 0 && (source === 'TRANSACTIONS' || metricName.length > 0);
+  const valid =
+    title.trim().length > 0 &&
+    (source === 'TRANSACTIONS' || metricName.length > 0) &&
+    (tagKey === NONE || tagValue.trim().length > 0);
+
+  const resetTags = (): void => {
+    setGroupBy(NONE);
+    setTagKey(NONE);
+    setTagValue('');
+  };
 
   const submit = (): void => {
     addWidget.mutate(
@@ -48,9 +76,13 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
           title: title.trim(),
           source,
           metricName: source === 'METRIC' ? metricName : undefined,
-          filterName: source === 'TRANSACTIONS' && filterName !== ALL_TRANSACTIONS ? filterName : undefined,
+          filterName:
+            source === 'TRANSACTIONS' && filterName !== ALL_TRANSACTIONS ? filterName : undefined,
           aggregation,
           display,
+          groupBy: groupBy === NONE ? undefined : groupBy,
+          tagKey: tagKey === NONE ? undefined : tagKey,
+          tagValue: tagKey === NONE ? undefined : tagValue.trim(),
         },
       },
       {
@@ -58,6 +90,7 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
           onOpenChange(false);
           setTitle('');
           setMetricName('');
+          resetTags();
         },
         onError: (error) => toast.error(error.message),
       },
@@ -79,10 +112,23 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
             <DialogDescription>Pick the data to chart and how to summarize it.</DialogDescription>
           </DialogHeader>
           <FieldRow label="Title" htmlFor="widget-title">
-            <Input id="widget-title" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={80} placeholder="Cart value" autoFocus />
+            <Input
+              id="widget-title"
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              maxLength={80}
+              placeholder="Cart value"
+              autoFocus
+            />
           </FieldRow>
           <FieldRow label="Data" htmlFor="widget-source">
-            <Select value={source} onValueChange={(value) => setSource(value as SeriesSource)}>
+            <Select
+              value={source}
+              onValueChange={(value) => {
+                setSource(value as SeriesSource);
+                resetTags();
+              }}
+            >
               <SelectTrigger id="widget-source" className="w-full">
                 <SelectValue />
               </SelectTrigger>
@@ -93,8 +139,22 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
             </Select>
           </FieldRow>
           {source === 'METRIC' ? (
-            <FieldRow label="Metric" htmlFor="widget-metric" hint={metrics?.length === 0 ? 'No metrics received yet. Send one with watchdog.gauge().' : undefined}>
-              <Select value={metricName} onValueChange={setMetricName}>
+            <FieldRow
+              label="Metric"
+              htmlFor="widget-metric"
+              hint={
+                metrics?.length === 0
+                  ? 'No metrics received yet. Send one with watchdog.gauge().'
+                  : undefined
+              }
+            >
+              <Select
+                value={metricName}
+                onValueChange={(value) => {
+                  setMetricName(value);
+                  resetTags();
+                }}
+              >
                 <SelectTrigger id="widget-metric" className="w-full">
                   <SelectValue placeholder="Choose a metric" />
                 </SelectTrigger>
@@ -109,7 +169,13 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
             </FieldRow>
           ) : (
             <FieldRow label="Transaction" htmlFor="widget-transaction">
-              <Select value={filterName} onValueChange={setFilterName}>
+              <Select
+                value={filterName}
+                onValueChange={(value) => {
+                  setFilterName(value);
+                  resetTags();
+                }}
+              >
                 <SelectTrigger id="widget-transaction" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -126,7 +192,10 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
           )}
           <div className="grid gap-5 sm:grid-cols-2">
             <FieldRow label="Summarize as" htmlFor="widget-aggregation">
-              <Select value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
+              <Select
+                value={aggregation}
+                onValueChange={(value) => setAggregation(value as Aggregation)}
+              >
                 <SelectTrigger id="widget-aggregation" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -153,6 +222,64 @@ export function WidgetDialog({ projectId, dashboardId, open, onOpenChange }: Wid
                 </SelectContent>
               </Select>
             </FieldRow>
+          </div>
+          <FieldRow
+            label="Split by tag"
+            htmlFor="widget-group"
+            hint="One line per tag value, such as tier or language."
+          >
+            <Select value={groupBy} onValueChange={setGroupBy}>
+              <SelectTrigger id="widget-group" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={NONE}>No split</SelectItem>
+                {tagKeys?.map((entry) => (
+                  <SelectItem key={entry.key} value={entry.key}>
+                    {entry.key}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </FieldRow>
+          <div className="grid gap-5 sm:grid-cols-2">
+            <FieldRow label="Only where tag" htmlFor="widget-tag">
+              <Select
+                value={tagKey}
+                onValueChange={(value) => {
+                  setTagKey(value);
+                  setTagValue('');
+                }}
+              >
+                <SelectTrigger id="widget-tag" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={NONE}>Any</SelectItem>
+                  {tagKeys?.map((entry) => (
+                    <SelectItem key={entry.key} value={entry.key}>
+                      {entry.key}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </FieldRow>
+            {tagKey !== NONE && (
+              <FieldRow label="Equals" htmlFor="widget-tag-value">
+                <Input
+                  id="widget-tag-value"
+                  value={tagValue}
+                  onChange={(event) => setTagValue(event.target.value)}
+                  list="widget-tag-values"
+                  maxLength={200}
+                />
+                <datalist id="widget-tag-values">
+                  {filterValues.map((value) => (
+                    <option key={value} value={value} />
+                  ))}
+                </datalist>
+              </FieldRow>
+            )}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={!valid || addWidget.isPending}>

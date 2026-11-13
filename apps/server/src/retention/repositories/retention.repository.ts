@@ -25,6 +25,11 @@ export class RetentionRepository {
     return result.count;
   }
 
+  async deleteRollupsBefore(cutoff: Date): Promise<number> {
+    const result = await this.prisma.metricRollup.deleteMany({ where: { bucket: { lt: cutoff } } });
+    return result.count;
+  }
+
   async deleteReplaysBefore(cutoff: Date): Promise<number> {
     const result = await this.prisma.replay.deleteMany({ where: { lastEventAt: { lt: cutoff } } });
     return result.count;

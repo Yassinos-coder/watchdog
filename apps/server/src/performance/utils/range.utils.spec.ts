@@ -11,5 +11,17 @@ describe('RangeUtils', () => {
     expect(RangeUtils.bucketMs('24h')).toBe(3_600_000);
     expect(RangeUtils.bucketMs('7d')).toBe(6 * 3_600_000);
     expect(RangeUtils.bucketMs('30d')).toBe(86_400_000);
+    expect(RangeUtils.bucketMs('90d')).toBe(86_400_000);
+  });
+
+  it('serves only long metric ranges from rollups', () => {
+    expect(RangeUtils.usesRollups('24h', 'METRIC')).toBe(false);
+    expect(RangeUtils.usesRollups('7d', 'METRIC')).toBe(true);
+    expect(RangeUtils.usesRollups('90d', 'METRIC')).toBe(true);
+    expect(RangeUtils.usesRollups('30d', 'TRANSACTIONS')).toBe(false);
+  });
+
+  it('converts a range to seconds', () => {
+    expect(RangeUtils.windowSeconds('1h')).toBe(3600);
   });
 });

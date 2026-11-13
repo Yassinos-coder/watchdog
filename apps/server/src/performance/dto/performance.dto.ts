@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsInt, IsOptional, IsString, Max, MaxLength, Min } from 'class-validator';
-import { AGGREGATIONS, RANGE_KEYS } from '../constants/performance.constants';
+import { IsIn, IsInt, IsOptional, IsString, Max, MaxLength, Min, ValidateIf } from 'class-validator';
+import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, RANGE_KEYS } from '../constants/performance.constants';
 import type { Aggregation, RangeKey, SeriesSource } from '../interfaces/performance.interfaces';
 
 export class RangeQueryDto {
@@ -27,6 +27,32 @@ export class SeriesQueryDto extends RangeQueryDto {
   @IsOptional()
   @IsIn(AGGREGATIONS)
   aggregation?: Aggregation;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(MAX_TAG_KEY_LENGTH)
+  groupBy?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(MAX_TAG_KEY_LENGTH)
+  tagKey?: string;
+
+  @ValidateIf((query: SeriesQueryDto) => query.tagKey !== undefined)
+  @IsString()
+  @MaxLength(200)
+  tagValue?: string;
+}
+
+export class TagKeysQueryDto {
+  @IsOptional()
+  @IsIn(['METRIC', 'TRANSACTIONS'])
+  source?: SeriesSource;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  name?: string;
 }
 
 export class TransactionListQueryDto {

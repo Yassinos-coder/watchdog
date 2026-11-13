@@ -5,8 +5,10 @@ import type {
   PerfRange,
   Series,
   SeriesParams,
+  SeriesSource,
   Transaction,
   TransactionPage,
+  TagKey,
   TransactionSummary,
   Widget,
   WidgetInput,
@@ -19,7 +21,11 @@ class PerformanceService extends BaseApiClient {
     return this.get(`/projects/${projectId}/transactions/summary?range=${range}`);
   }
 
-  listTransactions(projectId: string, name: string | undefined, page: number): Promise<TransactionPage> {
+  listTransactions(
+    projectId: string,
+    name: string | undefined,
+    page: number,
+  ): Promise<TransactionPage> {
     const query = new URLSearchParams({ page: String(page), pageSize: String(PAGE_SIZE) });
     if (name) query.set('name', name);
     return this.get(`/projects/${projectId}/transactions?${query.toString()}`);
@@ -40,7 +46,18 @@ class PerformanceService extends BaseApiClient {
       range: params.range,
     });
     if (params.name) query.set('name', params.name);
+    if (params.groupBy) query.set('groupBy', params.groupBy);
+    if (params.tag) {
+      query.set('tagKey', params.tag.key);
+      query.set('tagValue', params.tag.value);
+    }
     return this.get(`/projects/${projectId}/series?${query.toString()}`);
+  }
+
+  tagKeys(projectId: string, source: SeriesSource, name: string | undefined): Promise<TagKey[]> {
+    const query = new URLSearchParams({ source });
+    if (name) query.set('name', name);
+    return this.get(`/projects/${projectId}/tag-keys?${query.toString()}`);
   }
 
   listDashboards(projectId: string): Promise<Dashboard[]> {

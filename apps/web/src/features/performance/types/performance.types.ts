@@ -1,7 +1,7 @@
-export type PerfRange = '1h' | '24h' | '7d' | '30d';
-export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99';
+export type PerfRange = '1h' | '24h' | '7d' | '30d' | '90d';
+export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99' | 'RATE';
 export type SeriesSource = 'METRIC' | 'TRANSACTIONS';
-export type WidgetDisplay = 'LINE' | 'BAR' | 'NUMBER';
+export type WidgetDisplay = 'LINE' | 'BAR' | 'NUMBER' | 'TABLE';
 export type Severity = 'good' | 'warning' | 'critical';
 
 export interface TransactionSummary {
@@ -59,10 +59,22 @@ export interface SeriesPoint {
   value: number | null;
 }
 
+export interface SeriesGroup {
+  key: string;
+  points: SeriesPoint[];
+  total: number | null;
+}
+
 export interface Series {
   points: SeriesPoint[];
   total: number | null;
   bucketMs: number;
+  groups?: SeriesGroup[];
+}
+
+export interface TagFilter {
+  key: string;
+  value: string;
 }
 
 export interface SeriesParams {
@@ -70,6 +82,13 @@ export interface SeriesParams {
   name?: string;
   aggregation: Aggregation;
   range: PerfRange;
+  groupBy?: string;
+  tag?: TagFilter;
+}
+
+export interface TagKey {
+  key: string;
+  values: string[];
 }
 
 export interface Widget {
@@ -80,6 +99,9 @@ export interface Widget {
   filterName: string | null;
   aggregation: Aggregation;
   display: WidgetDisplay;
+  groupBy: string | null;
+  tagKey: string | null;
+  tagValue: string | null;
   position: number;
 }
 
@@ -98,4 +120,7 @@ export interface WidgetInput {
   filterName?: string;
   aggregation: Aggregation;
   display: WidgetDisplay;
+  groupBy?: string;
+  tagKey?: string;
+  tagValue?: string;
 }

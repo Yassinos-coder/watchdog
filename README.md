@@ -162,7 +162,7 @@ The `release` passed to the SDK and to the CLI must match.
 | `TRUST_PROXY` | no | Number of reverse proxies in front of Watchdog (for accurate client IPs) |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM` | no | Invite emails, emailed sign-in codes and email alerts |
 | `OAUTH_GOOGLE_*`, `OAUTH_GITHUB_*` | no | Sign in with Google or GitHub |
-| `RETENTION_EVENT_DAYS`, `RETENTION_PERFORMANCE_DAYS`, `RETENTION_REPLAY_DAYS` | no | How long data is kept (90, 30 and 30 days by default, `0` keeps it forever) |
+| `RETENTION_EVENT_DAYS`, `RETENTION_PERFORMANCE_DAYS`, `RETENTION_ROLLUP_DAYS`, `RETENTION_REPLAY_DAYS` | no | How long data is kept (90, 30, 400 and 30 days by default, `0` keeps it forever) |
 | `REDIS_URL` | no | Shared rate-limit counters across several instances |
 | `UPDATE_CHECK` | no | Set to `false` to stop checking npm for a newer version |
 | `INGEST_EVENTS_PER_MINUTE` | no | Per-project event quota (default 6000) |

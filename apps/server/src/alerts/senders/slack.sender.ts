@@ -15,10 +15,10 @@ export class SlackSender implements ChannelSender {
   payload(message: AlertMessage): Record<string, unknown> {
     const details = [
       message.projectName,
-      message.level,
+      message.metric ? null : message.level,
       message.environment,
       message.release,
-      `${message.eventCount} ${message.eventCount === 1 ? 'event' : 'events'}`,
+      message.metric ? null : `${message.eventCount} ${message.eventCount === 1 ? 'event' : 'events'}`,
     ].filter(Boolean);
     return {
       text: `${message.reason}: ${message.title}`,

@@ -1,14 +1,18 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { performanceService } from '../services/performanceService';
-import type { PerfRange, SeriesParams } from '../types/performance.types';
+import type { PerfRange, SeriesParams, SeriesSource } from '../types/performance.types';
 
 export const performanceKeys = {
-  summary: (projectId: string, range: PerfRange) => ['performance', projectId, 'summary', range] as const,
+  summary: (projectId: string, range: PerfRange) =>
+    ['performance', projectId, 'summary', range] as const,
   transactions: (projectId: string, name: string | undefined, page: number) =>
     ['performance', projectId, 'transactions', name ?? null, page] as const,
   transaction: (transactionId: string) => ['performance', 'transaction', transactionId] as const,
   metrics: (projectId: string) => ['performance', projectId, 'metrics'] as const,
-  series: (projectId: string, params: SeriesParams) => ['performance', projectId, 'series', params] as const,
+  series: (projectId: string, params: SeriesParams) =>
+    ['performance', projectId, 'series', params] as const,
+  tagKeys: (projectId: string, source: SeriesSource, name: string | undefined) =>
+    ['performance', projectId, 'tag-keys', source, name ?? null] as const,
   dashboards: (projectId: string) => ['performance', projectId, 'dashboards'] as const,
 };
 
@@ -49,6 +53,19 @@ export function useSeries(projectId: string, params: SeriesParams, enabled = tru
     queryFn: () => performanceService.series(projectId, params),
     enabled,
     refetchInterval: 30_000,
+  });
+}
+
+export function useTagKeys(
+  projectId: string,
+  source: SeriesSource,
+  name: string | undefined,
+  enabled = true,
+) {
+  return useQuery({
+    queryKey: performanceKeys.tagKeys(projectId, source, name),
+    queryFn: () => performanceService.tagKeys(projectId, source, name),
+    enabled,
   });
 }
 

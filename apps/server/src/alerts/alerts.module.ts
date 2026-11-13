@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { PerformanceModule } from '../performance/performance.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { CHANNEL_SENDERS } from './alerts.tokens';
 import { AlertsController } from './controllers/alerts.controller';
@@ -13,10 +14,11 @@ import { TelegramSender } from './senders/telegram.sender';
 import { AlertChannelsService } from './services/alert-channels.service';
 import { AlertDispatchService } from './services/alert-dispatch.service';
 import { AlertRulesService } from './services/alert-rules.service';
+import { MetricAlertService } from './services/metric-alert.service';
 import { HttpPoster } from './services/http-poster.service';
 
 @Module({
-  imports: [ProjectsModule],
+  imports: [ProjectsModule, PerformanceModule],
   controllers: [AlertsController],
   providers: [
     HttpPoster,
@@ -40,6 +42,7 @@ import { HttpPoster } from './services/http-poster.service';
     AlertChannelsService,
     AlertRulesService,
     AlertDispatchService,
+    MetricAlertService,
     IssueSignalListener,
   ],
 })

@@ -111,15 +111,16 @@ model Project {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  keys         ProjectKey[]
-  issues       Issue[]
-  events       Event[]
-  releases     Release[]
-  alertRules   AlertRule[]
-  transactions Transaction[]
-  metrics      Metric[]
-  dashboards   Dashboard[]
-  replays      Replay[]
+  keys          ProjectKey[]
+  issues        Issue[]
+  events        Event[]
+  releases      Release[]
+  alertRules    AlertRule[]
+  transactions  Transaction[]
+  metrics       Metric[]
+  metricRollups MetricRollup[]
+  dashboards    Dashboard[]
+  replays       Replay[]
 
   @@map("projects")
 }
@@ -225,6 +226,12 @@ enum AlertTrigger {
   NEW_ISSUE
   REGRESSION
   SPIKE
+  METRIC
+}
+
+enum MetricComparator {
+  ABOVE
+  BELOW
 }
 
 enum DeliveryStatus {
@@ -249,18 +256,26 @@ model AlertChannel {
 }
 
 model AlertRule {
-  id              String       @id @default(uuid())
-  projectId       String
-  name            String
-  trigger         AlertTrigger
-  spikeThreshold  Int?
-  spikeWindowMins Int?
-  minLevel        String       @default("error")
-  environment     String?
-  cooldownMins    Int          @default(30)
-  enabled         Boolean      @default(true)
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id                String             @id @default(uuid())
+  projectId         String
+  name              String
+  trigger           AlertTrigger
+  spikeThreshold    Int?
+  spikeWindowMins   Int?
+  metricSource      WidgetSource?
+  metricName        String?
+  metricAggregation WidgetAggregation?
+  metricComparator  MetricComparator?
+  metricThreshold   Float?
+  metricWindowMins  Int?
+  metricTagKey      String?
+  metricTagValue    String?
+  minLevel          String             @default("error")
+  environment       String?
+  cooldownMins      Int                @default(30)
+  enabled           Boolean            @default(true)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 
   project    Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
   channels   AlertChannel[]
@@ -315,12 +330,14 @@ enum WidgetAggregation {
   P50
   P95
   P99
+  RATE
 }
 
 enum WidgetDisplay {
   LINE
   BAR
   NUMBER
+  TABLE
 }
 
 model Transaction {
@@ -368,6 +385,32 @@ model Metric {
   @@map("metrics")
 }
 
+model MetricRollup {
+  id          String     @id @default(uuid())
+  projectId   String
+  name        String
+  type        MetricType
+  unit        String?
+  environment String     @default("")
+  tags        Json
+  tagsKey     String
+  bucket      DateTime
+  count       Int
+  sum         Float
+  min         Float
+  max         Float
+  p50         Float
+  p95         Float
+  p99         Float
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, name, type, environment, tagsKey, bucket])
+  @@index([projectId, name, bucket])
+  @@index([bucket])
+  @@map("metric_rollups")
+}
+
 model Dashboard {
   id        String   @id @default(uuid())
   projectId String
@@ -391,6 +434,9 @@ model DashboardWidget {
   filterName  String?
   aggregation WidgetAggregation @default(AVG)
   display     WidgetDisplay     @default(LINE)
+  groupBy     String?
+  tagKey      String?
+  tagValue    String?
   position    Int               @default(0)
   createdAt   DateTime          @default(now())
 

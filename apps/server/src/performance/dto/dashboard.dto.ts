@@ -1,5 +1,5 @@
 import { IsIn, IsOptional, IsString, MaxLength, MinLength, ValidateIf } from 'class-validator';
-import { AGGREGATIONS } from '../constants/performance.constants';
+import { AGGREGATIONS, MAX_TAG_KEY_LENGTH, WIDGET_DISPLAYS } from '../constants/performance.constants';
 import type { Aggregation, SeriesSource, WidgetDisplayKind } from '../interfaces/performance.interfaces';
 
 export class CreateDashboardDto {
@@ -32,6 +32,24 @@ export class WidgetInput {
   @IsIn(AGGREGATIONS)
   aggregation!: Aggregation;
 
-  @IsIn(['LINE', 'BAR', 'NUMBER'])
+  @IsIn(WIDGET_DISPLAYS)
   display!: WidgetDisplayKind;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(MAX_TAG_KEY_LENGTH)
+  groupBy?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(MAX_TAG_KEY_LENGTH)
+  tagKey?: string;
+
+  @ValidateIf((input: WidgetInput) => input.tagKey !== undefined)
+  @IsString()
+  @MinLength(1)
+  @MaxLength(200)
+  tagValue?: string;
 }

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { MetricRollupService } from '../src/performance/services/metric-rollup.service';
 import { createTestApp } from './support/create-test-app';
 import { OwnerSession, resetDatabase, signInOwner } from './support/test-helpers';
 
@@ -104,6 +105,100 @@ describe('Performance tracing and metrics (e2e)', () => {
     await owner.agent
       .get(`/api/projects/${projectId}/series?source=METRIC&name=x&aggregation=MEDIAN`)
       .expect(400);
+  });
+
+  describe('tags, rates and rollups', () => {
+    const seriesUrl = (query: string) => `/api/projects/${projectId}/series?${query}`;
+    const totalsOf = (groups: { key: string; total: number }[]) =>
+      Object.fromEntries(groups.map((group) => [group.key, group.total]));
+
+    beforeAll(async () => {
+      await post('metrics', {
+        metrics: [
+          { name: 'calls.started', type: 'counter', value: 1, tags: { tier: 'pro', lang: 'en' } },
+          { name: 'calls.started', type: 'counter', value: 1, tags: { tier: 'pro', lang: 'fr' } },
+          { name: 'calls.started', type: 'counter', value: 1, tags: { tier: 'free', lang: 'en' } },
+          { name: 'calls.started', type: 'counter', value: 3, tags: { tier: 'pro', lang: 'en' } },
+          { name: 'voice.latency', type: 'distribution', value: 100, tags: { tier: 'pro' } },
+          { name: 'voice.latency', type: 'distribution', value: 300, tags: { tier: 'pro' } },
+        ],
+      }).expect(202);
+    });
+
+    it('groups a series by tag with totals per group', async () => {
+      const series = await owner.agent
+        .get(seriesUrl('source=METRIC&name=calls.started&aggregation=SUM&range=1h&groupBy=tier'))
+        .expect(200);
+
+      expect(totalsOf(series.body.groups)).toEqual({ pro: 5, free: 1 });
+      expect(series.body.groups[0].key).toBe('pro');
+      expect(series.body.groups[0].points.length).toBeGreaterThan(0);
+    });
+
+    it('filters by tag', async () => {
+      const series = await owner.agent
+        .get(seriesUrl('source=METRIC&name=calls.started&aggregation=COUNT&range=1h&tagKey=lang&tagValue=fr'))
+        .expect(200);
+
+      expect(series.body.total).toBe(1);
+    });
+
+    it('rejects a tag key without a value', async () => {
+      await owner.agent
+        .get(seriesUrl('source=METRIC&name=calls.started&aggregation=COUNT&range=1h&tagKey=lang'))
+        .expect(400);
+    });
+
+    it('computes a rate per second', async () => {
+      const series = await owner.agent
+        .get(seriesUrl('source=METRIC&name=calls.started&aggregation=RATE&range=1h'))
+        .expect(200);
+
+      expect(series.body.total).toBeCloseTo(6 / 3600, 6);
+    });
+
+    it('lists tag keys with sample values', async () => {
+      const keys = await owner.agent
+        .get(`/api/projects/${projectId}/tag-keys?source=METRIC&name=calls.started`)
+        .expect(200);
+
+      expect(keys.body).toEqual([
+        { key: 'lang', values: ['en', 'fr'] },
+        { key: 'tier', values: ['free', 'pro'] },
+      ]);
+    });
+
+    it('rolls metrics up hourly and serves long ranges from the rollups', async () => {
+      expect(await app.get(MetricRollupService).run()).toBeGreaterThan(0);
+      await app.get(MetricRollupService).run();
+
+      const sum = await owner.agent.get(seriesUrl('source=METRIC&name=calls.started&aggregation=SUM&range=7d')).expect(200);
+      const count = await owner.agent.get(seriesUrl('source=METRIC&name=calls.started&aggregation=COUNT&range=30d')).expect(200);
+      const latency = await owner.agent.get(seriesUrl('source=METRIC&name=voice.latency&aggregation=AVG&range=90d')).expect(200);
+      const grouped = await owner.agent
+        .get(seriesUrl('source=METRIC&name=calls.started&aggregation=SUM&range=7d&groupBy=lang'))
+        .expect(200);
+
+      expect(sum.body.total).toBe(6);
+      expect(count.body.total).toBe(4);
+      expect(latency.body.total).toBeCloseTo(200);
+      expect(totalsOf(grouped.body.groups)).toEqual({ en: 5, fr: 1 });
+    });
+
+    it('creates grouped table widgets and rejects a half tag filter', async () => {
+      const dashboard = await owner.agent.post(`/api/projects/${projectId}/dashboards`).send({ name: 'Calls' }).expect(201);
+      const widget = await owner.agent
+        .post(`/api/dashboards/${dashboard.body.id}/widgets`)
+        .send({ title: 'By tier', source: 'METRIC', metricName: 'calls.started', aggregation: 'RATE', display: 'TABLE', groupBy: 'tier', tagKey: 'lang', tagValue: 'en' })
+        .expect(201);
+
+      expect(widget.body).toMatchObject({ display: 'TABLE', aggregation: 'RATE', groupBy: 'tier', tagKey: 'lang', tagValue: 'en' });
+      await owner.agent
+        .post(`/api/dashboards/${dashboard.body.id}/widgets`)
+        .send({ title: 'Half', source: 'METRIC', metricName: 'calls.started', aggregation: 'SUM', display: 'LINE', tagKey: 'lang' })
+        .expect(400);
+      await owner.agent.delete(`/api/dashboards/${dashboard.body.id}`).expect(204);
+    });
   });
 
   it('manages dashboards and widgets', async () => {

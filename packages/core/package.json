@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/core",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Watchdog SDK core: event model, stack parsing and a retrying transport",
   "keywords": [
     "watchdog",

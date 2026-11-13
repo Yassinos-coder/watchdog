@@ -1,6 +1,8 @@
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import {
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
@@ -18,17 +20,35 @@ interface SeriesChartProps {
   height?: string;
 }
 
-const CONFIG = { value: { label: 'Value', color: 'var(--chart-1)' } } satisfies ChartConfig;
+const PALETTE_SIZE = 5;
 
-export function SeriesChart({ series, range, aggregation, isDuration, kind, height = 'h-56' }: SeriesChartProps) {
-  const data = series.points.map((point) => ({ timestamp: point.timestamp, value: point.value }));
+export function SeriesChart({
+  series,
+  range,
+  aggregation,
+  isDuration,
+  kind,
+  height = 'h-56',
+}: SeriesChartProps) {
+  const { rows, lines } = PerformanceUtils.toChartData(series);
+  const grouped = lines.length > 1 || Boolean(series.groups);
   const short = range === '1h' || range === '24h';
-  const formatTick = (value: string): string => (short ? Format.hour(value) : Format.shortDate(value));
-  const formatValue = (value: number): string => PerformanceUtils.value(value, isDuration, aggregation);
+  const formatTick = (value: string): string =>
+    short ? Format.hour(value) : Format.shortDate(value);
+  const formatValue = (value: number): string =>
+    PerformanceUtils.value(value, isDuration, aggregation);
+  const config: ChartConfig = Object.fromEntries(
+    lines.map((line, index) => [
+      line.id,
+      { label: line.label, color: `var(--chart-${(index % PALETTE_SIZE) + 1})` },
+    ]),
+  );
 
-  if (data.length === 0) {
+  if (rows.length === 0) {
     return (
-      <div className={`grid ${height} place-items-center rounded-lg border border-dashed text-sm text-muted-foreground`}>
+      <div
+        className={`grid ${height} place-items-center rounded-lg border border-dashed text-sm text-muted-foreground`}
+      >
         No data in this range yet.
       </div>
     );
@@ -37,30 +57,65 @@ export function SeriesChart({ series, range, aggregation, isDuration, kind, heig
   const axes = (
     <>
       <CartesianGrid vertical={false} />
-      <XAxis dataKey="timestamp" tickLine={false} axisLine={false} minTickGap={32} tickFormatter={formatTick} />
+      <XAxis
+        dataKey="timestamp"
+        tickLine={false}
+        axisLine={false}
+        minTickGap={32}
+        tickFormatter={formatTick}
+      />
       <YAxis tickLine={false} axisLine={false} width={56} tickFormatter={formatValue} />
       <ChartTooltip
         content={
           <ChartTooltipContent
             labelFormatter={(value) => Format.dateTime(String(value))}
-            formatter={(value) => <span className="tabular font-medium">{formatValue(Number(value))}</span>}
+            formatter={(value, name) => (
+              <span className="flex w-full items-center justify-between gap-3">
+                {grouped && (
+                  <span className="text-muted-foreground">
+                    {config[String(name)]?.label ?? name}
+                  </span>
+                )}
+                <span className="tabular font-medium">{formatValue(Number(value))}</span>
+              </span>
+            )}
           />
         }
       />
+      {grouped && <ChartLegend content={<ChartLegendContent />} />}
     </>
   );
 
   return (
-    <ChartContainer config={CONFIG} className={`aspect-auto ${height} w-full`}>
+    <ChartContainer config={config} className={`aspect-auto ${height} w-full`}>
       {kind === 'BAR' ? (
-        <BarChart data={data} margin={{ left: 0, right: 8, top: 8 }}>
+        <BarChart data={rows} margin={{ left: 0, right: 8, top: 8 }}>
           {axes}
-          <Bar dataKey="value" fill="var(--color-value)" radius={[3, 3, 0, 0]} />
+          {lines.map((line, index) => (
+            <Bar
+              key={line.id}
+              dataKey={line.id}
+              stackId="series"
+              fill={`var(--color-${line.id})`}
+              radius={index === lines.length - 1 ? [3, 3, 0, 0] : 0}
+            />
+          ))}
         </BarChart>
       ) : (
-        <AreaChart data={data} margin={{ left: 0, right: 8, top: 8 }}>
+        <AreaChart data={rows} margin={{ left: 0, right: 8, top: 8 }}>
           {axes}
-          <Area dataKey="value" type="monotone" stroke="var(--color-value)" strokeWidth={2} fill="var(--color-value)" fillOpacity={0.12} connectNulls />
+          {lines.map((line) => (
+            <Area
+              key={line.id}
+              dataKey={line.id}
+              type="monotone"
+              stroke={`var(--color-${line.id})`}
+              strokeWidth={2}
+              fill={`var(--color-${line.id})`}
+              fillOpacity={grouped ? 0.06 : 0.12}
+              connectNulls
+            />
+          ))}
         </AreaChart>
       )}
     </ChartContainer>

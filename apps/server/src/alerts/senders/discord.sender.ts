@@ -25,10 +25,15 @@ export class DiscordSender implements ChannelSender {
   payload(message: AlertMessage): Record<string, unknown> {
     const fields = [
       { name: 'Project', value: message.projectName, inline: true },
-      { name: 'Level', value: message.level, inline: true },
+      ...(message.metric ? [] : [{ name: 'Level', value: message.level, inline: true }]),
       ...(message.environment ? [{ name: 'Environment', value: message.environment, inline: true }] : []),
       ...(message.release ? [{ name: 'Release', value: message.release, inline: true }] : []),
-      { name: 'Events', value: String(message.eventCount), inline: true },
+      ...(message.metric
+        ? [
+            { name: 'Value', value: String(Number(message.metric.value.toFixed(2))), inline: true },
+            { name: 'Threshold', value: String(message.metric.threshold), inline: true },
+          ]
+        : [{ name: 'Events', value: String(message.eventCount), inline: true }]),
     ];
     return {
       allowed_mentions: { parse: [] },

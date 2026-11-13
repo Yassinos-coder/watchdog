@@ -1,5 +1,20 @@
 export type ChannelType = 'SLACK' | 'DISCORD' | 'TELEGRAM' | 'EMAIL';
-export type AlertTrigger = 'NEW_ISSUE' | 'REGRESSION' | 'SPIKE';
+export type AlertTrigger = 'NEW_ISSUE' | 'REGRESSION' | 'SPIKE' | 'METRIC';
+export type MetricComparator = 'ABOVE' | 'BELOW';
+export type MetricAlertSource = 'METRIC' | 'TRANSACTIONS';
+export type MetricAlertAggregation =
+  'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99' | 'RATE';
+
+export interface MetricRuleFields {
+  metricSource: MetricAlertSource | null;
+  metricName: string | null;
+  metricAggregation: MetricAlertAggregation | null;
+  metricComparator: MetricComparator | null;
+  metricThreshold: number | null;
+  metricWindowMins: number | null;
+  metricTagKey: string | null;
+  metricTagValue: string | null;
+}
 
 export interface AlertChannel {
   id: string;
@@ -10,7 +25,7 @@ export interface AlertChannel {
   createdAt: string;
 }
 
-export interface AlertRule {
+export interface AlertRule extends MetricRuleFields {
   id: string;
   projectId: string;
   name: string;
@@ -65,6 +80,14 @@ export interface RuleInput {
   trigger: AlertTrigger;
   spikeThreshold?: number;
   spikeWindowMins?: number;
+  metricSource?: MetricAlertSource;
+  metricName?: string;
+  metricAggregation?: MetricAlertAggregation;
+  metricComparator?: MetricComparator;
+  metricThreshold?: number;
+  metricWindowMins?: number;
+  metricTagKey?: string;
+  metricTagValue?: string;
   minLevel: string;
   environment?: string;
   cooldownMins: number;

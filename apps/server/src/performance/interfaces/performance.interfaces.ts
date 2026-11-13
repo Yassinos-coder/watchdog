@@ -1,9 +1,9 @@
 import type { MetricType } from '../../generated/prisma/enums';
 
-export type RangeKey = '1h' | '24h' | '7d' | '30d';
-export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99';
+export type RangeKey = '1h' | '24h' | '7d' | '30d' | '90d';
+export type Aggregation = 'AVG' | 'SUM' | 'MIN' | 'MAX' | 'COUNT' | 'P50' | 'P95' | 'P99' | 'RATE';
 export type SeriesSource = 'METRIC' | 'TRANSACTIONS';
-export type WidgetDisplayKind = 'LINE' | 'BAR' | 'NUMBER';
+export type WidgetDisplayKind = 'LINE' | 'BAR' | 'NUMBER' | 'TABLE';
 
 export interface SpanInput {
   spanId: string;
@@ -40,6 +40,11 @@ export interface MetricInput {
   timestamp: Date;
 }
 
+export interface TagFilter {
+  key: string;
+  value: string;
+}
+
 export interface SeriesQuery {
   projectId: string;
   source: SeriesSource;
@@ -47,7 +52,34 @@ export interface SeriesQuery {
   aggregation: Aggregation;
   from: Date;
   bucket: string;
+  bucketSeconds: number;
+  windowSeconds: number;
   environment?: string;
+  tag?: TagFilter;
+  groupBy?: string;
+  rollup?: boolean;
+}
+
+export interface GroupTotal {
+  key: string;
+  value: number | null;
+}
+
+export interface GroupedPoint {
+  bucket: Date;
+  key: string;
+  value: number | null;
+}
+
+export interface SeriesGroup {
+  key: string;
+  points: SeriesPoint[];
+  total: number | null;
+}
+
+export interface TagKeyView {
+  key: string;
+  values: string[];
 }
 
 export interface SeriesPoint {
@@ -59,6 +91,7 @@ export interface SeriesView {
   points: SeriesPoint[];
   total: number | null;
   bucketMs: number;
+  groups?: SeriesGroup[];
 }
 
 export interface TransactionSummaryRow {
@@ -102,6 +135,9 @@ export interface WidgetView {
   filterName: string | null;
   aggregation: Aggregation;
   display: WidgetDisplayKind;
+  groupBy: string | null;
+  tagKey: string | null;
+  tagValue: string | null;
   position: number;
 }
 

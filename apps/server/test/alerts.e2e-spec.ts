@@ -3,6 +3,7 @@ import type { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { HttpPoster } from '../src/alerts/services/http-poster.service';
+import { MetricAlertService } from '../src/alerts/services/metric-alert.service';
 import { createTestApp } from './support/create-test-app';
 import { OwnerSession, resetDatabase, signInOwner } from './support/test-helpers';
 
@@ -233,6 +234,75 @@ describe('Alerts (e2e)', () => {
       const failed = deliveries.body.find((delivery: { status: string }) => delivery.status === 'FAILED');
       expect(failed).toMatchObject({ ruleName: 'Failing', channelName: 'Dev Slack' });
       expect(failed.error).toContain('down');
+    });
+  });
+
+  describe('metric alerts', () => {
+    const sendMetrics = (metrics: Record<string, unknown>[]) =>
+      request(app.getHttpServer())
+        .post(`/api/ingest/v1/${projectId}/metrics`)
+        .set('x-watchdog-key', publicKey)
+        .send({ metrics })
+        .expect(202);
+
+    const metricRule = {
+      name: 'Voice latency',
+      trigger: 'METRIC',
+      metricSource: 'METRIC',
+      metricName: 'voice.latency',
+      metricAggregation: 'AVG',
+      metricComparator: 'ABOVE',
+      metricThreshold: 2000,
+      metricWindowMins: 5,
+    };
+
+    beforeAll(async () => {
+      await sendMetrics([
+        { name: 'voice.latency', type: 'distribution', value: 3000, tags: { tier: 'pro' } },
+        { name: 'voice.latency', type: 'distribution', value: 4000, tags: { tier: 'pro' } },
+        { name: 'voice.latency', type: 'distribution', value: 100, tags: { tier: 'free' } },
+      ]);
+    });
+
+    it('alerts when the aggregate crosses the threshold, then stays quiet during the cooldown', async () => {
+      const rule = await createRule(metricRule);
+      expect(rule).toMatchObject({ trigger: 'METRIC', metricName: 'voice.latency', metricThreshold: 2000 });
+
+      await app.get(MetricAlertService).evaluateAll();
+
+      expect(poster.calls).toHaveLength(1);
+      expect(JSON.stringify(poster.calls[0].body)).toContain('voice.latency avg is 2366.67, above 2000 over 5 min');
+
+      await app.get(MetricAlertService).evaluateAll();
+      expect(poster.calls).toHaveLength(1);
+    });
+
+    it('does not alert when the value is on the right side of the threshold', async () => {
+      await createRule({ ...metricRule, metricThreshold: 5000 });
+      await createRule({ ...metricRule, metricComparator: 'BELOW', metricThreshold: 100 });
+
+      await app.get(MetricAlertService).evaluateAll();
+
+      expect(poster.calls).toHaveLength(0);
+    });
+
+    it('can narrow the rule to a tag and a different aggregation', async () => {
+      await createRule({ ...metricRule, metricAggregation: 'MAX', metricTagKey: 'tier', metricTagValue: 'free', metricThreshold: 1000 });
+      await app.get(MetricAlertService).evaluateAll();
+      expect(poster.calls).toHaveLength(0);
+
+      await createRule({ ...metricRule, metricAggregation: 'MAX', metricTagKey: 'tier', metricTagValue: 'pro', metricThreshold: 3500 });
+      await app.get(MetricAlertService).evaluateAll();
+      expect(poster.calls).toHaveLength(1);
+    });
+
+    it('rejects incomplete metric rules and ignores metric fields on other triggers', async () => {
+      await owner.agent
+        .post(`/api/projects/${projectId}/alert-rules`)
+        .send({ channelIds: [slackChannelId], name: 'x', trigger: 'METRIC', metricSource: 'METRIC', metricAggregation: 'AVG' })
+        .expect(400);
+      const plain = await createRule({ name: 'Plain', trigger: 'NEW_ISSUE', metricThreshold: 5 });
+      expect(plain.metricThreshold).toBeNull();
     });
   });
 

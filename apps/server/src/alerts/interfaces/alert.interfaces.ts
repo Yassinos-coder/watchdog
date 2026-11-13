@@ -1,4 +1,10 @@
-import type { AlertChannelType, AlertTrigger } from '../../generated/prisma/enums';
+import type {
+  AlertChannelType,
+  AlertTrigger,
+  MetricComparator,
+  WidgetAggregation,
+  WidgetSource,
+} from '../../generated/prisma/enums';
 
 export interface WebhookConfig {
   webhookUrl: string;
@@ -15,6 +21,27 @@ export interface EmailConfig {
 
 export type ChannelConfig = WebhookConfig | TelegramConfig | EmailConfig;
 
+export interface MetricRuleSpec {
+  source: WidgetSource;
+  name: string | null;
+  aggregation: WidgetAggregation;
+  comparator: MetricComparator;
+  threshold: number;
+  windowMins: number;
+  tagKey: string | null;
+  tagValue: string | null;
+}
+
+export interface MetricAlertDetail {
+  source: WidgetSource;
+  name: string;
+  aggregation: WidgetAggregation;
+  comparator: MetricComparator;
+  threshold: number;
+  value: number;
+  windowMins: number;
+}
+
 export interface AlertMessage {
   trigger: AlertTrigger;
   reason: string;
@@ -26,6 +53,7 @@ export interface AlertMessage {
   release: string | null;
   eventCount: number;
   issueUrl: string;
+  metric?: MetricAlertDetail;
 }
 
 export interface ChannelSender {
@@ -49,6 +77,14 @@ export interface RuleView {
   trigger: AlertTrigger;
   spikeThreshold: number | null;
   spikeWindowMins: number | null;
+  metricSource: WidgetSource | null;
+  metricName: string | null;
+  metricAggregation: WidgetAggregation | null;
+  metricComparator: MetricComparator | null;
+  metricThreshold: number | null;
+  metricWindowMins: number | null;
+  metricTagKey: string | null;
+  metricTagValue: string | null;
   minLevel: string;
   environment: string | null;
   cooldownMins: number;

@@ -7,7 +7,7 @@ import { DeliveryView } from '../interfaces/alert.interfaces';
 interface RecordDeliveryInput {
   ruleId: string;
   channelId: string;
-  issueId: string;
+  issueId?: string;
   status: 'SENT' | 'FAILED';
   error?: string;
 }
@@ -28,6 +28,11 @@ export class AlertDeliveryRepository {
     const count = await this.prisma.alertDelivery.count({
       where: { ruleId, issueId, status: 'SENT', createdAt: { gte: since } },
     });
+    return count > 0;
+  }
+
+  async wasAttemptedSince(ruleId: string, since: Date): Promise<boolean> {
+    const count = await this.prisma.alertDelivery.count({ where: { ruleId, createdAt: { gte: since } } });
     return count > 0;
   }
 

@@ -33,6 +33,9 @@ export class PerformanceMapper {
       filterName: widget.filterName,
       aggregation: widget.aggregation,
       display: widget.display,
+      groupBy: widget.groupBy,
+      tagKey: widget.tagKey,
+      tagValue: widget.tagValue,
       position: widget.position,
     };
   }

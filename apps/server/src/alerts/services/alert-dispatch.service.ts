@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { AlertTrigger } from '../../generated/prisma/enums';
 import { LEVEL_RANK, MAX_ERROR_LENGTH, MINUTE_MS } from '../constants/alert.constants';
-import { IssueSignal } from '../interfaces/alert.interfaces';
+import { AlertMessage, IssueSignal } from '../interfaces/alert.interfaces';
 import { AlertMessageMapper } from '../mappers/alert-message.mapper';
-import { AlertDeliveryRepository, IssueWithProject } from '../repositories/alert-delivery.repository';
+import { AlertDeliveryRepository } from '../repositories/alert-delivery.repository';
 import { AlertRuleRepository, RuleWithChannels } from '../repositories/alert-rule.repository';
 import { SpikeDetector } from '../utils/spike-detector';
 import { AlertChannelsService } from './alert-channels.service';
@@ -73,19 +73,6 @@ export class AlertDispatchService {
     if (!issue) {
       return;
     }
-    for (const channel of channels) {
-      await this.sendOne(rule, channel, issue, signal, trigger, reason);
-    }
-  }
-
-  private async sendOne(
-    rule: RuleWithChannels,
-    channel: RuleWithChannels['channels'][number],
-    issue: IssueWithProject,
-    signal: IssueSignal,
-    trigger: AlertTrigger,
-    reason: string,
-  ): Promise<void> {
     const message = AlertMessageMapper.fromIssue(
       trigger,
       reason,
@@ -93,16 +80,31 @@ export class AlertDispatchService {
       this.configService.getOrThrow<string>('appUrl'),
       { environment: signal.environment, release: signal.release },
     );
+    await this.sendToChannels(rule, message, issue.id);
+  }
+
+  async sendToChannels(rule: RuleWithChannels, message: AlertMessage, issueId?: string): Promise<void> {
+    for (const channel of rule.channels.filter((candidate) => candidate.enabled)) {
+      await this.sendOne(rule, channel, message, issueId);
+    }
+  }
+
+  private async sendOne(
+    rule: RuleWithChannels,
+    channel: RuleWithChannels['channels'][number],
+    message: AlertMessage,
+    issueId?: string,
+  ): Promise<void> {
     try {
       await this.channelsService.send(channel, message);
-      await this.deliveryRepository.record({ ruleId: rule.id, channelId: channel.id, issueId: issue.id, status: 'SENT' });
+      await this.deliveryRepository.record({ ruleId: rule.id, channelId: channel.id, issueId, status: 'SENT' });
     } catch (error) {
       const detail = (error instanceof Error ? error.message : 'Unknown error').slice(0, MAX_ERROR_LENGTH);
       this.logger.warn(`Alert "${rule.name}" to "${channel.name}" failed: ${detail}`);
       await this.deliveryRepository.record({
         ruleId: rule.id,
         channelId: channel.id,
-        issueId: issue.id,
+        issueId,
         status: 'FAILED',
         error: detail,
       });

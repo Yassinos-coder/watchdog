@@ -1,5 +1,5 @@
 import type { AlertTrigger } from '../../generated/prisma/enums';
-import { AlertMessage } from '../interfaces/alert.interfaces';
+import { AlertMessage, MetricAlertDetail } from '../interfaces/alert.interfaces';
 import { IssueWithProject } from '../repositories/alert-delivery.repository';
 
 export class AlertMessageMapper {
@@ -24,6 +24,37 @@ export class AlertMessageMapper {
     };
   }
 
+  static fromMetric(
+    detail: MetricAlertDetail,
+    context: { projectId: string; projectName: string; environment: string | null; appUrl: string },
+  ): AlertMessage {
+    return {
+      trigger: 'METRIC',
+      reason: AlertMessageMapper.reason('METRIC'),
+      title: AlertMessageMapper.metricTitle(detail),
+      culprit: null,
+      projectName: context.projectName,
+      level: 'warning',
+      environment: context.environment,
+      release: null,
+      eventCount: 0,
+      issueUrl: `${context.appUrl}/projects/${context.projectId}/dashboards`,
+      metric: detail,
+    };
+  }
+
+  static metricTitle(detail: MetricAlertDetail): string {
+    const direction = detail.comparator === 'ABOVE' ? 'above' : 'below';
+    const aggregation = detail.aggregation.toLowerCase();
+    const value = AlertMessageMapper.number(detail.value);
+    const threshold = AlertMessageMapper.number(detail.threshold);
+    return `${detail.name} ${aggregation} is ${value}, ${direction} ${threshold} over ${detail.windowMins} min`;
+  }
+
+  static number(value: number): string {
+    return String(Number(value.toFixed(2)));
+  }
+
   static sample(appUrl: string): AlertMessage {
     return {
       trigger: 'NEW_ISSUE',
@@ -42,6 +73,9 @@ export class AlertMessageMapper {
   static reason(trigger: AlertTrigger, spike?: { count: number; windowMins: number }): string {
     if (trigger === 'REGRESSION') {
       return 'Issue regressed';
+    }
+    if (trigger === 'METRIC') {
+      return 'Metric alert';
     }
     if (trigger === 'SPIKE' && spike) {
       return `Spike: ${spike.count} events in ${spike.windowMins} min`;

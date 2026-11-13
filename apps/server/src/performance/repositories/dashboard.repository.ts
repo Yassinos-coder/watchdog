@@ -65,6 +65,9 @@ export class DashboardRepository {
         filterName: input.filterName,
         aggregation: input.aggregation,
         display: input.display,
+        groupBy: input.groupBy,
+        tagKey: input.tagKey,
+        tagValue: input.tagValue,
         position,
       },
     });

@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import type { AlertChannel, AlertRule } from '../../generated/prisma/client';
-import type { AlertTrigger } from '../../generated/prisma/enums';
+import type {
+  AlertTrigger,
+  MetricComparator,
+  WidgetAggregation,
+  WidgetSource,
+} from '../../generated/prisma/enums';
 
 export interface RuleWithChannels extends AlertRule {
   channels: AlertChannel[];
@@ -12,6 +17,14 @@ export interface RuleData {
   trigger: AlertTrigger;
   spikeThreshold: number | null;
   spikeWindowMins: number | null;
+  metricSource: WidgetSource | null;
+  metricName: string | null;
+  metricAggregation: WidgetAggregation | null;
+  metricComparator: MetricComparator | null;
+  metricThreshold: number | null;
+  metricWindowMins: number | null;
+  metricTagKey: string | null;
+  metricTagValue: string | null;
   minLevel: string;
   environment: string | null;
   cooldownMins: number;
@@ -39,6 +52,13 @@ export class AlertRuleRepository {
   findActive(projectId: string, trigger: AlertTrigger): Promise<RuleWithChannels[]> {
     return this.prisma.alertRule.findMany({
       where: { projectId, trigger, enabled: true },
+      include: WITH_CHANNELS,
+    });
+  }
+
+  findAllActive(trigger: AlertTrigger): Promise<RuleWithChannels[]> {
+    return this.prisma.alertRule.findMany({
+      where: { trigger, enabled: true },
       include: WITH_CHANNELS,
     });
   }

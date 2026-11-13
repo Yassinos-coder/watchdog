@@ -46,7 +46,23 @@ Metric names start with a letter and may contain letters, digits, `_`, `.`, `-` 
 
 ## Dashboards
 
-Open **Dashboards** in a project to build widgets from a metric or from transactions, with an aggregation (average, sum, min, max, count, p50, p95, p99) and a line, bar or number display.
+Open **Dashboards** in a project to build widgets from a metric or from transactions.
+
+- **Aggregation**: average, sum, min, max, count, p50, p95, p99, or **rate per second**. For metrics the rate is the sum divided by the time covered, which suits counters such as `calls.started`. For transactions it is throughput, the number of transactions per second.
+- **Display**: line chart, bar chart, single number, or a table.
+- **Split by tag**: draw one line, stacked bar or table row per value of a tag, for example calls per minute split by `tier` or `language`. The eight largest values are shown, and metrics without that tag appear as `(none)`.
+- **Only where tag**: limit the widget to metrics or transactions whose tag has one value, for example `tier=pro`.
+
+The tag lists in the widget dialog come from the last 7 days of data, so send the metric once before you build the widget.
+
+## Long ranges and rollups
+
+Every hour, Watchdog summarizes each metric into one row per tag combination, holding its count, sum, minimum, maximum, p50, p95 and p99. The 7, 30 and 90 day ranges read these summaries instead of the raw data points, so dashboards stay fast as volume grows. The last two hours are recalculated every five minutes, so recent hours are accurate.
+
+- Count, sum, minimum, maximum, average and rate are exact.
+- Percentiles on the 7, 30 and 90 day ranges are approximate: the percentiles of each hour are averaged, weighted by how many points the hour had.
+- Summaries are kept for 400 days by default, much longer than the raw points. See [Data retention](retention.md).
+- Transaction charts always use the raw data, so they stop at `RETENTION_PERFORMANCE_DAYS`.
 
 ## Ingest API
 

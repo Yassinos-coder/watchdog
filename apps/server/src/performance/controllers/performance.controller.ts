@@ -1,9 +1,10 @@
 import { Controller, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { RangeQueryDto, SeriesQueryDto, TransactionListQueryDto } from '../dto/performance.dto';
+import { RangeQueryDto, SeriesQueryDto, TagKeysQueryDto, TransactionListQueryDto } from '../dto/performance.dto';
 import type {
   MetricNameView,
   PerformancePage,
   SeriesView,
+  TagKeyView,
   TransactionSummaryRow,
   TransactionView,
 } from '../interfaces/performance.interfaces';
@@ -37,6 +38,14 @@ export class PerformanceController {
   @Get('projects/:projectId/metrics')
   listMetricNames(@Param('projectId', ParseUUIDPipe) projectId: string): Promise<MetricNameView[]> {
     return this.queryService.listMetricNames(projectId);
+  }
+
+  @Get('projects/:projectId/tag-keys')
+  tagKeys(
+    @Param('projectId', ParseUUIDPipe) projectId: string,
+    @Query() query: TagKeysQueryDto,
+  ): Promise<TagKeyView[]> {
+    return this.queryService.tagKeys(projectId, query);
   }
 
   @Get('projects/:projectId/series')

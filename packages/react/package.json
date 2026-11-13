@@ -1,6 +1,6 @@
 {
   "name": "@watchdog-sdk/react",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "description": "Watchdog SDK for React: error boundary, hooks and React 19 root error handlers",
   "keywords": [
     "watchdog",

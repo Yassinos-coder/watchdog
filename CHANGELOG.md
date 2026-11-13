@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-11-13
+
+### Added
+- Metric alerts: a new rule type that alerts when a custom metric or a transaction timing goes above or below a threshold over a time window, using any aggregation (average, sum, min, max, count, p50, p95, p99 or rate), an optional tag and environment, and a quiet period between alerts
+- Metrics are summarized into hourly rollups that serve the 7, 30 and 90 day dashboard ranges, and are kept for 400 days by default (RETENTION_ROLLUP_DAYS), well past the raw points
+- Dashboards gain a rate per second aggregation and a table display, and a 90 day range
+- Dashboard widgets can be split by a tag (one line, stacked bar or table row per value) and limited to one tag value, so you can chart calls per minute by tier or language
+
 ## [0.8.1] - 2026-11-12
 
 ### Fixed

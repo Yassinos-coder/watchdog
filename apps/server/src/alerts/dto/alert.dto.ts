@@ -7,6 +7,7 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsObject,
   IsOptional,
   IsString,
@@ -15,6 +16,8 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
+import type { AlertTrigger, MetricComparator, WidgetAggregation, WidgetSource } from '../../generated/prisma/enums';
+import { ALERT_TRIGGERS, METRIC_AGGREGATIONS } from '../constants/alert.constants';
 
 export class CreateChannelDto {
   @IsIn(['SLACK', 'DISCORD', 'TELEGRAM', 'EMAIL'])
@@ -51,8 +54,8 @@ export class CreateRuleDto {
   @MaxLength(80)
   name!: string;
 
-  @IsIn(['NEW_ISSUE', 'REGRESSION', 'SPIKE'])
-  trigger!: 'NEW_ISSUE' | 'REGRESSION' | 'SPIKE';
+  @IsIn(ALERT_TRIGGERS)
+  trigger!: AlertTrigger;
 
   @IsOptional()
   @Type(() => Number)
@@ -67,6 +70,45 @@ export class CreateRuleDto {
   @Min(1)
   @Max(1440)
   spikeWindowMins?: number;
+
+  @IsOptional()
+  @IsIn(['METRIC', 'TRANSACTIONS'])
+  metricSource?: WidgetSource;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  metricName?: string;
+
+  @IsOptional()
+  @IsIn(METRIC_AGGREGATIONS)
+  metricAggregation?: WidgetAggregation;
+
+  @IsOptional()
+  @IsIn(['ABOVE', 'BELOW'])
+  metricComparator?: MetricComparator;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  metricThreshold?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(1440)
+  metricWindowMins?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  metricTagKey?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  metricTagValue?: string;
 
   @IsOptional()
   @IsIn(['debug', 'info', 'warning', 'error', 'fatal'])
@@ -103,8 +145,8 @@ export class UpdateRuleDto {
   name?: string;
 
   @IsOptional()
-  @IsIn(['NEW_ISSUE', 'REGRESSION', 'SPIKE'])
-  trigger?: 'NEW_ISSUE' | 'REGRESSION' | 'SPIKE';
+  @IsIn(ALERT_TRIGGERS)
+  trigger?: AlertTrigger;
 
   @IsOptional()
   @Type(() => Number)
@@ -119,6 +161,45 @@ export class UpdateRuleDto {
   @Min(1)
   @Max(1440)
   spikeWindowMins?: number;
+
+  @IsOptional()
+  @IsIn(['METRIC', 'TRANSACTIONS'])
+  metricSource?: WidgetSource;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  metricName?: string;
+
+  @IsOptional()
+  @IsIn(METRIC_AGGREGATIONS)
+  metricAggregation?: WidgetAggregation;
+
+  @IsOptional()
+  @IsIn(['ABOVE', 'BELOW'])
+  metricComparator?: MetricComparator;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber({ allowNaN: false, allowInfinity: false })
+  metricThreshold?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(1440)
+  metricWindowMins?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  metricTagKey?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  metricTagValue?: string;
 
   @IsOptional()
   @IsIn(['debug', 'info', 'warning', 'error', 'fatal'])

@@ -22,6 +22,22 @@ export class MetricRepository {
     }));
   }
 
+  async listRolledUpNames(projectId: string): Promise<MetricNameView[]> {
+    const groups = await this.prisma.metricRollup.groupBy({
+      by: ['name', 'type', 'unit'],
+      where: { projectId },
+      _sum: { count: true },
+      orderBy: { name: 'asc' },
+      take: 500,
+    });
+    return groups.map((group) => ({
+      name: group.name,
+      type: group.type,
+      unit: group.unit,
+      samples: group._sum.count ?? 0,
+    }));
+  }
+
   async insertMany(projectId: string, metrics: MetricInput[]): Promise<number> {
     if (metrics.length === 0) {
       return 0;

@@ -10,6 +10,7 @@ const DEFAULT_DOCS_URL = 'https://github.com/Yassinos-coder/watchdog/blob/main/d
 
 const DEFAULT_EVENT_RETENTION_DAYS = 90;
 const DEFAULT_SHORT_RETENTION_DAYS = 30;
+const DEFAULT_ROLLUP_RETENTION_DAYS = 400;
 
 const parseDays = (value: string | undefined, fallback: number): number => {
   if (value === undefined || value === '') {
@@ -113,6 +114,7 @@ export default () => {
     retention: {
       eventDays: parseDays(process.env.RETENTION_EVENT_DAYS, DEFAULT_EVENT_RETENTION_DAYS),
       performanceDays: parseDays(process.env.RETENTION_PERFORMANCE_DAYS, DEFAULT_SHORT_RETENTION_DAYS),
+      rollupDays: parseDays(process.env.RETENTION_ROLLUP_DAYS, DEFAULT_ROLLUP_RETENTION_DAYS),
       replayDays: parseDays(process.env.RETENTION_REPLAY_DAYS, DEFAULT_SHORT_RETENTION_DAYS),
     },
     security: {

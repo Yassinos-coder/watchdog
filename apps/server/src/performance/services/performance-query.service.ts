@@ -1,14 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ProjectRepository } from '../../projects/repositories/project.repository';
 import { DEFAULT_PAGE_SIZE } from '../constants/performance.constants';
-import { SeriesQueryDto, TransactionListQueryDto } from '../dto/performance.dto';
+import { SeriesQueryDto, TagKeysQueryDto, TransactionListQueryDto } from '../dto/performance.dto';
 import type {
   Aggregation,
   MetricNameView,
   PerformancePage,
   RangeKey,
+  SeriesQuery,
   SeriesSource,
   SeriesView,
+  TagFilter,
+  TagKeyView,
   TransactionSummaryRow,
   TransactionView,
 } from '../interfaces/performance.interfaces';
@@ -59,7 +62,13 @@ export class PerformanceQueryService {
 
   async listMetricNames(projectId: string): Promise<MetricNameView[]> {
     await this.requireProject(projectId);
-    return this.metricRepository.listNames(projectId);
+    const [recent, rolledUp] = await Promise.all([
+      this.metricRepository.listNames(projectId),
+      this.metricRepository.listRolledUpNames(projectId),
+    ]);
+    const known = new Set(recent.map((metric) => `${metric.name}:${metric.type}`));
+    const older = rolledUp.filter((metric) => !known.has(`${metric.name}:${metric.type}`));
+    return [...recent, ...older].sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async series(projectId: string, query: SeriesQueryDto): Promise<SeriesView> {
@@ -70,7 +79,14 @@ export class PerformanceQueryService {
       aggregation: query.aggregation ?? 'P95',
       range: query.range ?? DEFAULT_RANGE,
       environment: query.environment,
+      groupBy: query.groupBy,
+      tag: query.tagKey && query.tagValue !== undefined ? { key: query.tagKey, value: query.tagValue } : undefined,
     });
+  }
+
+  async tagKeys(projectId: string, query: TagKeysQueryDto): Promise<TagKeyView[]> {
+    await this.requireProject(projectId);
+    return this.seriesRepository.tagKeys(projectId, query.source ?? 'METRIC', query.name);
   }
 
   async seriesFor(
@@ -81,17 +97,28 @@ export class PerformanceQueryService {
       aggregation: Aggregation;
       range: RangeKey;
       environment?: string;
+      groupBy?: string;
+      tag?: TagFilter;
     },
   ): Promise<SeriesView> {
-    const query = {
+    const query: SeriesQuery = {
       projectId,
       source: input.source,
       name: input.name,
       aggregation: input.aggregation,
       from: RangeUtils.from(input.range),
       bucket: RangeUtils.bucket(input.range),
+      bucketSeconds: RangeUtils.bucketMs(input.range) / 1000,
+      windowSeconds: RangeUtils.windowSeconds(input.range),
       environment: input.environment,
+      tag: input.tag,
+      groupBy: input.groupBy,
+      rollup: RangeUtils.usesRollups(input.range, input.source),
     };
+    const bucketMs = RangeUtils.bucketMs(input.range);
+    if (query.groupBy) {
+      return this.groupedSeries({ ...query, groupBy: query.groupBy }, bucketMs);
+    }
     const [points, total] = await Promise.all([
       this.seriesRepository.series(query),
       this.seriesRepository.total(query),
@@ -99,8 +126,23 @@ export class PerformanceQueryService {
     return {
       points: points.map((point) => ({ timestamp: point.bucket.toISOString(), value: point.value })),
       total,
-      bucketMs: RangeUtils.bucketMs(input.range),
+      bucketMs,
     };
+  }
+
+  private async groupedSeries(query: SeriesQuery & { groupBy: string }, bucketMs: number): Promise<SeriesView> {
+    const [points, totals] = await Promise.all([
+      this.seriesRepository.series(query),
+      this.seriesRepository.groupTotals(query),
+    ]);
+    const groups = totals.map((group) => ({
+      key: group.key,
+      total: group.value,
+      points: points
+        .filter((point) => point.key === group.key)
+        .map((point) => ({ timestamp: point.bucket.toISOString(), value: point.value })),
+    }));
+    return { points: [], total: null, bucketMs, groups };
   }
 
   private async requireProject(projectId: string): Promise<void> {

@@ -33,4 +33,4 @@ All settings are environment variables.
 
 ## Retention
 
-`RETENTION_EVENT_DAYS`, `RETENTION_PERFORMANCE_DAYS`, `RETENTION_REPLAY_DAYS`. See [Data retention](retention.md).
+`RETENTION_EVENT_DAYS`, `RETENTION_PERFORMANCE_DAYS`, `RETENTION_ROLLUP_DAYS`, `RETENTION_REPLAY_DAYS`. See [Data retention](retention.md).
