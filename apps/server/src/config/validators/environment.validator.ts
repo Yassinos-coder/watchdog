@@ -15,6 +15,13 @@ export class EnvironmentValidator {
         `WATCHDOG_SECRET_KEY is required and must be at least ${MIN_SECRET_KEY_LENGTH} characters (generate one with: openssl rand -hex 32)`,
       );
     }
+    const ingestLimit = config.INGEST_EVENTS_PER_MINUTE;
+    if (
+      ingestLimit !== undefined &&
+      (!/^[1-9]\d*$/.test(String(ingestLimit)) || !Number.isSafeInteger(Number(ingestLimit)))
+    ) {
+      problems.push('INGEST_EVENTS_PER_MINUTE must be a positive safe integer');
+    }
 
     if (problems.length > 0) {
       throw new InternalServerErrorException(`Invalid configuration:\n- ${problems.join('\n- ')}`);

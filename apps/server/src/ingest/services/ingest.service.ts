@@ -20,9 +20,13 @@ export class IngestService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async accept(projectId: string, publicKey: string | undefined, body: unknown): Promise<IngestResult> {
+  async accept(
+    projectId: string,
+    publicKey: string | undefined,
+    body: unknown,
+  ): Promise<IngestResult> {
     await this.projectKeyService.assertValid(publicKey, projectId);
-    this.rateLimiter.consume(projectId);
+    await this.rateLimiter.consume(projectId);
 
     const event = EventPayloadValidator.parse(body);
     if (event.exception) {

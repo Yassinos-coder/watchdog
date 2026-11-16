@@ -12,9 +12,13 @@ export class ReplayIngestService {
     private readonly replayRepository: ReplayRepository,
   ) {}
 
-  async accept(projectId: string, publicKey: string | undefined, body: unknown): Promise<{ id: string }> {
+  async accept(
+    projectId: string,
+    publicKey: string | undefined,
+    body: unknown,
+  ): Promise<{ id: string }> {
     await this.projectKeyService.assertValid(publicKey, projectId);
-    this.rateLimiter.consume(projectId);
+    await this.rateLimiter.consume(projectId);
     const chunk = ReplayPayloadValidator.parse(body);
     await this.replayRepository.appendChunk(projectId, chunk);
     return { id: chunk.replayId };

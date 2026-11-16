@@ -38,6 +38,6 @@ export class PerformanceIngestService {
 
   private async authorize(projectId: string, publicKey: string | undefined): Promise<void> {
     await this.projectKeyService.assertValid(publicKey, projectId);
-    this.rateLimiter.consume(projectId);
+    await this.rateLimiter.consume(projectId);
   }
 }
