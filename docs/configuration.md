@@ -19,6 +19,7 @@ All settings are environment variables.
 | `TRUST_PROXY` | `false` | Number of proxy hops in front of the app |
 | `CORS_ORIGINS` | none | Extra allowed origins, comma separated |
 | `INGEST_EVENTS_PER_MINUTE` | `6000` | Per-project ingest limit |
+| `REDIS_URL` | none | Shares per-project ingest quota counters across app instances. If Redis is unavailable, each instance falls back to its own in-memory limit |
 | `SHIELD_WHITELIST` | none | Comma-separated IPs or CIDR ranges that skip rate limits and IP blocks. Other `SHIELD_*` settings are listed under [Blocked by the shield](railway.md#blocked-by-the-shield-temporary-ip-ban) |
 | `DOCS_URL` | GitHub docs | Where in-app help links point |
 | `UPDATE_CHECK` | `true` | Owners and admins see a notice when a newer Watchdog version is published. Set to `false` to stop the server contacting the npm registry |
