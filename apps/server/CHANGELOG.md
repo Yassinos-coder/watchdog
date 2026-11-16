@@ -1,5 +1,11 @@
 # @watchdog/server
 
+## 0.12.3
+
+### Patch Changes
+
+- 9b8c3b2: Share per-project ingest quotas across app instances when Redis is configured.
+
 ## 0.12.2
 
 No changes in this release.

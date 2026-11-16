@@ -1,5 +1,9 @@
 # @watchdog/web
 
+## 0.12.3
+
+No changes in this release.
+
 ## 0.12.2
 
 ### Patch Changes

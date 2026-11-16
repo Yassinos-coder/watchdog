@@ -1,5 +1,11 @@
 # @watchdog-sdk/react-native
 
+## 0.12.3
+
+### Patch Changes
+
+- @watchdog-sdk/core@0.12.3
+
 ## 0.12.2
 
 ### Patch Changes
