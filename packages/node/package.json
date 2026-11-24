@@ -86,10 +86,10 @@
     "rimraf": "^6.1.4",
     "tsup": "^9.0.0",
     "typescript": "^6.0.3",
-    "vitest": "^5.1.0",
+    "vitest": "^5.1.1",
     "@types/node": "^26.6.6",
-    "@nestjs/common": "^12.4.0",
-    "@nestjs/core": "^12.4.0",
+    "@nestjs/common": "^12.6.0",
+    "@nestjs/core": "^12.6.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   }
